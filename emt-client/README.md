@@ -11,13 +11,16 @@
 5. Tap _Extensions_ in vs code, type "@recommended" and install all from section "Workspace recommendations"
 6. Run `npm start` and everything should be ready to start 🚀
 
+If you have any issues with setting up the project, feel free to reach out me [@alicenoknow](https://github.com/alicenoknow)
+
 ## 📚 Useful resources
 - [React docs](https://en.reactjs.org/docs/getting-started.html)
 - [Typescript handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [Sass docs](https://sass-lang.com/documentation)
 - [React Boostrap](https://react-bootstrap.github.io/getting-started/introduction)
 - [Beam naming convention for stylesheet](http://getbem.com/naming/)
-- [Redux - we will probably use it at some point](https://react-redux.js.org/)
+- [Redux - we will probably use it](https://react-redux.js.org/)
+- [React Router - we will probably use it](https://reactrouter.com/docs/en/v6)
 
 ## 📜 Available Scripts
 
