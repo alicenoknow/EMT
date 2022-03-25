@@ -19,6 +19,7 @@ If you have any issues with setting up the project, feel free to reach out me [@
 - [Sass docs](https://sass-lang.com/documentation)
 - [React Boostrap](https://react-bootstrap.github.io/getting-started/introduction)
 - [Beam naming convention for stylesheet](http://getbem.com/naming/)
+- [Jest - for testing](https://jestjs.io/docs/getting-started) 
 - [Redux - we will probably use it](https://react-redux.js.org/)
 - [React Router - we will probably use it](https://reactrouter.com/docs/en/v6)
 
