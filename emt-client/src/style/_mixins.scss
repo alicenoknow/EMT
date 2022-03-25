@@ -1,0 +1,8 @@
+/**
+    Mixins allow us to define styles that can be re-used throughout our app.
+    Docs and how to use: https://sass-lang.com/documentation/at-rules/mixin
+    Example: 
+*/
+@mixin transition-ease {
+	transition: all 0.5s ease-in-out;
+}
