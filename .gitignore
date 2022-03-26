@@ -1,0 +1,25 @@
+/.idea
+/emt-server/target
+
+
+# dependencies
+/emt-client/node_modules
+/emt-client/.pnp
+/emt-client/.pnp.js
+
+# testing
+/emt-client/coverage
+
+# production
+/emt-client/build
+
+# misc
+/emt-client/.DS_Store
+/emt-client/.env.local
+/emt-client/.env.development.local
+/emt-client/.env.test.local
+/emt-client/.env.production.local
+
+/emt-client/npm-debug.log*
+/emt-client/yarn-debug.log*
+/emt-client/yarn-error.log*
