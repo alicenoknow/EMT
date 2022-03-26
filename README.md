@@ -10,4 +10,4 @@ A repository for EMT: Erasmus Managment Tool project written for Software Engine
 Check `README` in `emt-client`.
 
 # Backend
-tbd
+Check `HELP` in `emt-server`.
