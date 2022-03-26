@@ -31,5 +31,5 @@ jobs:
       working-directory: emt-client
     - run: npm run build --if-present
       working-directory: emt-client
-    - run: npm test --passWithNoTests
+    - run: npm test
       working-directory: emt-client
