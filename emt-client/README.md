@@ -6,10 +6,11 @@
 ## 🧱 Steps:
 1. Install all tools mentioned above 
 2. Clone this repo
-3. Run `cd emt-client`
-4. Run `npm install`
-5. Tap _Extensions_ in vs code, type "@recommended" and install all from section "Workspace recommendations"
-6. Run `npm start` and everything should be ready to start 🚀
+3. Make sure your working directory in vscode is `EMT` not `emt-client` (workspace setup is in the root dir)
+4. Run `cd emt-client`
+5. Run `npm install`
+6. Tap _Extensions_ in vs code, type "@recommended" and install all from section "Workspace recommendations"
+7. Run `npm start` and everything should be ready to start 🚀
 
 If you have any issues with setting up the project, feel free to reach out me [@alicenoknow](https://github.com/alicenoknow)
 
@@ -19,7 +20,9 @@ If you have any issues with setting up the project, feel free to reach out me [@
 - [Sass docs](https://sass-lang.com/documentation)
 - [React Boostrap](https://react-bootstrap.github.io/getting-started/introduction)
 - [Beam naming convention for stylesheet](http://getbem.com/naming/)
-- [Jest - for testing](https://jestjs.io/docs/getting-started) 
+- [Jest - for testing](https://jestjs.io/docs/getting-started)
+- [Prettier - code formatter we use](https://prettier.io/docs/en/index.html)
+- [Eslint - linter we use](https://eslint.org/docs/about/)
 - [Redux - we will probably use it](https://react-redux.js.org/)
 - [React Router - we will probably use it](https://reactrouter.com/docs/en/v6)
 
