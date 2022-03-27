@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
-import "./Home.scss";
 
 interface RecruitSurveyState {
     isSent: boolean;

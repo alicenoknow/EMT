@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import { validateForm } from "./utils/loginUtils";
 import FormGroup from '../components/forms/FormGroup';
 import "./Login.scss";
@@ -10,6 +11,7 @@ interface LoginState {
 }
 
 export default function Login() {
+	const navigate = useNavigate();
 	const [state, setState] = useState<LoginState>({
 		email: "",
 		password: "",
@@ -48,7 +50,8 @@ export default function Login() {
 							className="login__button"
 							size="lg"
 							type="submit"
-							disabled={!validateForm(email, password)}>
+							disabled={!validateForm(email, password)}
+							onClick={_e => {navigate("/user")}}>
 							Zaloguj
 						</Button>
 						<Button
