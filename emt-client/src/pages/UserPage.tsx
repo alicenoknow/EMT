@@ -10,7 +10,7 @@ interface UserPageProps {
 
 export default function UserPage(props: UserPageProps) {
     const navigate = useNavigate();
-    
+
     const {firstName, lastName} = props;
 
 	return (
@@ -27,7 +27,7 @@ export default function UserPage(props: UserPageProps) {
                     <Accordion.Item eventKey="1">
                         <Accordion.Header>Dokumenty - studia</Accordion.Header>
                         <Accordion.Body>
-                            <Button variant="link" onClick={_e => { navigate("/form") }}>Ankieta rekrutacyjna</Button>
+                            <Button variant="link" onClick={() => { navigate("/form") }}>Ankieta rekrutacyjna</Button>
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="2">

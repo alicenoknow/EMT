@@ -51,7 +51,7 @@ export default function Login() {
 							size="lg"
 							type="submit"
 							disabled={!validateForm(email, password)}
-							onClick={_e => {navigate("/user")}}>
+							onClick={() => {navigate("/user")}}>
 							Zaloguj
 						</Button>
 						<Button
