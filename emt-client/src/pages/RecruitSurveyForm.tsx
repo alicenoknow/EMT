@@ -12,12 +12,6 @@ export default function RecruitSurveyForm() {
 
     const { isSent } = state;
 
-    const onButtonClick = () => {
-        setState({ isSent: !isSent });
-    };
-
-    const buttonText = isSent ? "Zapisz" : "Coś poszło nie tak";
-
     return (
         <Container>
             <Form>
@@ -99,8 +93,8 @@ export default function RecruitSurveyForm() {
                     </Row>
                 </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    Zapisz
+                <Button variant="primary" type="submit" onClick={() => setState({isSent: true})}>
+                    { isSent ? "Zapisz" : "Zapisano" }
                 </Button>
             </Form>
         </Container>
