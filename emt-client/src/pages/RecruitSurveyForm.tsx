@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import "./Home.scss";
 
-interface AnkietaRekrutacyjnaState {
+interface RecruitSurveyState {
     isSent: boolean;
 }
 
-export default function AnkietaRekrutacyjnaForm() {
-    const [state, setState] = useState<AnkietaRekrutacyjnaState>({
+export default function RecruitSurveyForm() {
+    const [state, setState] = useState<RecruitSurveyState>({
         isSent: false,
     });
 
@@ -17,7 +17,7 @@ export default function AnkietaRekrutacyjnaForm() {
         setState({ isSent: !isSent });
     };
 
-    const buttonText = isSent ? "Zapisz" : "Something went wrong";
+    const buttonText = isSent ? "Zapisz" : "Coś poszło nie tak";
 
     return (
         <Container>
@@ -26,7 +26,7 @@ export default function AnkietaRekrutacyjnaForm() {
                     <Row>
                         <Col>
                             <Form.Label>Imie</Form.Label>
-                            <Form.Control type="text" placeholder="Imie" />
+                            <Form.Control type="text" placeholder="Imię" />
                             <Form.Label>Nazwisko</Form.Label>
                             <Form.Control type="text" placeholder="Nazwisko" />
                             <Form.Label>Wydział</Form.Label>
@@ -55,7 +55,7 @@ export default function AnkietaRekrutacyjnaForm() {
 
                     <Row>
                         <Col>
-                            <Form.Label>Całkowice zaliczony semestr</Form.Label>
+                            <Form.Label>Całkowicie zaliczony semestr</Form.Label>
                             <Form.Select aria-label="Wybierz semestr">
                                 <option>Wybierz</option>
                                 <option value="1">1</option>
@@ -80,7 +80,7 @@ export default function AnkietaRekrutacyjnaForm() {
                         <Col>
                             <Form.Label>Średnia ważona za cały okres studiów</Form.Label>
                             <Form.Control type="value" placeholder="0.0"></Form.Control>
-                            <Form.Label>Poziom certyfikactu/Ocena</Form.Label>
+                            <Form.Label>Poziom certyfikatu/Ocena</Form.Label>
                             <Form.Control type="text" placeholder="C1"></Form.Control>
                             <Form.Label>Koordynator wydziałowy(wydział macierzysty studenta)</Form.Label>
                             <Form.Control type="text" placeholder="Jan Kowalski"></Form.Control>
@@ -89,13 +89,13 @@ export default function AnkietaRekrutacyjnaForm() {
                     <Row>
                         <Col>
                             <Form.Check type="switch" id="other-type-switch" label="Wyjazd długoterminowy 2-12 miesięcy"></Form.Check>
-                            <Form.Check type="switch" id="other-type-switch" label="wyjazd krótkoterminowy 5-30 dni połączony z obowiązkową częścią wirtualną"></Form.Check>
+                            <Form.Check type="switch" id="other-type-switch" label="Wyjazd krótkoterminowy 5-30 dni połączony z obowiązkową częścią wirtualną"></Form.Check>
                         </Col>
                         <Form.Label>Jeśli uczestniczyłeś już w programie Erasmus+ to poniżej podaj stopień
                             studiów, ilość miesiecy.
                         </Form.Label>
                         <Form.Control as="textarea" rows={2}></Form.Control>
-                        <Form.Check type="switch" id="other-type-switch" label="Otrzymuje stypendium socjalne z AGH"></Form.Check>
+                        <Form.Check type="switch" id="other-type-switch" label="Otrzymuję stypendium socjalne z AGH"></Form.Check>
                         <Form.Check type="switch" id="other-type-switch" label="Jestem osobą niepełnosprawną"></Form.Check>
                     </Row>
                 </Form.Group>
