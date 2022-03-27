@@ -1,12 +1,15 @@
 import React from "react";
 import "./App.scss";
-import Home from "./pages/Home";
-import AnkietaRekrutacyjnaForm from "./pages/AnkietaRekrutacyjnaForm";
+
+import Login from "./pages/Login";
+
 
 export default function App() {
 	return (
 		<div className="app">
-			<AnkietaRekrutacyjnaForm />
+
+			<Login />
+
 		</div>
 	);
 }
