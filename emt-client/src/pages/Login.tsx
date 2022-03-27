@@ -23,7 +23,7 @@ export default function Login() {
 	return (
 		<Container fluid className="p-0">
 			<div className="login">
-				<Form onSubmit={handleSubmit}>
+				<Form className="login__form" onSubmit={handleSubmit}>
 					<Form.Group className="login__input" controlId="email">
 						<Form.Control
 							autoFocus
