@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
-import "./Home.scss";
 
 interface RecruitSurveyState {
     isSent: boolean;
@@ -12,12 +11,6 @@ export default function RecruitSurveyForm() {
     });
 
     const { isSent } = state;
-
-    const onButtonClick = () => {
-        setState({ isSent: !isSent });
-    };
-
-    const buttonText = isSent ? "Zapisz" : "Coś poszło nie tak";
 
     return (
         <Container>
@@ -100,8 +93,8 @@ export default function RecruitSurveyForm() {
                     </Row>
                 </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    Zapisz
+                <Button variant="primary" type="submit" onClick={() => setState({isSent: true})}>
+                    { isSent ? "Zapisz" : "Zapisano" }
                 </Button>
             </Form>
         </Container>
