@@ -35,6 +35,6 @@ describe("test validateForm", () => {
 		["brando420@gmail.com", "legitne!Haslo"],
 		["marlon123@agh.edu.pl", ""],
 	])("returns false on invalid form data", (email, password) => {
-		expect(validateForm(email, password)).toBeFalse;
+		expect(validateForm(email, password)).toBeFalsy;
 	});
 });
