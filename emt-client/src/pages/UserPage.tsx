@@ -11,7 +11,7 @@ export default function UserPage(props: UserPageProps) {
     const {firstName, lastName} = props;
 	return (
 		<Container fluid className="p-0">
-			<div className="user">
+            <div className="user">
                 <div className="user__header">
                     <h4>{firstName} {lastName} <Badge bg="secondary">Student</Badge></h4>
                 </div>
