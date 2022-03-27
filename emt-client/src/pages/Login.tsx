@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { validateForm } from "./utils/loginUtils";
+import FormGroup from '../components/forms/FormGroup';
 import "./Login.scss";
 
 interface LoginState {
@@ -24,25 +25,24 @@ export default function Login() {
 		<Container fluid className="p-0">
 			<div className="login">
 				<Form className="login__form" onSubmit={handleSubmit}>
-					<Form.Group className="login__input" controlId="email">
-						<Form.Control
-							autoFocus
-							type="email"
-							value={email}
-							placeholder="Podaj adres email"
-							onChange={e => setState({ ...state, email: e.target.value })}
-						/>
-						<Form.Text>Użyj adresu email w domenie AGH.</Form.Text>
-					</Form.Group>
-					<Form.Group className="login__input" controlId="password">
-						<Form.Control
-							type="password"
-							value={password}
-							placeholder="Podaj hasło"
-							onChange={e => setState({ ...state, password: e.target.value })}
-						/>
-						<Form.Text>Hasło nie może być puste.</Form.Text>
-					</Form.Group>
+					<FormGroup
+						id="email"
+						type="email"
+						value={email}
+						placeholder="Podaj adres email"
+						onChange={e => setState({ ...state, email: e.target.value })}
+						bottomText={'Użyj adresu email w domenie AGH.'}
+
+					/>
+					<FormGroup
+						id="password"
+						type="password"
+						value={password}
+						placeholder="Podaj hasło"
+						onChange={e => setState({ ...state, password: e.target.value })}
+						bottomText={'Hasło nie może być puste.'}
+
+					/>
 					<div className="login__buttons">
 						<Button
 							className="login__button"
