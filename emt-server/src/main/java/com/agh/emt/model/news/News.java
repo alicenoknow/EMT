@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 @Document("news")
 @Data
 public class News {
-    @Transient
-    public static final String SEQUENCE_NAME = "news_sequence";
-
     @Id
     private Long id;
     private LocalDateTime timeAdded;
     private String title;
     private String message;
+
+    @Transient
+    public static final String SEQUENCE_NAME = "news_sequence";
 }

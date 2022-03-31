@@ -4,6 +4,7 @@ import com.agh.emt.model.student.Student;
 import com.agh.emt.utils.form.*;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -47,4 +48,7 @@ public class RecruitmentForm {
     private DisabilityCertificate disabilityCertificate; // Optional
 
     private Boolean accepted = false;
+
+    @Transient
+    public static final String SEQUENCE_NAME = "recruitment_form_sequence";
 }
