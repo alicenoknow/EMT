@@ -1,4 +1,7 @@
 package com.agh.emt.model.form;
 
-public class RecruitmentFormRepository {
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface RecruitmentFormRepository extends MongoRepository<RecruitmentForm, Long> {
+
 }

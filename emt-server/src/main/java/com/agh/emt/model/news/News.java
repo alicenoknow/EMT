@@ -16,5 +16,6 @@ public class News {
     @Id
     private Long id;
     private LocalDateTime timeAdded;
+    private String title;
     private String message;
 }
