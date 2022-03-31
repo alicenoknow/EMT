@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { validateForm } from "./utils/loginUtils";
-import FormGroup from '../components/forms/FormGroup';
+import FormGroup from "../components/forms/FormGroup";
 import "./Login.scss";
+import SecondaryButton from "../components/buttons/SecondaryButton";
 
 interface LoginState {
 	email: string;
 	password: string;
 }
 
-export default function Login() {
+export default function AdminLogin() {
 	const navigate = useNavigate();
 	const [state, setState] = useState<LoginState>({
 		email: "",
@@ -31,19 +32,18 @@ export default function Login() {
 						id="email"
 						type="email"
 						value={email}
-						placeholder="Podaj adres email"
+						label="Adres e-mail"
+						placeholder="twoj_mail@agh.edu.pl"
 						onChange={e => setState({ ...state, email: e.target.value })}
-						bottomText={'Użyj adresu email w domenie AGH.'}
-
+						bottomText={"Użyj adresu email w domenie AGH."}
 					/>
 					<FormGroup
 						id="password"
 						type="password"
 						value={password}
-						placeholder="Podaj hasło"
+						label="Hasło"
 						onChange={e => setState({ ...state, password: e.target.value })}
-						bottomText={'Hasło nie może być puste.'}
-
+						bottomText={"Hasło nie może być puste."}
 					/>
 					<div className="login__buttons">
 						<Button
@@ -51,22 +51,13 @@ export default function Login() {
 							size="lg"
 							type="submit"
 							disabled={!validateForm(email, password)}
-							onClick={() => {navigate("/user")}}>
+							onClick={() => {
+								navigate("/user");
+							}}>
 							Zaloguj
 						</Button>
-						<Button
-							className="login__button"
-							size="lg"
-							type="button"
-							disabled={!validateForm(email, password)}>
-							Zarejstruj
-						</Button>
 					</div>
-					<div className="login__buttons--secondary">
-						<Button className="login__button--secondary" variant="link">
-							Nie pamiętasz hasła?
-						</Button>
-					</div>
+					<SecondaryButton text="Nie pamiętasz hasła?" onClick={() => null} />
 				</Form>
 			</div>
 		</Container>

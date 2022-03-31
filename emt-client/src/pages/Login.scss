@@ -1,8 +1,10 @@
 @import "../../node_modules/bootstrap/scss/bootstrap";
 @import "../style/colors";
 
+
 .login {
 	display: flex;
+	flex-direction: column;
 	height: 100vh;
 	align-content: center;
 }
@@ -18,23 +20,20 @@
 }
 
 .login__button {
-	background-color: $secondary;
+	background-color: $primary !important;
+	border: 0px !important;
 	margin: 1rem 2rem;
 	cursor: pointer;
 
 	&:disabled {
-		background-color: $secondary;
+		background-color: $primary !important;
+		border: 0px !important;
 		opacity: 0.6;
+	}
+
+	&:active {
+		outline: none !important;
 	}
 }
 
-.login__buttons--secondary {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
 
-.login__button--secondary {
-	color: $secondary;
-	cursor: pointer;
-}
