@@ -5,34 +5,38 @@ import com.agh.emt.service.news.NewsNotFoundException;
 import com.agh.emt.service.news.NewsService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/news")
+@RequestMapping("/api/news")
 @AllArgsConstructor
 public class NewsController {
     private NewsService newsService;
 
+    @GetMapping
     public ResponseEntity<List<News>> findAll() {
         return ResponseEntity.ok(newsService.findAll());
     }
 
-    public ResponseEntity<News> addNews(News news) {
+    @PostMapping
+    public ResponseEntity<News> addNews(@RequestBody News news) {
         return ResponseEntity.ok(newsService.addNews(news));
     }
 
-    public ResponseEntity<News> findNews(Long id) throws NewsNotFoundException {
+    @GetMapping("/{id}")
+    public ResponseEntity<News> findNews(@PathVariable Long id) throws NewsNotFoundException {
         return ResponseEntity.ok(newsService.findNews(id));
     }
 
-    public ResponseEntity<News> editNews(News news) {
+    @PutMapping
+    public ResponseEntity<News> editNews(@RequestBody News news) {
         return ResponseEntity.ok(newsService.editNews(news));
     }
 
-    public void deleteNews(Long id) {
+    @DeleteMapping("/{id}")
+    public void deleteNews(@PathVariable Long id) {
         newsService.deleteNews(id);
     }
 }
