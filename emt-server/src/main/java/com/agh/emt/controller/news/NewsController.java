@@ -24,15 +24,15 @@ public class NewsController {
         return ResponseEntity.ok(newsService.addNews(news));
     }
 
-//    public News findNews(Long id) throws NewsNotFoundException {
-//        return newsRepository.findById(id).orElseThrow(() -> new NewsNotFoundException("Nie znaleziono wiadomości o id: " + id));
-//    }
-//
-//    public News editNews(News news) {
-//        return newsRepository.save(news);
-//    }
-//
-//    public void deleteNews(Long id) {
-//        newsRepository.deleteById(id);
-//    }
+    public ResponseEntity<News> findNews(Long id) throws NewsNotFoundException {
+        return ResponseEntity.ok(newsService.findNews(id));
+    }
+
+    public ResponseEntity<News> editNews(News news) {
+        return ResponseEntity.ok(newsService.editNews(news));
+    }
+
+    public void deleteNews(Long id) {
+        newsService.deleteNews(id);
+    }
 }
