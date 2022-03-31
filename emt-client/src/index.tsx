@@ -6,11 +6,9 @@ import UserLogin from "./pages/UserLogin";
 import RecruitSurveyForm from "./pages/RecruitSurveyForm";
 import UserPage from "./pages/UserPage";
 import AdminLogin from "./pages/AdminLogin";
-import NavBar from "./components/NavBar";
 
 ReactDOM.render(
 	<React.StrictMode>
-		<NavBar/>
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<App />} />
