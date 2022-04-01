@@ -8,12 +8,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
 @Value
 public class UserDetailsImpl implements UserDetails {
-    Long id;
+    BigInteger _id;
     String username;
 
     @JsonIgnore
@@ -22,7 +23,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(Student student) {
         return new UserDetailsImpl(
-                student.getId(),
+                student.get_id(),
                 student.getEmail(),
                 student.getPassword(),
                 List.of(new SimpleGrantedAuthority(Role.STUDENT.name()))

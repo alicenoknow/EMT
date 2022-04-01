@@ -5,6 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigInteger;
+
 
 @Document("student")
 @Data
@@ -13,7 +15,7 @@ public class Student {
     public static final String SEQUENCE_NAME = "student_sequence";
 
     @Id
-    private Long id;
+    private BigInteger _id;
     private String email;
     private String password;
 }

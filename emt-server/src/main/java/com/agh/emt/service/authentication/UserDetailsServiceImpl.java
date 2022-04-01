@@ -14,14 +14,10 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final StudentRepository studentRepository;
 
-    public UserDetails loadByEmail(String email) throws StudentNotFoundException {
-        Student student = studentRepository.findByEmail(email)
-                .orElseThrow(() -> new StudentNotFoundException("Nie znaleziono użytkownika o mailu: " + email));
-        return UserDetailsImpl.build(student);
-    }
-
     @Override
-    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Nie znaleziono użytkownika o mailu: " + email));
+        return UserDetailsImpl.build(student);
     }
 }

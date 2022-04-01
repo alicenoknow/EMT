@@ -9,7 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class JwtResponse {
     String token;
-    Long id;
     String email;
     List<String> roles;
 }
