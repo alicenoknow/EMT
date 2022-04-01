@@ -25,7 +25,7 @@ public class Admin {
     @Indexed(unique = true)
     private String email; // only "*agh.edu.pl" emails accepted
 
-    private String passwordHash;
+    private String password;
     private Faculty faculty; // Optional
 
     @DBRef

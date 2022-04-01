@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 public class News {
     @Id
     private Long id;
-    private LocalDateTime timeAdded;
+    private LocalDateTime timeAdded = LocalDateTime.now();
+    private LocalDateTime timeLastModified = LocalDateTime.now();
     private String title;
     private String message;
 

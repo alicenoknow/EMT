@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 public class Student {
     @Id
     private Long id;
-    private LocalDateTime timeAdded;
+    private LocalDateTime timeAdded = LocalDateTime.now();
 
     @Indexed(unique = true)
     private String email; // only "*agh.edu.pl" emails accepted
 
-    private Long passwordHash;
+    private String password;
     private String firstName;
     private String lastName;
 

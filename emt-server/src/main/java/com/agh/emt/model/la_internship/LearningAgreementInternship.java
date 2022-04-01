@@ -15,7 +15,7 @@ public class LearningAgreementInternship {
     @Id
     private Long id;
     private LocalDateTime timeAdded = LocalDateTime.now();
-    private LocalDateTime timeLastModified;
+    private LocalDateTime timeLastModified = LocalDateTime.now();
 
     @DBRef
     private Student student; // imię, nazwisko, email
