@@ -17,11 +17,11 @@ import java.util.List;
 public class RecruitmentForm {
     @Id
     private Long id;
-    private LocalDateTime timeAdded;
+    private LocalDateTime timeAdded = LocalDateTime.now();
+    private LocalDateTime timeLastModified;
 
     @DBRef
-    private Student student; // imię, nazwisko, wydział, stopień, rok, kierunek studiów itp...
-    // czy miejsce z innego wydziału niż macierzysty? (tak/nie) -> można stwierdzić na podstawie studenta
+    private Student student; // imię, nazwisko, email
 
     private Faculty faculty; // can be determined if from different faculty
     private String homeFacultyCoordinator; // Enum?
@@ -34,10 +34,7 @@ public class RecruitmentForm {
     private String contactEmail; // may be different from Student.email used for login
     private String homeAddress;
 
-    private ErasmusDestination erasmusDestination;
-    private LocalDateTime dateFrom;
-    private LocalDateTime dateTo;
-    private Boolean longTerm;
+    private List<PlannedExchangeDetails> plannedExchangeDetails; // Current year: max. 2 exchanges
 
     private Boolean previousErasmus;
     private Integer previousErasmusMonths;
@@ -47,7 +44,8 @@ public class RecruitmentForm {
     private MaintenanceGrantConfirmation maintenanceGrantConfirmation; // Optional
     private DisabilityCertificate disabilityCertificate; // Optional
 
-    private Boolean accepted = false;
+    private Boolean isValid = false;
+    private Boolean isNominated = false;
 
     @Transient
     public static final String SEQUENCE_NAME = "recruitment_form_sequence";
