@@ -8,7 +8,7 @@ interface SecondaryButtonProps {
 }
 
 export default function SecondaryButton (props: SecondaryButtonProps) {
-    return (
+return (
         <div className="secondary">
             <Button className="secondary__button" variant="link" onClick={props.onClick}>
                 {props.text}

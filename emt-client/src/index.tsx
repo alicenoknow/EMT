@@ -7,6 +7,8 @@ import ScreenWrapper from './components/ScreenWrapper';
 import RecruitSurveyForm from "./pages/RecruitSurveyForm";
 import UserPage from "./pages/UserPage";
 import { store } from "./redux/store";
+import AdminLogin from "./pages/AdminLogin";
+import UserLogin from "./pages/UserLogin";
 
 ReactDOM.render(
 	<React.StrictMode>

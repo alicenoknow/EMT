@@ -20,14 +20,16 @@ export default function AdminLogin() {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		// const response = loginAdmin(state.email, state.password);
+		navigate("/user");
 	};
 
 	const { email, password } = state;
 
 	return (
-		<Container fluid className="p-0">
-			<div className="login">
-				<Form className="login__form" onSubmit={handleSubmit}>
+		<div className="login">
+			<Container fluid className="p-0">
+				<Form className="login__form" onSubmit={handleSubmit} method="POST">
 					<FormGroup
 						id="email"
 						type="email"
@@ -50,16 +52,13 @@ export default function AdminLogin() {
 							className="login__button"
 							size="lg"
 							type="submit"
-							disabled={!validateForm(email, password)}
-							onClick={() => {
-								navigate("/user");
-							}}>
+							disabled={!validateForm(email, password)}>
 							Zaloguj
 						</Button>
 					</div>
-					<SecondaryButton text="Nie pamiętasz hasła?" onClick={() => null} />
 				</Form>
-			</div>
-		</Container>
+				<SecondaryButton text="Nie pamiętasz hasła?" onClick={() => null} />
+			</Container>
+		</div>
 	);
 }
