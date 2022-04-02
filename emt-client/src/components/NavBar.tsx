@@ -1,10 +1,9 @@
 import React from "react";
-import { Container, Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav } from "react-bootstrap";
 
 export default function NavBar() {
 	return (
-		<Navbar bg="light" variant="light">
-			<Container>
+		<Navbar>
 				<Navbar.Brand href="/">
 					<img
 						alt=""
@@ -20,7 +19,6 @@ export default function NavBar() {
 					<Nav.Link href="/news">Aktualności</Nav.Link>
 					<Nav.Link href="/login/user">Rekrutacja</Nav.Link>
 				</Nav>
-			</Container>
 		</Navbar>
 	);
 }
