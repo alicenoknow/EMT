@@ -1,0 +1,9 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../style/colors";
+
+
+.table__button {
+    background-color: $secondary;
+	margin: 1rem 2rem;
+	cursor: pointer;
+}

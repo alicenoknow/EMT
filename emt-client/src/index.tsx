@@ -8,6 +8,7 @@ import ScreenWrapper from './components/ScreenWrapper';
 import RecruitSurveyForm from "./pages/RecruitSurveyForm";
 import UserPage from "./pages/UserPage";
 import { store } from "./redux/store";
+import AdminPage from "./pages/AdminPage";
 
 ReactDOM.render(
 	<React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.render(
 						<Route path="/" element={<App />} />
 						<Route path="/login" element={<Login />} />
 						<Route path="/user" element={<UserPage firstName="Anna" lastName="Kowalska"/>} />
+						<Route path="/admin" element={<AdminPage />} />
 						<Route path="/form" element={<RecruitSurveyForm />} />
 					</Routes>
 				</BrowserRouter>
