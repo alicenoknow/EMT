@@ -1,5 +1,5 @@
 import React from "react";
-import "./Spacer.scss";
+import "./UtilsStyles.scss";
 
 
 export default function Spacer () {

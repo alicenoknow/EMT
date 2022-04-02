@@ -5,6 +5,8 @@ import { validateForm } from "./utils/loginUtils";
 import FormGroup from "../components/forms/FormGroup";
 import "./Login.scss";
 import SecondaryButton from "../components/buttons/SecondaryButton";
+import { useAppDispatch } from "../redux/hooks";
+import { setAlert } from "../redux/alertSlice";
 
 interface LoginState {
 	email: string;
@@ -13,6 +15,7 @@ interface LoginState {
 
 export default function AdminLogin() {
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 	const [state, setState] = useState<LoginState>({
 		email: "",
 		password: "",
@@ -21,6 +24,13 @@ export default function AdminLogin() {
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		// const response = loginAdmin(state.email, state.password);
+		dispatch(
+			setAlert({
+				type: "danger",
+				header: "Coś poszło nie tak 😭",
+				body: `Szukaliśmy wszędzie 🔍, ale nie możemy znaleźć Twojego konta. Upewnij się, że podany e-mail i hasło są poprawne. Jeśli zapomniałeś hasła, kliknij "Nie pamiętasz hasła?", aby je zresetować.`,
+			}),
+		);
 		navigate("/user");
 	};
 
