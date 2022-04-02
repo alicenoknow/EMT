@@ -32,8 +32,8 @@ public class AuthenticationController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/login-student")
-    public ResponseEntity<?> authenticateStudent(@Valid @RequestBody LoginRequest loginRequest) {
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -47,6 +47,23 @@ public class AuthenticationController {
                 userDetails.getUsername(),
                 roles));
     }
+
+
+//    @PostMapping("/login-admin")
+//    public ResponseEntity<?> authenticateAdmin(@Valid @RequestBody LoginRequest loginRequest) {
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        String jwt = jwtUtils.generateJwtToken(authentication);
+//
+//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+//        List<String> roles = userDetails.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(new JwtResponse(jwt,
+//                userDetails.getUsername(),
+//                roles));
+//    }
 
 //    @PostMapping("/signup")
 //    public ResponseEntity<?> registerStudent(@Valid @RequestBody SignupRequest signUpRequest) {
