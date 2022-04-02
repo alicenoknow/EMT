@@ -1,22 +1,24 @@
-package com.agh.emt.model.news;
+package com.agh.emt.model.la_internship;
 
+
+import com.agh.emt.model.student.Student;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document("news")
+@Document("la_internship")
 @Data
-public class News {
+public class LearningAgreementInternship {
     @Id
     private Long id;
     private LocalDateTime timeAdded = LocalDateTime.now();
     private LocalDateTime timeLastModified = LocalDateTime.now();
-    private String title;
-    private String message;
 
-    @Transient
-    public static final String SEQUENCE_NAME = "news_sequence";
+    @DBRef
+    private Student student; // imię, nazwisko, email
+
+    // TODO: Fill fields as in LA document
 }
