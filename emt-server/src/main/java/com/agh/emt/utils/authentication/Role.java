@@ -6,5 +6,9 @@ public enum Role {
     CONTRACT_COORDINATOR,
     DEAN_OFFICE_WORKER,
     FOREIGN_COUNTRIES_DEPARTMENT_REP,
-    OTHER_ADMIN
+    OTHER_ADMIN;
+
+    public String getFullName() {
+        return "ROLE_" + name();
+    }
 }

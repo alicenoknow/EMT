@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/news")
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class NewsController {
     private NewsService newsService;
 
     @GetMapping
-    @PreAuthorize("hasRole('CONTRACT_COORDINATOR')")
+    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<List<News>> findAll() {
         return ResponseEntity.ok(newsService.findAll());
     }
@@ -28,7 +29,7 @@ public class NewsController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasRole('CONTRACT_COORDINATOR')")
     public ResponseEntity<News> findNews(@PathVariable Long id) throws NewsNotFoundException {
         return ResponseEntity.ok(newsService.findNews(id));
     }

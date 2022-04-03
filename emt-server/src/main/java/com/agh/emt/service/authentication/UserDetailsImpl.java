@@ -4,7 +4,7 @@ import com.agh.emt.model.admin.Admin;
 import com.agh.emt.model.student.Student;
 import com.agh.emt.utils.authentication.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,21 +13,34 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
-@Value
+@AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
-    BigInteger _id;
-    String username;
+    private BigInteger _id;
+    private String username;
 
     @JsonIgnore
-    String password;
-    Collection<? extends GrantedAuthority> authorities;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+    @Override
+    public String getUsername() {
+        return username;
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
     public static UserDetailsImpl build(Student student) {
         return new UserDetailsImpl(
                 student.get_id(),
                 student.getEmail(),
                 student.getPassword(),
-                List.of(new SimpleGrantedAuthority(Role.STUDENT.name()))
+                List.of(new SimpleGrantedAuthority( Role.STUDENT.getFullName()))
         );
     }
 
@@ -36,7 +49,7 @@ public class UserDetailsImpl implements UserDetails {
                 admin.get_id(),
                 admin.getEmail(),
                 admin.getPassword(),
-                List.of(new SimpleGrantedAuthority(admin.getRole().name()))
+                List.of(new SimpleGrantedAuthority(admin.getRole().getFullName()))
         );
     }
 

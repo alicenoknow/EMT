@@ -59,15 +59,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().formLogin().disable()
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests()
-                .antMatchers("/api/auth/*").permitAll()
-                .antMatchers("/api/swagger-ui/**").permitAll()
-                .anyRequest().authenticated()
-                .and().httpBasic()
-                .authenticationEntryPoint(unauthorizedHandler);
+                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/news/**").permitAll()
+                .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

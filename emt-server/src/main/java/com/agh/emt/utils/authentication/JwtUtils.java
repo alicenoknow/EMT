@@ -1,20 +1,18 @@
 package com.agh.emt.utils.authentication;
 
-import java.util.Date;
-
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.*;
+
+import java.util.Date;
 @Component
 @Slf4j
 public class JwtUtils {
 
     private final String jwtSecret = "BDSKdsajkdaflD";
-    private final long jwtExpirationMs = 3600000;
+    private final long jwtExpirationMs = 100000000;
 
     public String generateJwtToken(Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
