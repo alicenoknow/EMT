@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 
@@ -17,7 +16,7 @@ public class Student {
     public static final String SEQUENCE_NAME = "student_sequence";
 
     @Id
-    private BigInteger _id;
+    private String id;
 
     @Indexed(unique = true)
     private String email; // only "*agh.edu.pl" emails accepted

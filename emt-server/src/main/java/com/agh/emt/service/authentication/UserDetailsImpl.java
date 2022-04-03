@@ -5,23 +5,27 @@ import com.agh.emt.model.student.Student;
 import com.agh.emt.utils.authentication.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
-    private BigInteger _id;
+    @Id
+    private String id;
     private String username;
 
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
+    public String getId() {
+        return id;
+    }
     @Override
     public String getPassword() {
         return password;
@@ -37,19 +41,19 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(Student student) {
         return new UserDetailsImpl(
-                student.get_id(),
+                student.getId(),
                 student.getEmail(),
                 student.getPassword(),
-                List.of(new SimpleGrantedAuthority( Role.STUDENT.getFullName()))
+                List.of(new SimpleGrantedAuthority( Role.ROLE_STUDENT.name()))
         );
     }
 
     public static UserDetailsImpl build(Admin admin) {
         return new UserDetailsImpl(
-                admin.get_id(),
+                admin.getId(),
                 admin.getEmail(),
                 admin.getPassword(),
-                List.of(new SimpleGrantedAuthority(admin.getRole().getFullName()))
+                List.of(new SimpleGrantedAuthority(admin.getRole().name()))
         );
     }
 

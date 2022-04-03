@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Value
 @AllArgsConstructor
 public class RecruitmentFormPreview {
-    Long id;
+    String id;
     LocalDateTime timeAdded;
     LocalDateTime timeLastModified;
     Student student;

@@ -20,12 +20,11 @@ public class NewsService {
     }
 
     public News addNews(News news) {
-        news.setId(sequenceGeneratorService.generateSequence(News.SEQUENCE_NAME));
         news.setTimeAdded(LocalDateTime.now());
         return newsRepository.insert(news);
     }
 
-    public News findNews(Long id) throws NewsNotFoundException {
+    public News findNews(String id) throws NewsNotFoundException {
         return newsRepository.findById(id).orElseThrow(() -> new NewsNotFoundException("Nie znaleziono wiadomości o id: " + id));
     }
 
@@ -33,7 +32,7 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    public void deleteNews(Long id) {
+    public void deleteNews(String id) {
         newsRepository.deleteById(id);
     }
 }
