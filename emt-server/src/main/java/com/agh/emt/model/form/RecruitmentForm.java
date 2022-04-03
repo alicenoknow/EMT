@@ -44,6 +44,7 @@ public class RecruitmentForm {
     private MaintenanceGrantConfirmation maintenanceGrantConfirmation; // Optional
     private DisabilityCertificate disabilityCertificate; // Optional
 
+    private List<RecruitmentFormRemark> remarks; // added by admins that have the form’s student on their student list
     private Boolean isValid = false;
     private Boolean isNominated = false;
 
