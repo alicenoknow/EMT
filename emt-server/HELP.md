@@ -1,3 +1,10 @@
+# API
+to open springdoc OPEN-API, go to:
+
+http://localhost:8080/api/docs/swagger-ui/index.html
+
+http://localhost:8080/api/docs/api-docs
+
 # Getting Started
 
 ### Reference Documentation
