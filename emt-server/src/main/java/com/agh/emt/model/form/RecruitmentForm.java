@@ -4,11 +4,9 @@ import com.agh.emt.model.student.Student;
 import com.agh.emt.utils.form.*;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +14,7 @@ import java.util.List;
 @Data
 public class RecruitmentForm {
     @Id
-    private Long id;
+    private String id;
     private LocalDateTime timeAdded = LocalDateTime.now();
     private LocalDateTime timeLastModified = LocalDateTime.now();
 
@@ -28,7 +26,7 @@ public class RecruitmentForm {
     private String fieldOfStudy;
     private Integer yearOfStudy; // in [1, ..., 6]
     private Integer semestersFullyPassed; // in [1, ..., 10]
-    private BigDecimal gpa;
+    private Double gpa;
 
     private String phoneNumber;
     private String contactEmail; // may be different from Student.email used for login
@@ -48,6 +46,24 @@ public class RecruitmentForm {
     private Boolean isValid = false;
     private Boolean isNominated = false;
 
-    @Transient
-    public static final String SEQUENCE_NAME = "recruitment_form_sequence";
+    public void updateFields(RecruitmentForm other) {
+        timeLastModified = LocalDateTime.now();
+        faculty = other.getFaculty();
+        homeFacultyCoordinator = other.getHomeFacultyCoordinator();
+        fieldOfStudy = other.getFieldOfStudy();
+        yearOfStudy = other.getYearOfStudy();
+        semestersFullyPassed = other.getSemestersFullyPassed();
+        gpa = other.getGpa();
+        phoneNumber = other.getPhoneNumber();
+        contactEmail = other.getContactEmail();
+        homeAddress = other.getHomeAddress();
+        plannedExchangeDetails = other.getPlannedExchangeDetails();
+        previousErasmusMonths = other.getPreviousErasmusMonths();
+        previousErasmusDegree = other.getPreviousErasmusDegree();
+        certificates = other.getCertificates();
+        maintenanceGrantConfirmation = other.getMaintenanceGrantConfirmation();
+        disabilityCertificate = other.getDisabilityCertificate();
+        isValid = other.getIsValid();
+        isNominated = other.getIsNominated();
+    }
 }

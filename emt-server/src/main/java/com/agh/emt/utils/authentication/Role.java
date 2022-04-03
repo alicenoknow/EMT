@@ -1,14 +1,10 @@
 package com.agh.emt.utils.authentication;
 
 public enum Role {
-    STUDENT,
-    FACULTY_COORDINATOR,
-    CONTRACT_COORDINATOR,
-    DEAN_OFFICE_WORKER,
-    FOREIGN_COUNTRIES_DEPARTMENT_REP,
-    OTHER_ADMIN;
-
-    public String getFullName() {
-        return "ROLE_" + name();
-    }
+    ROLE_STUDENT,
+    ROLE_FACULTY_COORDINATOR,
+    ROLE_CONTRACT_COORDINATOR,
+    ROLE_DEAN_OFFICE_WORKER,
+    ROLE_FOREIGN_COUNTRIES_DEPARTMENT_REP,
+    ROLE_OTHER_ADMIN;
 }

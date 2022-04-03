@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigInteger;
 import java.util.List;
 
 
@@ -18,7 +17,7 @@ import java.util.List;
 @Data
 public class Admin {
     @Id
-    private BigInteger _id;
+    private String id;
     private Role role;
     private String firstName;
     private String lastName;
