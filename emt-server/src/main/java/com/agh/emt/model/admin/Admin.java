@@ -1,7 +1,7 @@
 package com.agh.emt.model.admin;
 
 import com.agh.emt.model.student.Student;
-import com.agh.emt.utils.admin.AdminRole;
+import com.agh.emt.utils.authentication.Role;
 import com.agh.emt.utils.form.Faculty;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigInteger;
 import java.util.List;
 
 
@@ -17,8 +18,8 @@ import java.util.List;
 @Data
 public class Admin {
     @Id
-    private Integer id;
-    private AdminRole adminRole;
+    private BigInteger _id;
+    private Role role;
     private String firstName;
     private String lastName;
 
