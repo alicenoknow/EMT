@@ -6,13 +6,14 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Document("student")
 @Data
 public class Student {
     @Id
-    private Long id;
+    private BigInteger _id;
     private LocalDateTime timeAdded = LocalDateTime.now();
 
     @Indexed(unique = true)
