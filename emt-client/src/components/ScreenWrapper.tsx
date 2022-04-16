@@ -1,16 +1,25 @@
 import React from "react";
+import { getAlertConfig, shouldShowAlert } from "../redux/alertSlice";
+import { useAppSelector } from "../redux/hooks";
 import NavBar from "./NavBar";
-import "./ScreenWrapper.scss";
+import TopAlert from "./TopAlert";
+import "./UtilsStyles.scss";
 
 interface EmptyProps {
-    nothing?: never;
+	nothing?: never;
 }
 
-export default function ScreenWrapper (props: React.PropsWithChildren<EmptyProps>) {
-    return (
-        <div className="container">
-            <NavBar />
-            {props.children}
-        </div>
-    );
+export default function ScreenWrapper(
+	props: React.PropsWithChildren<EmptyProps>,
+) {
+	const alertConfig = useAppSelector(getAlertConfig);
+    const isAlertVisible = useAppSelector(shouldShowAlert);
+
+	return (
+		<div className="container">
+			<NavBar />
+			{isAlertVisible && <TopAlert {...alertConfig} />}
+			{props.children}
+		</div>
+	);
 }
