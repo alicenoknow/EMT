@@ -22,7 +22,7 @@ export default function UserLogin() {
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		// const response = loginUser(state.email, state.password);
-		// navigate("/user");
+		navigate("/user");
 	};
 
 	const { email, password } = state;
