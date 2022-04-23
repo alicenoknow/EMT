@@ -27,7 +27,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentForm> findForLoggedStudent() throws NoLoggedUserException, RecruitmentFormNotFoundException {
+    ResponseEntity<RecruitmentForm> findForLoggedStudent() throws NoLoggedUserException, RecruitmentFormNotFoundException, StudentNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForLoggedStudent());
     }
 
@@ -46,7 +46,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/student-form/{studentId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentForm> findForUser(@PathVariable String studentId) throws RecruitmentFormNotFoundException {
+    ResponseEntity<RecruitmentForm> findForUser(@PathVariable String studentId) throws RecruitmentFormNotFoundException, StudentNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForStudent(studentId));
     }
 
@@ -58,7 +58,7 @@ public class RecruitmentFormController {
 
     @PutMapping("/student-form/{studentId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentForm> editForUser(@PathVariable String studentId, @RequestBody RecruitmentForm recruitmentForm) throws RecruitmentFormNotFoundException {
+    ResponseEntity<RecruitmentForm> editForUser(@PathVariable String studentId, @RequestBody RecruitmentForm recruitmentForm) throws RecruitmentFormNotFoundException, StudentNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.editForStudent(studentId, recruitmentForm));
     }
 }
