@@ -14,9 +14,7 @@
 	<name>emt</name>
 	<description>Erasmus Managment Tool project written for Software Engineering class at AGH UST 2021/2022</description>
 	<properties>
-		<maven.compiler.source>16</maven.compiler.source>
-		<maven.compiler.target>16</maven.compiler.target>
-		<java.version>16</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -72,11 +70,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-compiler-plugin</artifactId>
-		<version>3.10.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.microsoft.graph</groupId>

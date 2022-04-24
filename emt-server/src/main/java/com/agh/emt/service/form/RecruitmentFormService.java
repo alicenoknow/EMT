@@ -20,10 +20,10 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class RecruitmentFormService {
-    private final RecruitmentFormRepository recruitmentFormRepository;
-    private final StudentRepository studentRepository;
-    private final UserService userService;
-    private final OneDriveService oneDriveService;
+    private final RecruitmentFormRepository recruitmentFormRepository=null;
+    private final StudentRepository studentRepository=null;
+    private final UserService userService=null;
+    private final OneDriveService oneDriveService=null;
 
     public List<RecruitmentFormPreviewDTO> findAllPreviews() {
         List<RecruitmentFormPreview> recruitmentFormPreviews = recruitmentFormRepository.findAllProjectedBy();
