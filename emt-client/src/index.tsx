@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import App from "./App";
-import ScreenWrapper from './components/ScreenWrapper';
-import RecruitSurveyForm from "./pages/RecruitSurveyForm";
+import ScreenWrapper from "./components/ScreenWrapper";
+import DocumentPage from "./pages/DocumentPage";
 import UserPage from "./pages/UserPage";
 import { store } from "./redux/store";
 import AdminLogin from "./pages/AdminLogin";
@@ -16,11 +16,24 @@ ReactDOM.render(
 			<ScreenWrapper>
 				<BrowserRouter>
 					<Routes>
-					<Route path="/" element={<App />} />
-					<Route path="/login/user" element={<UserLogin />} />
-					<Route path="/login/admin" element={<AdminLogin />} />
-					<Route path="/user" element={<UserPage firstName="Anna" lastName="Kowalska"/>} />
-					<Route path="/form" element={<RecruitSurveyForm />} />
+						<Route path="/" element={<App />} />
+						<Route path="/login/user" element={<UserLogin />} />
+						<Route path="/login/admin" element={<AdminLogin />} />
+						<Route
+							path="/user"
+							element={<UserPage firstName="Anna" lastName="Kowalska" />}
+						/>
+						<Route
+							path="/form"
+							element={
+								<DocumentPage
+									isFilled={false}
+									isAvailable={true}
+									docLink="Link do Ankiety"
+									docName="Ankieta Rekrutacyjna"
+								/>
+							}
+						/>
 					</Routes>
 				</BrowserRouter>
 			</ScreenWrapper>
