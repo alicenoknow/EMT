@@ -19,10 +19,4 @@ public class RecruitmentForm {
 
     @DBRef
     private Student student; // imię, nazwisko, email
-
-
-    public void updateFields(RecruitmentForm other) {
-        timeLastModified = LocalDateTime.now();
-        oneDriveLink = other.oneDriveLink;
-    }
 }

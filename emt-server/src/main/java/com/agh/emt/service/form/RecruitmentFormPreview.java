@@ -1,4 +1,4 @@
-package com.agh.emt.model.form;
+package com.agh.emt.service.form;
 
 import com.agh.emt.model.student.Student;
 import lombok.AllArgsConstructor;
