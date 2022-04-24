@@ -1,5 +1,6 @@
 package com.agh.emt.model.student;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -16,6 +17,9 @@ public class Student {
 
     @Indexed(unique = true)
     private String email; // only "*agh.edu.pl" emails accepted
+
+    @JsonIgnore
     private String password;
+
     private LocalDateTime timeAdded = LocalDateTime.now();
 }
