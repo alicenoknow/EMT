@@ -29,7 +29,7 @@ public class RecruitmentFormController {
 
     @PostMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentFormDTO> addForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException {
+    ResponseEntity<RecruitmentFormDTO> addForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(recruitmentFormDTO));
     }
 
@@ -48,7 +48,7 @@ public class RecruitmentFormController {
 
     @PostMapping("/student-form/{studentId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentFormDTO> addForUser(@PathVariable String studentId, @RequestBody RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormExistsException {
+    ResponseEntity<RecruitmentFormDTO> addForUser(@PathVariable String studentId, @RequestBody RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.addForStudent(studentId, recruitmentFormDTO));
     }
 
