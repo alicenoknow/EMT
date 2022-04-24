@@ -14,8 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,12 +28,21 @@ public class RecruitmentFormService {
     public List<RecruitmentFormPreviewDTO> findAllPreviews() {
         List<RecruitmentFormPreview> recruitmentFormPreviews = recruitmentFormRepository.findAllProjectedBy();
 
-        return recruitmentFormPreviews.stream().map(recruitmentFormPreview -> {
-            //todo send request to one drive
-            byte[] pdf = oneDriveService.getRecruitmentFormPDF("somePath");
+        List<RecruitmentFormPreviewDTO> result = new LinkedList<>();
 
-            return new RecruitmentFormPreviewDTO(recruitmentFormPreview, RankUtils.getRank(pdf));
-        }).collect(Collectors.toList());
+        byte[] pdf;
+        double rank = 0;
+        for (var recruitmentFormPreview: recruitmentFormPreviews) {
+            try {
+                pdf = oneDriveService.getRecruitmentFormPDF("somePath");
+                rank = RankUtils.getRank(pdf);
+            } catch (RecruitmentFormNotFoundException e) {
+                rank = 0;
+            } finally {
+                result.add(new RecruitmentFormPreviewDTO(recruitmentFormPreview, rank));
+            }
+        }
+        return result;
     }
 
     public RecruitmentFormDTO findForLoggedStudent() throws NoLoggedUserException, RecruitmentFormNotFoundException, StudentNotFoundException {
@@ -44,13 +53,12 @@ public class RecruitmentFormService {
         RecruitmentForm recruitmentForm = recruitmentFormRepository.findByStudent(student)
                 .orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono Twojego formularza"));
 
-        //todo send GET request to one drive
         byte[] pdf = oneDriveService.getRecruitmentFormPDF("somePath");
 
         return new RecruitmentFormDTO(recruitmentForm, pdf);
 
     }
-    public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException {
+    public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException {
         UserDetails loggedUser = UserService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
@@ -64,8 +72,8 @@ public class RecruitmentFormService {
                 .orElseThrow(() -> new StudentNotFoundException("Nie znaleziono zalogowanego użytkownika w bazie")));
         recruitmentFormRepository.save(recruitmentForm);
 
-        //todo send POST request to one drive and get link
-//        byte[] pdf,path = oneDriveService.postRecruitmentFormPDF("somePath");
+        byte[] pdf = oneDriveService.postRecruitmentFormPDF("somePath", recruitmentFormDTO.getPdf());
+//        todo
         String oneDriveLink = "aaaaaaaa";
 
         recruitmentForm.setOneDriveLink(oneDriveLink);
@@ -79,8 +87,8 @@ public class RecruitmentFormService {
         RecruitmentForm recruitmentForm = recruitmentFormRepository.findByStudent(student)
                 .orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono Twojego formularza"));
 
-        //todo send PUT request to one drive and get link
-//        byte[] pdf,path = oneDriveService.putRecruitmentFormPDF("somePath");
+        byte[] pdf = oneDriveService.postRecruitmentFormPDF("somePath", recruitmentFormDTO.getPdf());
+//        todo
         String oneDriveLink = "aaaaaaaa";
         recruitmentForm.setOneDriveLink(oneDriveLink);
 
@@ -95,14 +103,14 @@ public class RecruitmentFormService {
                 .orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono Twojego formularza"));
 
 
-        //todo send GET request to one drive
+//        todo
         byte[] pdf = oneDriveService.getRecruitmentFormPDF("somePath");
 
         return new RecruitmentFormDTO(recruitmentForm, pdf);
 
     }
 
-    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormExistsException, StudentNotFoundException {
+    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormExistsException, StudentNotFoundException, RecruitmentFormNotFoundException {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
         if (recruitmentFormRepository.existsByStudent(student)) {
             throw new RecruitmentFormExistsException("Z tego konta złożono już formularz rekrutacyjny");
@@ -112,8 +120,8 @@ public class RecruitmentFormService {
         recruitmentForm.setStudent(studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("Nie znaleziono użytkownika w bazie")));
 
-        //todo send POST request to one drive and get link
-//        byte[] pdf,path = oneDriveService.postRecruitmentFormPDF("somePath");
+        byte[] pdf = oneDriveService.postRecruitmentFormPDF("somePath", recruitmentFormDTO.getPdf());
+//        todo
         String oneDriveLink = "aaaaaaaa";
 
         recruitmentForm.setOneDriveLink(oneDriveLink);
@@ -127,8 +135,8 @@ public class RecruitmentFormService {
                 .orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono formularza"));
 
 
-        //todo send PUT request to one drive and get link
-//        byte[] pdf,path = oneDriveService.putRecruitmentFormPDF("somePath");
+        byte[] pdf = oneDriveService.postRecruitmentFormPDF("somePath", recruitmentFormDTO.getPdf());
+//        todo
         String oneDriveLink = "aaaaaaaa";
         recruitmentForm.setOneDriveLink(oneDriveLink);
 
