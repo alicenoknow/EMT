@@ -16,7 +16,7 @@ public class RecruitmentFormPreviewDTO {
 
     public RecruitmentFormPreviewDTO(RecruitmentFormPreview recruitmentFormPreview, Double rankingPoints) {
         this.id = recruitmentFormPreview.getId();
-        this.studentEmail = recruitmentFormPreview.getStudent().getEmail();
+        this.studentEmail = recruitmentFormPreview.getStudent().getUserCredentials().getEmail();
         this.timeAdded = recruitmentFormPreview.getTimeAdded();
         this.timeLastModified = recruitmentFormPreview.getTimeLastModified();
         this.rankingPoints = rankingPoints;
