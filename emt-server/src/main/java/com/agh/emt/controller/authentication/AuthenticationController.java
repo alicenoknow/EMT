@@ -1,7 +1,14 @@
 package com.agh.emt.controller.authentication;
 
+import com.agh.emt.model.authentication.UserCredentials;
+import com.agh.emt.model.confirmation_token.ConfirmationToken;
 import com.agh.emt.model.student.StudentRepository;
+import com.agh.emt.service.authentication.UserAlreadyExistException;
 import com.agh.emt.service.authentication.UserDetailsImpl;
+import com.agh.emt.service.authentication.SignUpRequest;
+import com.agh.emt.service.authentication.UserService;
+import com.agh.emt.service.authentication.email_sender.EmailSenderService;
+import com.agh.emt.service.authentication.email_sender.NoSuchConfirmationTokenException;
 import com.agh.emt.utils.authentication.JwtResponse;
 import com.agh.emt.utils.authentication.JwtUtils;
 import com.agh.emt.utils.authentication.LoginRequest;
@@ -25,12 +32,23 @@ import java.util.stream.Collectors;
 public class AuthenticationController {
     @Autowired
     AuthenticationManager authenticationManager;
+
     @Autowired
     StudentRepository studentRepository;
+
+//    @Autowired
+//    UserCredentialsRepository userCredentialsRepository;
+//    @Autowired
+//    ConfirmationTokenRepository confirmationTokenRepository;
+
     @Autowired
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
+    @Autowired
+    UserService userService;
+    @Autowired
+    EmailSenderService emailSenderService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -48,6 +66,32 @@ public class AuthenticationController {
                 roles));
     }
 
+//    @GetMapping("/signup")
+//    public String showRegistrationForm(WebRequest request, Model model) {
+//        SignUpRequest signUpRequest = new SignUpRequest();
+//        model.addAttribute("user", signUpRequest);
+//        return "signup";
+//    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUserAccount(@Valid SignUpRequest signUpRequest)
+            throws UserAlreadyExistException {
+
+        UserCredentials registeredUserCredentials = userService.registerNewUserAccount(signUpRequest);
+        ConfirmationToken confirmationToken = emailSenderService.createConfirmationToken(registeredUserCredentials);
+        emailSenderService.sendConfirmationEmail(confirmationToken, registeredUserCredentials);
+        return ResponseEntity.ok("successfulRegistration");
+    }
+
+    @PostMapping("/confirm-account")
+    public ResponseEntity<?> confirmUserAccount(@RequestParam("token")String confirmationTokenString)
+            throws NoSuchConfirmationTokenException {
+
+        ConfirmationToken confirmationToken =
+                emailSenderService.getConfirmationTokenByTokenString(confirmationTokenString);
+        userService.confirmUserAccount(confirmationToken.getUserCredentials());
+        return ResponseEntity.ok("successfulAccountConfirmation");
+    }
 
 //    @PostMapping("/signup")
 //    public ResponseEntity<?> registerStudent(@Valid @RequestBody SignupRequest signUpRequest) {
