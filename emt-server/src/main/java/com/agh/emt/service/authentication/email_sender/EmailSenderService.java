@@ -3,6 +3,7 @@ package com.agh.emt.service.authentication.email_sender;
 import com.agh.emt.model.authentication.UserCredentials;
 import com.agh.emt.model.confirmation_token.ConfirmationToken;
 import com.agh.emt.model.confirmation_token.ConfirmationTokenRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,17 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class EmailSenderService {
-    @Autowired
-    private JavaMailSender javaMailSender; // Działa bo konfiguracja jest w application.properties
+    private JavaMailSender javaMailSender;
 
     @Autowired
     private ConfirmationTokenRepository confirmationTokenRepository;
-
-    @Autowired
-    public EmailSenderService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
 
     @Async
     public void sendEmail(SimpleMailMessage simpleMailMessage) {
@@ -39,9 +35,9 @@ public class EmailSenderService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(userCredentials.getEmail());
         mailMessage.setSubject("Potwierdź swoją rejestrację w EMT");
-        mailMessage.setFrom("no-reply@emt.agh.edu.pl"); // w skrzynce pokazuje się emt.io.agh@gmail.com jako adresat :(
+        mailMessage.setFrom("no-reply@emt.agh.edu.pl"); // w skrzynce pokazuje się emt.io.agh@gmail.com jako nadawca :(
         mailMessage.setText("Aby potwierdzić swoje konto, kliknij w poniższy link: "
-                + "http://localhost:3000" + "/confirm-account?token=" + confirmationToken.getConfirmationTokenString());
+                + "http://localhost:8080" + "/api/auth/confirm-account?token=" + confirmationToken.getConfirmationTokenString());
         sendEmail(mailMessage);
     }
 

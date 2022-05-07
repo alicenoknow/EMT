@@ -3,15 +3,14 @@ package com.agh.emt.controller.authentication;
 import com.agh.emt.model.authentication.UserCredentials;
 import com.agh.emt.model.confirmation_token.ConfirmationToken;
 import com.agh.emt.model.student.StudentRepository;
-import com.agh.emt.service.authentication.UserAlreadyExistException;
-import com.agh.emt.service.authentication.UserDetailsImpl;
-import com.agh.emt.service.authentication.SignUpRequest;
-import com.agh.emt.service.authentication.UserService;
+import com.agh.emt.service.authentication.*;
 import com.agh.emt.service.authentication.email_sender.EmailSenderService;
 import com.agh.emt.service.authentication.email_sender.NoSuchConfirmationTokenException;
 import com.agh.emt.utils.authentication.JwtResponse;
 import com.agh.emt.utils.authentication.JwtUtils;
 import com.agh.emt.utils.authentication.LoginRequest;
+import com.agh.emt.utils.authentication.signup_validator.InvalidAghStudentEmailException;
+import com.agh.emt.utils.authentication.signup_validator.PasswordNotMatchingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,11 +35,6 @@ public class AuthenticationController {
     @Autowired
     StudentRepository studentRepository;
 
-//    @Autowired
-//    UserCredentialsRepository userCredentialsRepository;
-//    @Autowired
-//    ConfirmationTokenRepository confirmationTokenRepository;
-
     @Autowired
     PasswordEncoder encoder;
     @Autowired
@@ -51,7 +45,12 @@ public class AuthenticationController {
     EmailSenderService emailSenderService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest)
+            throws UserNotEnabledException {
+
+        if(!userService.isUserEnabled(loginRequest.getEmail())) {
+            throw new UserNotEnabledException("Konto użytkownika nie jest potwierdzone");
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -66,16 +65,9 @@ public class AuthenticationController {
                 roles));
     }
 
-//    @GetMapping("/signup")
-//    public String showRegistrationForm(WebRequest request, Model model) {
-//        SignUpRequest signUpRequest = new SignUpRequest();
-//        model.addAttribute("user", signUpRequest);
-//        return "signup";
-//    }
-
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUserAccount(@Valid SignUpRequest signUpRequest)
-            throws UserAlreadyExistException {
+    public ResponseEntity<?> registerUserAccount(@RequestBody @Valid SignUpRequest signUpRequest)
+            throws UserAlreadyExistException, PasswordNotMatchingException, InvalidAghStudentEmailException {
 
         UserCredentials registeredUserCredentials = userService.registerNewUserAccount(signUpRequest);
         ConfirmationToken confirmationToken = emailSenderService.createConfirmationToken(registeredUserCredentials);
@@ -83,7 +75,7 @@ public class AuthenticationController {
         return ResponseEntity.ok("successfulRegistration");
     }
 
-    @PostMapping("/confirm-account")
+    @GetMapping("/confirm-account")
     public ResponseEntity<?> confirmUserAccount(@RequestParam("token")String confirmationTokenString)
             throws NoSuchConfirmationTokenException {
 
@@ -92,51 +84,4 @@ public class AuthenticationController {
         userService.confirmUserAccount(confirmationToken.getUserCredentials());
         return ResponseEntity.ok("successfulAccountConfirmation");
     }
-
-//    @PostMapping("/signup")
-//    public ResponseEntity<?> registerStudent(@Valid @RequestBody SignupRequest signUpRequest) {
-//        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new MessageResponse("Error: Username is already taken!"));
-//        }
-//        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new MessageResponse("Error: Email is already in use!"));
-//        }
-//        // Create new user's account
-//        User user = new User(signUpRequest.getUsername(),
-//                signUpRequest.getEmail(),
-//                encoder.encode(signUpRequest.getPassword()));
-//        Set<String> strRoles = signUpRequest.getRole();
-//        Set<Role> roles = new HashSet<>();
-//        if (strRoles == null) {
-//            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-//                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-//            roles.add(userRole);
-//        } else {
-//            strRoles.forEach(role -> {
-//                switch (role) {
-//                    case "admin":
-//                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-//                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-//                        roles.add(adminRole);
-//                        break;
-//                    case "mod":
-//                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-//                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-//                        roles.add(modRole);
-//                        break;
-//                    default:
-//                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-//                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-//                        roles.add(userRole);
-//                }
-//            });
-//        }
-//        user.setRoles(roles);
-//        userRepository.save(user);
-//        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-//    }
 }
