@@ -15,4 +15,5 @@ public class UserCredentials {
     @JsonIgnore
     private String password;
     private Role role;
+    private boolean isEnabled = false;
 }
