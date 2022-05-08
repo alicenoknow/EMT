@@ -1,13 +1,12 @@
 import React from "react";
 import "./App.scss";
-
-import Login from "./pages/Login";
+import Home from "./pages/Home";
 
 
 export default function App() {
 	return (
 		<div className="app">
-			<Login />
+			<Home />
 		</div>
 	);
 }

@@ -1,0 +1,79 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../style/colors";
+
+.document {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	height: 100%;
+	align-content: center;
+	margin: auto;
+}
+
+.document__container {
+	margin-top: 4rem;
+	justify-content: center;
+}
+
+.document__line {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	height: 1px;
+	width: 100%;
+	background-color: #0005;
+}
+
+.document__link {
+	color: $primary;
+	font-size: large;
+	padding-left: 2rem;
+
+	&:hover {
+		color: $secondary;
+		cursor: pointer;
+	}
+}
+
+.upload__button {
+	background-color: $primary !important;
+	color: $onPrimary !important;
+    border-color: $primary !important;
+	margin: 1rem 1rem;
+	transition: color 0.4s ease-in-out background-color 0.4s ease-in-out;
+
+	cursor: pointer;
+
+	&:hover {
+		background-color: $onPrimary !important;
+		border-color: $primary !important;
+		color: $primary !important;
+		cursor: pointer;
+	}
+}
+
+.send_container {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.send__button {
+	background-color: $secondary !important;
+    border-color: $secondary !important;
+	margin: 1rem 1rem;
+	cursor: pointer;
+
+	&:disabled {
+		background-color: $secondary !important;
+		border-color: $secondary !important;
+		opacity: 0.6;
+	}
+
+	&:hover {
+        background-color: $onSecondary !important;
+		border-color: $secondary !important;
+		color: $secondary !important;
+		outline: none !important;
+	}
+}

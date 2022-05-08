@@ -1,0 +1,10 @@
+package com.agh.emt.utils.authentication;
+
+public enum Role {
+    ROLE_STUDENT,
+    ROLE_FACULTY_COORDINATOR,
+    ROLE_CONTRACT_COORDINATOR,
+    ROLE_DEAN_OFFICE_WORKER,
+    ROLE_FOREIGN_COUNTRIES_DEPARTMENT_REP,
+    ROLE_OTHER_ADMIN;
+}
