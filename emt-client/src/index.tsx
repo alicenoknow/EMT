@@ -7,7 +7,6 @@ import ScreenWrapper from "./components/ScreenWrapper";
 import DocumentPage from "./pages/DocumentPage";
 import UserPage from "./pages/UserPage";
 import { store } from "./redux/store";
-import AdminLogin from "./pages/AdminLogin";
 import UserLogin from "./pages/UserLogin";
 
 ReactDOM.render(
@@ -18,7 +17,6 @@ ReactDOM.render(
 					<Routes>
 						<Route path="/" element={<App />} />
 						<Route path="/login/user" element={<UserLogin />} />
-						<Route path="/login/admin" element={<AdminLogin />} />
 						<Route
 							path="/user"
 							element={<UserPage firstName="Anna" lastName="Kowalska" />}
