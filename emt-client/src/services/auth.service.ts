@@ -13,7 +13,6 @@ export const register = (email: string, password: string) => {
 		.post(ROOT_API + REGISTER_API, {
 			email,
 			password,
-			matchingPassword: password,
 		})
 		.catch(function (error) {
 			console.log(error.toJSON());
