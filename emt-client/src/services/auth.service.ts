@@ -7,7 +7,6 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 const ROOT_API = "http://localhost:8080/api";
 const LOGIN_API = "/auth/login";
 const REGISTER_API = "/auth/signup";
-const CONFIRM_API = "/auth/confirm-account";
 
 export const register = (email: string, password: string) => {
 	return axios
