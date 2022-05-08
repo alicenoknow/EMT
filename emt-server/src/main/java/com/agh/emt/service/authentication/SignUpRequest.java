@@ -16,5 +16,4 @@ public class SignUpRequest {
     @NotNull
     @NotEmpty
     String password;
-    String matchingPassword;
 }
