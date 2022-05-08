@@ -19,18 +19,54 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {
-            NewsNotFoundException.class,
-            NoLoggedUserException.class,
-            RecruitmentFormNotFoundException.class,
-            RecruitmentFormExistsException.class,
-            StudentNotFoundException.class,
-            UserNotEnabledException.class,
-            NoSuchConfirmationTokenException.class,
-            UserAlreadyExistException.class,
-            InvalidAghEmailException.class
-    })
+    // http internal server error codes: >=512
+    @ExceptionHandler(InvalidAghEmailException.class)
+    protected ResponseEntity<String> handleInvalidAghEmailException(InvalidAghEmailException ex) {
+        return ResponseEntity.status(512).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    protected ResponseEntity<String> handleUserAlreadyExistException(UserAlreadyExistException ex) {
+        return ResponseEntity.status(513).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NoSuchConfirmationTokenException.class)
+    protected ResponseEntity<String> handleNoSuchConfirmationTokenException(NoSuchConfirmationTokenException ex) {
+        return ResponseEntity.status(514).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotEnabledException.class)
+    protected ResponseEntity<String> handleUserNotEnabledException(UserNotEnabledException ex) {
+        return ResponseEntity.status(515).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(StudentNotFoundException.class)
+    protected ResponseEntity<String> handleStudentNotFoundException(StudentNotFoundException ex) {
+        return ResponseEntity.status(516).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RecruitmentFormExistsException.class)
+    protected ResponseEntity<String> handleRecruitmentFormExistsException(RecruitmentFormExistsException ex) {
+        return ResponseEntity.status(517).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RecruitmentFormNotFoundException.class)
+    protected ResponseEntity<String> handleRecruitmentFormNotFoundException(RecruitmentFormNotFoundException ex) {
+        return ResponseEntity.status(518).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NoLoggedUserException.class)
+    protected ResponseEntity<String> handleNoLoggedUserException(NoLoggedUserException ex) {
+        return ResponseEntity.status(519).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NewsNotFoundException.class)
+    protected ResponseEntity<String> handleNewsNotFoundException(NewsNotFoundException ex) {
+        return ResponseEntity.status(520).body(ex.getMessage());
+    }
+
+    @ExceptionHandler()
     protected ResponseEntity<String> defaultHandle(Exception ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 }
