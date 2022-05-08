@@ -3,7 +3,7 @@ package com.agh.emt.service.authentication;
 import com.agh.emt.model.authentication.UserCredentials;
 import com.agh.emt.model.authentication.UserCredentialsRepository;
 import com.agh.emt.utils.authentication.Role;
-import com.agh.emt.utils.authentication.signup_validator.InvalidAghStudentEmailException;
+import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
 import com.agh.emt.utils.authentication.signup_validator.SignUpValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +30,7 @@ public class UserService {
     }
 
     public UserCredentials registerNewUserAccount(SignUpRequest signUpRequest)
-            throws UserAlreadyExistException, InvalidAghStudentEmailException {
+            throws UserAlreadyExistException, InvalidAghEmailException {
 
         SignUpValidator.validateSignUpRequest(signUpRequest);
 

@@ -8,7 +8,7 @@ import com.agh.emt.service.form.RecruitmentFormExistsException;
 import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.agh.emt.service.news.NewsNotFoundException;
 import com.agh.emt.service.student.StudentNotFoundException;
-import com.agh.emt.utils.authentication.signup_validator.InvalidAghStudentEmailException;
+import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,7 +28,7 @@ public class RestResponseEntityExceptionHandler
             UserNotEnabledException.class,
             NoSuchConfirmationTokenException.class,
             UserAlreadyExistException.class,
-            InvalidAghStudentEmailException.class
+            InvalidAghEmailException.class
     })
     protected ResponseEntity<String> defaultHandle(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());

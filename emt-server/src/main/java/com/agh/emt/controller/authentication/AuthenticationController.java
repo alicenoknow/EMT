@@ -9,7 +9,7 @@ import com.agh.emt.service.authentication.email_sender.NoSuchConfirmationTokenEx
 import com.agh.emt.utils.authentication.JwtResponse;
 import com.agh.emt.utils.authentication.JwtUtils;
 import com.agh.emt.utils.authentication.LoginRequest;
-import com.agh.emt.utils.authentication.signup_validator.InvalidAghStudentEmailException;
+import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,7 +66,7 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUserAccount(@RequestBody @Valid SignUpRequest signUpRequest)
-            throws UserAlreadyExistException, InvalidAghStudentEmailException {
+            throws UserAlreadyExistException, InvalidAghEmailException {
 
         UserCredentials registeredUserCredentials = userService.registerNewUserAccount(signUpRequest);
         ConfirmationToken confirmationToken = emailSenderService.createConfirmationToken(registeredUserCredentials);
