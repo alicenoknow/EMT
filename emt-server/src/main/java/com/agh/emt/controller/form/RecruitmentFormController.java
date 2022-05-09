@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/recruitment-form")
 @AllArgsConstructor
 public class RecruitmentFormController {
-    private final RecruitmentFormService recruitmentFormService;
+    private final RecruitmentFormService recruitmentFormService=null;
 
     @GetMapping
     ResponseEntity<List<RecruitmentFormPreviewDTO>> findAll() {
