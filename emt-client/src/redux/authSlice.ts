@@ -24,9 +24,8 @@ export const authSlice = createSlice({
 	},
 });
 
-export const { setAuthToken } = authSlice.actions;
+export const { setAuthToken, setAdmin } = authSlice.actions;
 export const getAuthToken = (state: RootState) => state.authData.authToken;
 export const isAdmin = (state: RootState) => state.authData.isAdmin;
-
 
 export default authSlice.reducer;

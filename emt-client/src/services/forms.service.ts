@@ -6,24 +6,13 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const ROOT_API = "http://localhost:8080/api";
 const LOGIN_API = "/auth/login";
-const REGISTER_API = "/auth/signup";
+const REGISTER_API = "/auth/register";
 
 export const register = (email: string, password: string) => {
-	return axios
-		.post(ROOT_API + REGISTER_API, {
-			email,
-			password,
-		})
-		.catch(function (error) {
-			console.log(error.toJSON());
-			return undefined;
-		})
-		.then(response => {
-			if (response?.data?.token) {
-				localStorage.setItem("user", JSON.stringify(response.data));
-			}
-			return response?.status;
-		});
+	return axios.post(ROOT_API + REGISTER_API, {
+		email,
+		password,
+	});
 };
 
 export const login = (

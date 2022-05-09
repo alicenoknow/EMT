@@ -4,8 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { validateForm } from "./utils/loginUtils";
 import FormGroup from "../components/forms/FormGroup";
 import "./Login.scss";
-import Spacer from "../components/Spacer";
 import SecondaryButton from "../components/buttons/SecondaryButton";
+import { login, register } from "../services/auth.service";
+import { setAdmin, setAuthToken } from "../redux/authSlice";
+import { setLoading } from "../redux/globalSlice";
+import { useAppDispatch } from "../redux/hooks";
+import { LoginResponse, Roles } from "../services/types";
+import {
+	LoginFailedAlert,
+	RegisterSuccessAlert,
+	RegisterFailAlert,
+} from "./utils/alertUtils";
+import { setAlert, setAlertVisibility } from "../redux/alertSlice";
 
 interface LoginState {
 	email: string;
@@ -13,16 +23,54 @@ interface LoginState {
 }
 
 export default function UserLogin() {
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const [state, setState] = useState<LoginState>({
 		email: "",
 		password: "",
 	});
 
+	const navigateTo = (path: string, isAdmin: boolean) => {
+		dispatch(setAdmin(isAdmin));
+		dispatch(setAlertVisibility(false));
+		setTimeout(() => navigate(path), 1500);
+	};
+
+	const handleLogin = async () => {
+		dispatch(setLoading(true));
+		const response: LoginResponse = await login(state.email, state.password);
+		dispatch(setLoading(false));
+
+		if (response && response.token && response.roles) {
+			dispatch(setAuthToken(response.token));
+			if (response.roles.includes(Roles.ADMIN)) {
+				navigateTo("/admin", true);
+			} else {
+				navigateTo("/user", false);
+			}
+		} else {
+			dispatch(setAlert(LoginFailedAlert));
+		}
+	};
+
+	const handleRegister = async () => {
+		dispatch(setLoading(true));
+		const response: number | undefined = await register(
+			state.email,
+			state.password,
+		);
+		dispatch(setLoading(false));
+
+		if (response === 200) {
+			dispatch(setAlert(RegisterSuccessAlert));
+		} else {
+			dispatch(setAlert(RegisterFailAlert));
+		}
+	};
+
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// const response = loginUser(state.email, state.password);
-		navigate("/user");
+		handleLogin();
 	};
 
 	const { email, password } = state;
@@ -36,7 +84,7 @@ export default function UserLogin() {
 						type="email"
 						value={email}
 						label="Adres e-mail"
-						placeholder="twoj_mail@agh.edu.pl"
+						placeholder="twojmail@agh.edu.pl"
 						onChange={e => setState({ ...state, email: e.target.value })}
 						bottomText={"Użyj adresu email w domenie AGH."}
 					/>
@@ -46,7 +94,6 @@ export default function UserLogin() {
 						value={password}
 						label="Hasło"
 						onChange={e => setState({ ...state, password: e.target.value })}
-						bottomText={"Hasło nie może być puste."}
 					/>
 					<div className="login__buttons">
 						<Button
@@ -60,6 +107,7 @@ export default function UserLogin() {
 							className="login__button"
 							size="lg"
 							type="button"
+							onClick={() => handleRegister()}
 							disabled={!validateForm(email, password)}>
 							Zarejstruj
 						</Button>
@@ -67,13 +115,6 @@ export default function UserLogin() {
 					<SecondaryButton text="Nie pamiętasz hasła?" onClick={() => null} />
 				</Form>
 			</Container>
-			<div className="login__footer">
-				<SecondaryButton
-					text="Zaloguj się jako administrator"
-					onClick={() => navigate("/login/admin")}
-				/>
-				<Spacer />
-			</div>
 		</div>
 	);
 }
