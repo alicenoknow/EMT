@@ -31,11 +31,12 @@ public class RecruitmentFormService {
     private final StudentRepository studentRepository;
     private final UserService userService;
     private final OneDriveService oneDriveService;
+    private final static String TEMPLATE_PDF_FORM_PATH = "wzor/AnkietaRekrutacyjnaErasmus2022.pdf";
+
 
     private static final int MAX_RECUITMENT_FORMS_PER_STUDENT = 2;
-    private static final String DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK = "default-recruitment-form.pdf";
 
-    public List<RecruitmentFormPreviewDTO> findAllPreviews() {
+    public List<RecruitmentFormPreviewDTO> findAllPreviews() throws RecruitmentFormNotFoundException {
         List<RecruitmentFormPreview> recruitmentFormPreviews = recruitmentFormRepository.findAllProjectedBy();
 
         List<RecruitmentFormPreviewDTO> result = new LinkedList<>();
@@ -44,7 +45,7 @@ public class RecruitmentFormService {
         double rank = 0;
         for (var recruitmentFormPreview: recruitmentFormPreviews) {
             try {
-                pdf = oneDriveService.getRecruitmentFormPDF("somePath");
+                pdf = oneDriveService.getRecruitmentFormPdfFromId("somePath");
                 rank = RankUtils.getRank(pdf);
             } finally {
                 result.add(new RecruitmentFormPreviewDTO(recruitmentFormPreview, rank));
@@ -83,12 +84,19 @@ public class RecruitmentFormService {
         List<RecruitmentForm> recruitmentForms = student.getRecruitmentForms();
 
         return recruitmentForms.stream()
-                .map(form -> new RecruitmentFormDTO(form, oneDriveService.getRecruitmentFormPDF(form.getOneDriveLink())))
+                .map(form -> {
+                    try {
+                        return new RecruitmentFormDTO(form, oneDriveService.getRecruitmentFormPdfFromId(form.getOneDriveLink()));
+                    } catch (RecruitmentFormNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException {
+    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, RecruitmentFormNotFoundException {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         if (student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT) {
@@ -116,7 +124,7 @@ public class RecruitmentFormService {
         }
 
         oneDriveService.putRecruitmentFormPDF(recruitmentForm.getOneDriveLink(), recruitmentFormDTO.getPdf());
-        return new RecruitmentFormDTO(recruitmentForm, oneDriveService.getRecruitmentFormPDF(recruitmentForm.getOneDriveLink()));
+        return new RecruitmentFormDTO(recruitmentForm, oneDriveService.getRecruitmentFormPdfFromId(recruitmentForm.getOneDriveLink()));
     }
 
 
@@ -136,16 +144,20 @@ public class RecruitmentFormService {
         }
     }
 
-    public byte[] findDefaultRecruitmentForm() {
-        return oneDriveService.getRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK);
-    }
-
-    public byte[] addDefaultRecruitmentForm(byte[] pdf) {
-        oneDriveService.postRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK, pdf);
-        return findDefaultRecruitmentForm();
-    }
-
-    public byte[] editDefaultRecruitmentForm(byte[] pdf) {
-        return oneDriveService.putRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK, pdf);
+//    public byte[] findDefaultRecruitmentForm() {
+//        return oneDriveService.getRecruitmentFormPdfFromPath(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK);
+//    }
+//
+//    public byte[] addDefaultRecruitmentForm(byte[] pdf) {
+//        oneDriveService.postRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK, pdf);
+//        return findDefaultRecruitmentForm();
+//    }
+//
+//    public byte[] editDefaultRecruitmentForm(byte[] pdf) {
+//        return oneDriveService.putRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK, pdf);
+//    }
+//
+    public byte[] getTemplateForm() throws RecruitmentFormNotFoundException {
+        return oneDriveService.getRecruitmentFormPdfFromPath(TEMPLATE_PDF_FORM_PATH);
     }
 }

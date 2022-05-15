@@ -4,8 +4,9 @@ import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.form.*;
 import com.agh.emt.service.student.StudentNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +33,17 @@ public class RecruitmentFormController {
     ResponseEntity<List<StudentFormsPreviewDTO>> findAllStudentsWithPreviews() {
         return ResponseEntity.ok(recruitmentFormService.findAllStudentsWithPreviews());
     }
+    @GetMapping
+    ResponseEntity<List<RecruitmentFormPreviewDTO>> findAll() throws RecruitmentFormNotFoundException {
+        return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
+    }
+
+
+//    @GetMapping
+//    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
+//    ResponseEntity<> findAllStudentsWithPreviews() {
+        //todo zrobic jakies dto zeby byly dane podstawowe studenta i podstawowe jego formularzy i zwrocic liste wszystkich
+//    }
 
     @GetMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
@@ -77,8 +89,11 @@ public class RecruitmentFormController {
     }
 
 
-    private ResponseEntity<byte[]> getResponseForDefaultPdf(byte[] contents) {
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/template-form")
+    ResponseEntity<Resource> getTemplateForm() throws NoLoggedUserException, RecruitmentFormNotFoundException, StudentNotFoundException {
         HttpHeaders headers = new HttpHeaders();
+<<<<<<< HEAD
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData(DEFAULT_RECRUITMENT_FORM_FILENAME, DEFAULT_RECRUITMENT_FORM_FILENAME);
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
@@ -90,18 +105,29 @@ public class RecruitmentFormController {
         byte[] contents = recruitmentFormService.findDefaultRecruitmentForm();
         return getResponseForDefaultPdf(contents);
     }
+=======
+>>>>>>> 6dff3e3 ([EMT-157]Partial integration)
 
-    @PostMapping("/default")
-    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<byte[]> addDefaultRecruitmentForm(@RequestBody byte[] pdf) {
-        byte[] contents = recruitmentFormService.addDefaultRecruitmentForm(pdf);
-        return getResponseForDefaultPdf(contents);
+        byte[] templateFormByte = recruitmentFormService.getTemplateForm();
+        ByteArrayResource resource = new ByteArrayResource(templateFormByte);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(templateFormByte.length)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
     }
 
-    @PutMapping("/default")
-    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<byte[]> editDefaultRecruitmentForm(@RequestBody byte[] pdf) {
-        byte[] contents = recruitmentFormService.editDefaultRecruitmentForm(pdf);
-        return getResponseForDefaultPdf(contents);
-    }
+//    @PostMapping("/template-form")
+//    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
+//    ResponseEntity<byte[]> addDefaultRecruitmentForm(@RequestBody byte[] pdf) {
+//        byte[] contents = recruitmentFormService.addDefaultRecruitmentForm(pdf);
+//        return getResponseForDefaultPdf(contents);
+//    }
+//
+//    @PutMapping("/template-form")
+//    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
+//    ResponseEntity<byte[]> editDefaultRecruitmentForm(@RequestBody byte[] pdf) {
+//        byte[] contents = recruitmentFormService.editDefaultRecruitmentForm(pdf);
+//        return getResponseForDefaultPdf(contents);
+//    }
 }
