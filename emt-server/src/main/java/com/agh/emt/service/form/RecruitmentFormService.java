@@ -11,8 +11,12 @@ import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.student.StudentNotFoundException;
 import com.agh.emt.utils.ranking.RankUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -26,6 +30,9 @@ public class RecruitmentFormService {
     private final StudentRepository studentRepository;
     private final UserService userService;
     private final OneDriveService oneDriveService;
+
+    private static final int MAX_RECUITMENT_FORMS_PER_STUDENT = 2;
+    private static final String DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK = "default-recruitment-form.pdf";
 
     public List<RecruitmentFormPreviewDTO> findAllPreviews() {
         List<RecruitmentFormPreview> recruitmentFormPreviews = recruitmentFormRepository.findAllProjectedBy();
@@ -51,39 +58,17 @@ public class RecruitmentFormService {
 
         return this.findForStudent(studentId);
     }
-    public List<RecruitmentFormDTO> addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException {
+    public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException {
         UserDetails loggedUser = UserService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
-        if (recruitmentFormRepository.existsByStudent(student)) {
-            throw new RecruitmentFormExistsException("Z tego konta złożono już formularz rekrutacyjny");
-        }
-
-        RecruitmentForm recruitmentForm = new RecruitmentForm();
-        recruitmentForm.setStudent(studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException("Nie znaleziono zalogowanego użytkownika w bazie")));
-        recruitmentFormRepository.save(recruitmentForm);
-
-        String oneDriveLink= oneDriveService.postRecruitmentFormPDF(studentId + "/AR_" + new Timestamp(System.currentTimeMillis())+ ".pdf", recruitmentFormDTO.getPdf());
-
-        recruitmentForm.setOneDriveLink(oneDriveLink);
-        return recruitmentFormDTO;
+        return addForStudent(studentId, recruitmentFormDTO);
     }
-    public List<RecruitmentFormDTO> editForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
+    public RecruitmentFormDTO editForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
         UserDetails loggedUser = UserService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
-        RecruitmentForm recruitmentForm = recruitmentFormRepository.findByStudent(student)
-                .orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono Twojego formularza"));
-
-
-        oneDriveService.putRecruitmentFormPDF(recruitmentForm.getOneDriveLink(), recruitmentFormDTO.getPdf());
-
-        recruitmentFormRepository.save(recruitmentForm);
-
-        return recruitmentFormDTO;
+        return editForStudent(studentId, recruitmentFormDTO);
     }
 
     public List<RecruitmentFormDTO> findForStudent(String studentId) throws StudentNotFoundException {
@@ -96,36 +81,48 @@ public class RecruitmentFormService {
                 .collect(Collectors.toList());
     }
 
-    public List<RecruitmentFormDTO> addForStudent(String studentId, List<RecruitmentFormDTO> recruitmentFormDTOList) throws RecruitmentFormExistsException, StudentNotFoundException, RecruitmentFormNotFoundException {
+    @Transactional
+    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
-        if (recruitmentFormRepository.existsByStudent(student)) {
-            throw new RecruitmentFormExistsException("Z tego konta złożono już formularz rekrutacyjny");
+
+        if (student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT) {
+            throw new RecruitmentFormLimitExceededException("Przekroczono limit zgłoszeń dla studenta: " + student.getUserCredentials().getEmail());
         }
 
         RecruitmentForm recruitmentForm = new RecruitmentForm();
-        recruitmentForm.setStudent(studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException("Nie znaleziono użytkownika w bazie")));
-
-        String oneDriveLink = oneDriveService.postRecruitmentFormPDF(studentId+studentId + "/AR_" + new Timestamp(System.currentTimeMillis())+ ".pdf", recruitmentFormDTO.getPdf());
+        recruitmentForm = recruitmentFormRepository.save(recruitmentForm);
+        String oneDriveLink = oneDriveService.postRecruitmentFormPDF(recruitmentForm.getId() + "/AR_" + new Timestamp(System.currentTimeMillis()) + ".pdf", recruitmentFormDTO.getPdf());
 
         recruitmentForm.setOneDriveLink(oneDriveLink);
-
         recruitmentFormRepository.save(recruitmentForm);
+
+        student.getRecruitmentForms().add(recruitmentForm);
+
+        studentRepository.save(student);
+
         return recruitmentFormDTO;
     }
-    public List<RecruitmentFormDTO> setForStudent(String studentId, List<RecruitmentFormDTO> recruitmentFormDTOList) throws RecruitmentFormNotFoundException, StudentNotFoundException {
+    public RecruitmentFormDTO editForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
-        RecruitmentForm recruitmentForm = recruitmentFormRepository.findByStudent(student)
-                .orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono formularza"));
-
+        RecruitmentForm recruitmentForm = recruitmentFormRepository.findById(recruitmentFormDTO.getId()).orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono formularza o id: " + recruitmentFormDTO.getId()));
+        if (!student.getRecruitmentForms().contains(recruitmentForm)) {
+            throw new RecruitmentFormNotFoundException("Nie znaleziono formularza o id: " + recruitmentFormDTO.getId() + " wśród formularzy studenta o id: " + studentId);
+        }
 
         oneDriveService.putRecruitmentFormPDF(recruitmentForm.getOneDriveLink(), recruitmentFormDTO.getPdf());
-//        todo
-        String oneDriveLink = "aaaaaaaa";
-        recruitmentForm.setOneDriveLink(oneDriveLink);
+        return new RecruitmentFormDTO(recruitmentForm, oneDriveService.getRecruitmentFormPDF(recruitmentForm.getOneDriveLink()));
+    }
 
-        recruitmentFormRepository.save(recruitmentForm);
+    public byte[] findDefaultRecruitmentForm() {
+        return oneDriveService.getRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK);
+    }
 
-        return recruitmentFormDTO;
+    public byte[] addDefaultRecruitmentForm(byte[] pdf) {
+        oneDriveService.postRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK, pdf);
+        return findDefaultRecruitmentForm();
+    }
+
+    public byte[] editDefaultRecruitmentForm(byte[] pdf) {
+        return oneDriveService.putRecruitmentFormPDF(DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK, pdf);
     }
 }

@@ -14,7 +14,7 @@
 	<name>emt</name>
 	<description>Erasmus Managment Tool project written for Software Engineering class at AGH UST 2021/2022</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>18</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
