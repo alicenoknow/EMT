@@ -3,7 +3,6 @@ package com.agh.emt.controller.form;
 import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.form.*;
 import com.agh.emt.service.student.StudentNotFoundException;
-import com.microsoft.graph.models.Application;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,11 +27,10 @@ public class RecruitmentFormController {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
-
     @GetMapping
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<> findAllStudentsWithPreviews() {
-        //todo zrobic jakies dto zeby byly dane podstawowe studenta i podstawowe jego formularzy i zwrocic liste wszystkich
+    ResponseEntity<List<StudentFormsPreviewDTO>> findAllStudentsWithPreviews() {
+        return ResponseEntity.ok(recruitmentFormService.findAllStudentsWithPreviews());
     }
 
     @GetMapping("/my-form")
@@ -52,7 +50,6 @@ public class RecruitmentFormController {
     ResponseEntity<RecruitmentFormDTO> editForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.editForLoggedStudent(recruitmentFormDTO));
     }
-
 
     @GetMapping("/student-form/{studentId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
@@ -74,7 +71,7 @@ public class RecruitmentFormController {
 
     @DeleteMapping("/student-form/{studentId}/{formId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity deleteForStudent(@PathVariable String studentId, @PathVariable String formId) throws RecruitmentFormNotFoundException, StudentNotFoundException {
+    ResponseEntity<?> deleteForStudent(@PathVariable String studentId, @PathVariable String formId) throws RecruitmentFormNotFoundException, StudentNotFoundException {
         recruitmentFormService.deleteForStudent(studentId, formId);
         return ResponseEntity.ok().build();
     }
@@ -87,6 +84,7 @@ public class RecruitmentFormController {
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
+
     @GetMapping("/default")
     ResponseEntity<byte[]> findDefaultRecruitmentForm() {
         byte[] contents = recruitmentFormService.findDefaultRecruitmentForm();

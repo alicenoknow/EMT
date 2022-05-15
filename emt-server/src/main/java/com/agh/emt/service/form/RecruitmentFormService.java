@@ -53,6 +53,11 @@ public class RecruitmentFormService {
         return result;
     }
 
+    public List<StudentFormsPreviewDTO> findAllStudentsWithPreviews() {
+        List<Student> students = studentRepository.findAll();
+        return students.stream().map(StudentFormsPreviewDTO::new).collect(Collectors.toList());
+    }
+
     public List<RecruitmentFormDTO> findForLoggedStudent() throws NoLoggedUserException, StudentNotFoundException {
         UserDetails loggedUser = UserService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
