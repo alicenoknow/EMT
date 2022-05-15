@@ -42,7 +42,7 @@ public class OneDriveService {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    public byte[] getRecruitmentFormPDF(String fileId) throws RecruitmentFormNotFoundException {
+    public byte[] getRecruitmentFormPDF(String fileId) {
         String url = "https://graph.microsoft.com/v1.0/me/drive/items/" + fileId + "/content" ;
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();

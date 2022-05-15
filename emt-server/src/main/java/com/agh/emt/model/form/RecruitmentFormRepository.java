@@ -9,7 +9,4 @@ import java.util.Optional;
 
 public interface RecruitmentFormRepository extends MongoRepository<RecruitmentForm, String> {
     List<RecruitmentFormPreview> findAllProjectedBy();
-
-    Optional<RecruitmentForm> findByStudent(Student student);
-    boolean existsByStudent(Student student);
 }

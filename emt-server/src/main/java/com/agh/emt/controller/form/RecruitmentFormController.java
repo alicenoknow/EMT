@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/recruitment-form")
 @AllArgsConstructor
 public class RecruitmentFormController {
-    private final RecruitmentFormService recruitmentFormService=null;
+    private final RecruitmentFormService recruitmentFormService;
 
     @GetMapping
     ResponseEntity<List<RecruitmentFormPreviewDTO>> findAll() {
@@ -23,7 +23,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentFormDTO> findForLoggedStudent() throws NoLoggedUserException, RecruitmentFormNotFoundException, StudentNotFoundException {
+    ResponseEntity<List<RecruitmentFormDTO>> findForLoggedStudent() throws NoLoggedUserException, StudentNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForLoggedStudent());
     }
 
@@ -42,7 +42,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/student-form/{studentId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentFormDTO> findForUser(@PathVariable String studentId) throws RecruitmentFormNotFoundException, StudentNotFoundException {
+    ResponseEntity<List<RecruitmentFormDTO>> findForUser(@PathVariable String studentId) throws StudentNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForStudent(studentId));
     }
 

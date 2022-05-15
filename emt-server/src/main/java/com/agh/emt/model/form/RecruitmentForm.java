@@ -16,7 +16,4 @@ public class RecruitmentForm {
     private String oneDriveLink;
     private LocalDateTime timeAdded = LocalDateTime.now();
     private LocalDateTime timeLastModified = LocalDateTime.now();
-
-    @DBRef
-    private Student student; // imię, nazwisko, email
 }
