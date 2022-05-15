@@ -64,6 +64,13 @@ public class RecruitmentFormController {
         return ResponseEntity.ok(recruitmentFormService.editForStudent(studentId, recruitmentFormDTO));
     }
 
+    @DeleteMapping("/student-form/{studentId}/{formId}")
+    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
+    ResponseEntity deleteForStudent(@PathVariable String studentId, @PathVariable String formId) throws RecruitmentFormNotFoundException, StudentNotFoundException {
+        recruitmentFormService.deleteForStudent(studentId, formId);
+        return ResponseEntity.ok().build();
+    }
+
 
     private ResponseEntity<byte[]> getResponseForDefaultPdf(byte[] contents) {
         HttpHeaders headers = new HttpHeaders();

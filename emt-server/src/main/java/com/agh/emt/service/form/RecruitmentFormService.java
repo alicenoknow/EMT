@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,6 +112,23 @@ public class RecruitmentFormService {
 
         oneDriveService.putRecruitmentFormPDF(recruitmentForm.getOneDriveLink(), recruitmentFormDTO.getPdf());
         return new RecruitmentFormDTO(recruitmentForm, oneDriveService.getRecruitmentFormPDF(recruitmentForm.getOneDriveLink()));
+    }
+
+
+    public void deleteForStudent(String studentId, String formId) throws StudentNotFoundException {
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
+        Optional<RecruitmentForm> recruitmentFormOpt = student.getRecruitmentForms()
+                .stream()
+                .filter(f -> f.getId().equals(formId))
+                .findFirst();
+
+        if (recruitmentFormOpt.isPresent()) {
+            RecruitmentForm recruitmentForm = recruitmentFormOpt.get();
+            recruitmentFormRepository.delete(recruitmentForm);
+
+            student.getRecruitmentForms().remove(recruitmentForm);
+            studentRepository.save(student);
+        }
     }
 
     public byte[] findDefaultRecruitmentForm() {
