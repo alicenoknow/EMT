@@ -22,10 +22,10 @@ jobs:
       working-directory: emt-server
       run: docker compose -f docker-compose.yaml up -d
       
-    - name: Set up JDK 17 and cache Maven dependencies
+    - name: Set up JDK 18 and cache Maven dependencies  # Change: Java 17 -> 18
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '18'
         distribution: 'temurin'
         cache: maven
           
