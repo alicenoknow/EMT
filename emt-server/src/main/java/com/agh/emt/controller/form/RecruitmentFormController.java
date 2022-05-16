@@ -21,13 +21,13 @@ public class RecruitmentFormController {
 
     private static final String DEFAULT_RECRUITMENT_FORM_FILENAME = "formularz-rekrutacyjny.pdf";
 
-    @GetMapping
+    @GetMapping("/form-list")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
     ResponseEntity<List<RecruitmentFormPreviewDTO>> findAllPreviews() {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
-    @GetMapping
+    @GetMapping("/student-list")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
     ResponseEntity<List<StudentFormsPreviewDTO>> findAllStudentsWithPreviews() {
         return ResponseEntity.ok(recruitmentFormService.findAllStudentsWithPreviews());

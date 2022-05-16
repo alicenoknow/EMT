@@ -76,7 +76,11 @@
 			<artifactId>json</artifactId>
 			<version>20220320</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.microsoft.graph</groupId>
+			<artifactId>microsoft-graph</artifactId>
+			<version>5.24.0</version>
+		</dependency>
 
 	</dependencies>
 
@@ -94,14 +98,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
         </plugins>
 	</build>
 
