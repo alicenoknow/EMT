@@ -18,7 +18,11 @@
 
 .alert {
 	position: absolute;
-	top: 0px;
+	top: 100px;
+	width: 90%;
+	z-index: 2;
+	align-self: center;
+	justify-items: center;
 }
 
 .spinner__container {

@@ -17,10 +17,7 @@ ReactDOM.render(
 					<Routes>
 						<Route path="/" element={<App />} />
 						<Route path="/login/user" element={<UserLogin />} />
-						<Route
-							path="/user"
-							element={<UserPage firstName="Anna" lastName="Kowalska" />}
-						/>
+						<Route path="/user" element={<UserPage />} />
 						<Route
 							path="/form"
 							element={
