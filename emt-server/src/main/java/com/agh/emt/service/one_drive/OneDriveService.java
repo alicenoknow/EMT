@@ -42,7 +42,7 @@ public class OneDriveService {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    public byte[] getRecruitmentFormPDF(String fileId) throws RecruitmentFormNotFoundException {
+    public byte[] getRecruitmentFormPDF(String fileId) {
         String url = "https://graph.microsoft.com/v1.0/me/drive/items/" + fileId + "/content" ;
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
@@ -56,7 +56,7 @@ public class OneDriveService {
             return null;
         }
     }
-    public String postRecruitmentFormPDF(String filePath, byte[] pdf) throws RecruitmentFormNotFoundException {
+    public String postRecruitmentFormPDF(String filePath, byte[] pdf) {
         String url = "https://graph.microsoft.com/v1.0/me/drive/root:/" + filePath + ":/content" ;
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
@@ -77,7 +77,7 @@ public class OneDriveService {
             return null;
         }
     }
-    public byte[] putRecruitmentFormPDF(String fileId, byte[] pdf) throws RecruitmentFormNotFoundException {
+    public byte[] putRecruitmentFormPDF(String fileId, byte[] pdf) {
         String url = "https://graph.microsoft.com/v1.0/me/drive/items/" + fileId + "/content" ;
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
@@ -96,16 +96,6 @@ public class OneDriveService {
             return Objects.requireNonNull(response.getBody()).getBytes(StandardCharsets.UTF_8);
         } else {
             return null;
-        }
-    }
-
-    private byte[] getMock() throws RecruitmentFormNotFoundException {
-        try {
-            File file = ResourceUtils.getFile("classpath:default_document.pdf");
-            InputStream in = new FileInputStream(file);
-            return in.readAllBytes();
-        } catch (IOException e) {
-            throw new RecruitmentFormNotFoundException("nie znaleziono formularza...");
         }
     }
 }
