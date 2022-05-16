@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Container, Button } from "react-bootstrap";
-import { getTemplate } from "../services/forms.service";
+import { getTemplate, sendFilledPdf } from "../services/forms.service";
 import "./DocumentPage.scss";
 
 interface DocumentPageProps {
@@ -14,6 +14,8 @@ export default function DocumentPage(props: DocumentPageProps) {
 	const [isFilled, setFilled] = useState<boolean>(props.isFilled);
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 	const [uploadedFileName2, setUploadedFileName2] = useState<string | null>(null);
+	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+	const [uploadedFile2, setUploadedFile2] = useState<File | null>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const inputRef2 = useRef<HTMLInputElement>(null);
 
@@ -24,7 +26,8 @@ export default function DocumentPage(props: DocumentPageProps) {
 	};
 	const handleDisplayFileDetails = () => {
 		inputRef.current?.files &&
-			setUploadedFileName(inputRef.current.files[0].name);
+			setUploadedFileName(inputRef.current.files[0].name) && 
+			setUploadedFile(inputRef.current.files[0]);
 	};
 
 	// this is definitely not a copy paste
@@ -33,12 +36,22 @@ export default function DocumentPage(props: DocumentPageProps) {
 	};
 	const handleDisplayFileDetails2 = () => {
 		inputRef2.current?.files &&
-			setUploadedFileName2(inputRef2.current.files[0].name);
+			setUploadedFileName2(inputRef2.current.files[0].name) && 
+			setUploadedFile2(inputRef2.current.files[0]);
 	};
 	// -----------------------------------
 
 	const handleFileSend = () => {
-		setFilled(true);
+		console.log(uploadedFile)
+		let formData  = new FormData();
+		formData.append("files", uploadedFile!);
+		sendFilledPdf(formData);
+		formData  = new FormData();
+		// if(inputRef.current.files[0].!=null){
+		// 	let docNo = sendFilledPdf(inputRef.current.files[0])
+		// }
+		
+		
 	};
 
 	if (!isAvailable) {

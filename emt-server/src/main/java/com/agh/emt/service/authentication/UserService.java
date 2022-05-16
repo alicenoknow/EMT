@@ -2,6 +2,8 @@ package com.agh.emt.service.authentication;
 
 import com.agh.emt.model.authentication.UserCredentials;
 import com.agh.emt.model.authentication.UserCredentialsRepository;
+import com.agh.emt.model.student.Student;
+import com.agh.emt.model.student.StudentRepository;
 import com.agh.emt.utils.authentication.Role;
 import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
 import com.agh.emt.utils.authentication.signup_validator.SignUpValidator;
@@ -18,6 +20,8 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserCredentialsRepository userCredentialsRepository;
+    @Autowired
+    private StudentRepository studentRepository;
 
     public static UserDetails getLoggedUser() throws NoLoggedUserException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -49,6 +53,9 @@ public class UserService {
 
     public void confirmUserAccount(UserCredentials userCredentials) {
         userCredentials.setEnabled(true);
+        Student newStudent = new Student();
+        newStudent.setId(userCredentials.getId());
+        studentRepository.save(newStudent);
         userCredentialsRepository.save(userCredentials);
     }
 

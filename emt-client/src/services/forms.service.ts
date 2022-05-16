@@ -32,28 +32,28 @@ export const getTemplate = (
 		});
 };
 
-// export const sendDoc = (
-	
-
-// 	): Promise<number> => {
-// 		const tokenStr = JSON.parse(String(localStorage.getItem('user')))?.token;
+export const sendFilledPdf = (
+	pdf:FormData
+	): Promise<number> => {
+		const tokenStr = JSON.parse(String(localStorage.getItem('user')))?.token;
 		
-// 		return axios
-// 			.post(ROOT_API + TEMPLATE_FORM_API, { 
-// 				headers: {
-// 					"Authorization" : `Bearer ${tokenStr}`,
-// 					"Content-Type" : 'application/pdf',
-// 					"Content-Length" : ''
-// 				},
-// 				responseType: 'blob' 
-// 			})
-// 			.catch(function (error) {
-// 				console.log(error.toJSON());
-// 				return undefined;
-// 			})
-// 			.then(response => {
-// 				if (response?.data) {
-// 					FileDownload(response.data, 'AnkietaRekrutacyjnaErasmus2022-wzor.pdf');
-// 				}
-// 			});
-// 	};
+		return axios
+			.post(ROOT_API + SEND_FORM_API, {
+				"pdf":pdf
+			},{ 
+				headers: {
+					"Authorization" : `Bearer ${tokenStr}`,
+					"Content-Type" : 'application/json'
+				}
+			})
+			.catch(function (error) {
+				console.log(error.toJSON());
+				return undefined;
+			})
+			.then(response => {
+				if (response?.data?.id) {
+					return response?.data?.id
+				}
+				return undefined;
+			});
+	};

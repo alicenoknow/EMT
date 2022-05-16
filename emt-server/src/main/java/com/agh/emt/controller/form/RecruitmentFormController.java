@@ -22,11 +22,11 @@ public class RecruitmentFormController {
 
     private static final String DEFAULT_RECRUITMENT_FORM_FILENAME = "formularz-rekrutacyjny.pdf";
 
-    @GetMapping("/form-list")
-    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<List<RecruitmentFormPreviewDTO>> findAllPreviews() {
-        return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
-    }
+//    @GetMapping("/form-list")
+//    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
+//    ResponseEntity<List<RecruitmentFormPreviewDTO>> findAllPreviews() {
+//        return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
+//    }
 
     @GetMapping("/student-list")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
@@ -45,14 +45,16 @@ public class RecruitmentFormController {
         //todo zrobic jakies dto zeby byly dane podstawowe studenta i podstawowe jego formularzy i zwrocic liste wszystkich
 //    }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/my-form")
-    @PreAuthorize("hasRole('STUDENT')")
+//    @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<List<RecruitmentFormDTO>> findForLoggedStudent() throws NoLoggedUserException, StudentNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForLoggedStudent());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/my-form")
-    @PreAuthorize("hasRole('STUDENT')")
+//    @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<RecruitmentFormDTO> addForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException {
         return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(recruitmentFormDTO));
     }
@@ -93,20 +95,6 @@ public class RecruitmentFormController {
     @GetMapping("/template-form")
     ResponseEntity<Resource> getTemplateForm() throws NoLoggedUserException, RecruitmentFormNotFoundException, StudentNotFoundException {
         HttpHeaders headers = new HttpHeaders();
-<<<<<<< HEAD
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData(DEFAULT_RECRUITMENT_FORM_FILENAME, DEFAULT_RECRUITMENT_FORM_FILENAME);
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        return new ResponseEntity<>(contents, headers, HttpStatus.OK);
-    }
-
-    @GetMapping("/default")
-    ResponseEntity<byte[]> findDefaultRecruitmentForm() {
-        byte[] contents = recruitmentFormService.findDefaultRecruitmentForm();
-        return getResponseForDefaultPdf(contents);
-    }
-=======
->>>>>>> 6dff3e3 ([EMT-157]Partial integration)
 
         byte[] templateFormByte = recruitmentFormService.getTemplateForm();
         ByteArrayResource resource = new ByteArrayResource(templateFormByte);

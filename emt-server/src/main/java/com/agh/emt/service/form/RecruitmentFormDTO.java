@@ -21,4 +21,10 @@ public class RecruitmentFormDTO {
         this.timeLastModified = recruitmentForm.getTimeLastModified();
         this.pdf = pdf;
     }
+//    public RecruitmentFormDTO(byte[] pdf) {
+//        this.id = "";
+//        this.timeAdded = LocalDateTime.now();
+//        this.timeLastModified = LocalDateTime.now();
+//        this.pdf = pdf;
+//    }
 }

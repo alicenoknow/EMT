@@ -1,5 +1,6 @@
 package com.agh.emt.service.form;
 
+import com.agh.emt.model.authentication.UserCredentialsRepository;
 import com.agh.emt.model.form.RecruitmentForm;
 import com.agh.emt.model.form.RecruitmentFormRepository;
 import com.agh.emt.model.student.Student;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class RecruitmentFormService {
     private final RecruitmentFormRepository recruitmentFormRepository;
     private final StudentRepository studentRepository;
+    private final UserCredentialsRepository userCredentialsRepository;
     private final UserService userService;
     private final OneDriveService oneDriveService;
     private final static String TEMPLATE_PDF_FORM_PATH = "wzor/AnkietaRekrutacyjnaErasmus2022.pdf";
@@ -97,6 +99,7 @@ public class RecruitmentFormService {
 
     @Transactional
     public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, RecruitmentFormNotFoundException {
+        System.out.println(studentRepository.findAll());
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         if (student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT) {

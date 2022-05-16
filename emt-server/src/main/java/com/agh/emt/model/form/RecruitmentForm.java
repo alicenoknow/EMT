@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Data
 public class RecruitmentForm {
     @Id
-    private String id;
-    private String oneDriveLink;
+    private String id = "";
+    private String oneDriveLink = "";
     private LocalDateTime timeAdded = LocalDateTime.now();
     private LocalDateTime timeLastModified = LocalDateTime.now();
 }
