@@ -50,3 +50,17 @@ export const login = (
 export const logout = () => {
 	localStorage.removeItem("user");
 };
+
+export const getAuthHeader = () => {
+	const user = JSON.parse(localStorage.getItem("user") ?? "{}");
+	if (user && user.token) {
+		return { Authorization: "Bearer " + user.token };
+	} else {
+		return {};
+	}
+};
+
+export const getUserCredentials = () => {
+	const user = JSON.parse(localStorage.getItem("user") ?? "{}");
+	return user?.email;
+};
