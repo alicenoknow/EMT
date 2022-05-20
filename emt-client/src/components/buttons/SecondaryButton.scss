@@ -1,0 +1,12 @@
+@import "../../style/colors";
+
+.secondary {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.secondary__button {
+	color: $secondary !important;
+	cursor: pointer;
+}

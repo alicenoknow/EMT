@@ -3,8 +3,12 @@
 
 .login {
 	display: flex;
+	flex: 1;
+	flex-direction: column;
 	height: 100%;
+	padding-top: 120px;
 	align-content: center;
+	justify-content: center;
 }
 
 .login__form {
@@ -13,28 +17,35 @@
 }
 
 .login__buttons {
-	align-items: center;
+	display: flex;
 	justify-content: center;
 }
 
 .login__button {
-	background-color: $secondary;
-	margin: 1rem 2rem;
-	cursor: pointer;
+	background-color: $primary !important;
+	border: 0px !important;
+	margin: 1rem 1rem;
+	cursor: pointer !important;
 
 	&:disabled {
-		background-color: $secondary;
+		background-color: $primary !important;
+		border: 0px !important;
 		opacity: 0.6;
+	}
+
+	&:active {
+		outline: none !important;
 	}
 }
 
-.login__buttons--secondary {
+.login__footer {
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	height: 100%;
+	flex: 1;
+	flex-direction: column-reverse;
 }
 
-.login__button--secondary {
-	color: $secondary;
-	cursor: pointer;
+.login__footer__items {
+	display: flex;
+	flex: 1;
 }

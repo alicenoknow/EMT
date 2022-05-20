@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./selectors";
+import authReducer from "./authSlice";
+import alertReducer from "./alertSlice";
+import globalReducer from "./globalSlice";
 
 export const store = configureStore({
 	reducer: {
-		data: authReducer,
+		authData: authReducer,
+		alertData: alertReducer,
+		globalData: globalReducer,
 	},
 });
 export type RootState = ReturnType<typeof store.getState>;

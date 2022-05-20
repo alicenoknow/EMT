@@ -1,0 +1,34 @@
+@import "../style/colors";
+
+.spacer {
+	width: "100%";
+	height: 1px;
+	background-color: $backgroundGray;
+}
+
+.container {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 100vh;
+	min-width: 100vw;
+	background-color: $background;
+	color: $onBackground;
+}
+
+.alert {
+	position: absolute;
+	top: 100px;
+	width: 90%;
+	z-index: 2;
+	align-self: center;
+	justify-items: center;
+}
+
+.spinner__container {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	left: 50%;
+	align-self: center;
+}
