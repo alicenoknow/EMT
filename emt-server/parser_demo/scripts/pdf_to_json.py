@@ -15,9 +15,14 @@ def convert_pdf_from_file_to_dict(fname):
 	"""
 	pdfobject = open(fname,'rb')
 	pdf = pypdf.PdfFileReader(pdfobject)
-	res = pdf.getNamedDestinations()
-	print(res)
-	return res
+	res = pdf.getFields()
+	pdf_format_value_marker = '/V'
+	result = {}
+	for key in res.keys():
+		val = res[key][pdf_format_value_marker]
+		result[key] = val
+	print(result)
+	return result
 
 
 def save_jsoned_pdf_to_file(pdf_dict, fname):
@@ -41,10 +46,13 @@ def convert_pdf_directory(pdf_path, result_path):
 	"""
 	for filename in os.listdir(pdf_path):
 		f = os.path.join(pdf_path, filename)
+		print(f)
 			# checking if it is a file
 		json_name = result_path+filename+'_form.json'
 		save_jsoned_pdf_to_file(convert_pdf_from_file_to_dict(f), json_name)
 
+
+# save pdf to json
 print(sys.argv)
 result_path = sys.argv[2]
 # path where to load each pdf from

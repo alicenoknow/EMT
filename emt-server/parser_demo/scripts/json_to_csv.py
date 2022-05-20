@@ -97,16 +97,20 @@ def generate_rank(json_directory, rank_file_name, keys_to_include):
 	# 	# print(get_cert_points(user['certificate_type']))
 	# 	user['rank_score'] = 8*get_gpa(user['GPA']) + get_cert_points(user['exam_level'])+ get_faculty_points(user['faculty'])+ get_extra_activity_points(user['activity'])- get_late_points(user['being_late'])
 	# users.sort(key = lambda user: user['rank_score'], reverse = True)
-	cols = users[0].keys()
+	cols = keys_to_include
+	final_users  = []
+	for user in users:
+		final_users.append({key:user[key] for key in cols})
 	with open(rank_file_name, 'w+') as csvfile:
 		writer = csv.DictWriter(csvfile, fieldnames = cols)
 		writer.writeheader()
-		writer.writerows(users)
+		writer.writerows(final_users)
 
-result_path = sys.argv[3]
+csv_path = sys.argv[1]
 # path where to load each pdf from
 keys_path = sys.argv[2]
-csv_path = sys.argv[1]
+result_path = sys.argv[3]
+
 
 # execution flow
 # keys specs are columns which should be included result csv file
