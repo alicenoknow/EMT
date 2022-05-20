@@ -55,7 +55,7 @@ def convert_pdf_directory(pdf_path, result_path):
 # save pdf to json
 print(sys.argv)
 result_path = sys.argv[2]
-# path where to load each pdf from
+# path where to load each pdf from+
 pdf_path = sys.argv[1]
 print(result_path, pdf_path)
 # python3 pdf_to_json.py ../pdfs/ ./
