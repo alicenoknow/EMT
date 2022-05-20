@@ -3,7 +3,7 @@ package com.agh.emt.controller;
 import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.authentication.UserAlreadyExistException;
 import com.agh.emt.service.authentication.UserNotEnabledException;
-import com.agh.emt.service.authentication.email_sender.NoSuchConfirmationTokenException;
+import com.agh.emt.service.email_sender.NoSuchConfirmationTokenException;
 import com.agh.emt.service.form.RecruitmentFormExistsException;
 import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.agh.emt.service.news.NewsNotFoundException;

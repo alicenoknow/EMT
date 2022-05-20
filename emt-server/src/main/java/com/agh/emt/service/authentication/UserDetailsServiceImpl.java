@@ -1,7 +1,7 @@
 package com.agh.emt.service.authentication;
 
-import com.agh.emt.model.authentication.UserCredentials;
-import com.agh.emt.model.authentication.UserCredentialsRepository;
+import com.agh.emt.model.user.User;
+import com.agh.emt.model.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,16 +13,14 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserCredentialsRepository userCredentialsRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<UserCredentials> userCredentials;
+        Optional<User> user = userRepository.findByEmail(email);
 
-        userCredentials = userCredentialsRepository.findByEmail(email);
-
-        if (userCredentials.isPresent()) {
-            return UserDetailsImpl.build(userCredentials.get());
+        if (user.isPresent()) {
+            return UserDetailsImpl.build(user.get());
         } else {
             throw new UsernameNotFoundException("Nie znaleziono użytkownika o mailu: " + email);
         }
