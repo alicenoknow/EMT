@@ -13,9 +13,11 @@ import java.time.LocalDateTime;
 public class RecruitmentForm {
     @Id
     private String id;
-    private String oneDriveLink;
+    private String oneDriveLinkPdf;
+    private String oneDriveLinkScan;
     private LocalDateTime timeAdded = LocalDateTime.now();
     private LocalDateTime timeLastModified = LocalDateTime.now();
+    private Integer priority;
 
     @DBRef(lazy = true)
     private User user;

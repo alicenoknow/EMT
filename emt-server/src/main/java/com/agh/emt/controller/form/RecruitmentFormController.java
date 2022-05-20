@@ -27,12 +27,6 @@ public class RecruitmentFormController {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
-    @GetMapping("/student-list")
-    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<List<StudentFormsPreviewDTO>> findAllStudentsWithPreviews() {
-        return ResponseEntity.ok(recruitmentFormService.findAllStudentsWithPreviews());
-    }
-
     @GetMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<List<RecruitmentFormDTO>> findForLoggedStudent() throws NoLoggedUserException, StudentNotFoundException {

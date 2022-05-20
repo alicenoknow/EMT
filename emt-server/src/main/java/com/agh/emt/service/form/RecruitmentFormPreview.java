@@ -13,4 +13,7 @@ public class RecruitmentFormPreview {
     LocalDateTime timeAdded;
     LocalDateTime timeLastModified;
     User user;
+    Integer priority;
+    String oneDriveLinkPdf;
+    String oneDriveLinkScan;
 }

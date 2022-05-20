@@ -1,6 +1,5 @@
 package com.agh.emt.model.user;
 
-
 import com.agh.emt.model.form.RecruitmentForm;
 import com.agh.emt.utils.authentication.Role;
 import com.agh.emt.utils.form.Faculty;
