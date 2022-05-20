@@ -1,29 +1,24 @@
 package com.agh.emt.service.one_drive;
 
-import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
 import com.microsoft.graph.requests.GraphServiceClient;
+import lombok.AllArgsConstructor;
 import okhttp3.Request;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@AllArgsConstructor
 public class OneDriveService {
     private static GraphServiceClient<Request> graphClient;
     private static TokenCredentialAuthProvider authProvider;
@@ -35,7 +30,6 @@ public class OneDriveService {
     private final static List<String> SCOPES = Arrays.asList("Files.Read", "Files.ReadWrite","Files.ReadWrite.AppFolder");
 
     private final RestTemplate restTemplate;
-
 
     @Autowired
     public OneDriveService(RestTemplateBuilder restTemplateBuilder){

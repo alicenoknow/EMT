@@ -1,7 +1,7 @@
 package com.agh.emt.model.la_internship;
 
 
-import com.agh.emt.model.student.Student;
+import com.agh.emt.model.user.User;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -18,7 +18,7 @@ public class LearningAgreementInternship {
     private LocalDateTime timeLastModified = LocalDateTime.now();
 
     @DBRef
-    private Student student; // imię, nazwisko, email
+    private User user; // imię, nazwisko, email
 
     // TODO: Fill fields as in LA document
 }

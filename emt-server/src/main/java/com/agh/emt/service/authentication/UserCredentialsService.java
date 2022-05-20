@@ -1,23 +1,21 @@
 package com.agh.emt.service.authentication;
 
-import com.agh.emt.model.authentication.UserCredentials;
-import com.agh.emt.model.authentication.UserCredentialsRepository;
+import com.agh.emt.model.user.User;
+import com.agh.emt.model.user.UserRepository;
 import com.agh.emt.utils.authentication.Role;
 import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
 import com.agh.emt.utils.authentication.signup_validator.SignUpValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
-@Transactional
-public class UserService {
-    @Autowired
-    private UserCredentialsRepository userCredentialsRepository;
+@AllArgsConstructor
+public class UserCredentialsService {
+    private final UserRepository userRepository;
 
     public static UserDetails getLoggedUser() throws NoLoggedUserException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -29,7 +27,7 @@ public class UserService {
         }
     }
 
-    public UserCredentials registerNewUserAccount(SignUpRequest signUpRequest)
+    public User registerNewUserAccount(SignUpRequest signUpRequest)
             throws UserAlreadyExistException, InvalidAghEmailException {
 
         SignUpValidator.validateSignUpRequest(signUpRequest);
@@ -39,25 +37,25 @@ public class UserService {
                     + signUpRequest.getEmail());
         }
 
-        UserCredentials newUser = new UserCredentials();
-        newUser.setEmail(signUpRequest.getEmail());
-        newUser.setPassword(signUpRequest.getPassword());
-        // Assuming that the new user is a student
-        newUser.setRole(Role.ROLE_STUDENT);
-        return userCredentialsRepository.save(newUser);
+        User user = new User();
+        user.setEmail(signUpRequest.getEmail());
+        user.setPassword(signUpRequest.getPassword());
+        user.setRole(Role.ROLE_STUDENT);
+
+        return userRepository.save(user);
     }
 
-    public void confirmUserAccount(UserCredentials userCredentials) {
-        userCredentials.setEnabled(true);
-        userCredentialsRepository.save(userCredentials);
+    public void confirmUserAccount(User user) {
+        user.setEnabled(true);
+        userRepository.save(user);
     }
 
     public boolean isUserEnabled(String email) {
-        Optional<UserCredentials> userCredentials = userCredentialsRepository.findByEmail(email);
-        return userCredentials.map(UserCredentials::isEnabled).orElse(false);
+        Optional<User> userCredentials = userRepository.findByEmail(email);
+        return userCredentials.map(User::isEnabled).orElse(false);
     }
 
     private boolean emailExist(String email) {
-        return userCredentialsRepository.findByEmail(email).isPresent();
+        return userRepository.findByEmail(email).isPresent();
     }
 }

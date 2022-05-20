@@ -1,16 +1,15 @@
 package com.agh.emt.controller.authentication;
 
-import com.agh.emt.model.authentication.UserCredentials;
-import com.agh.emt.model.confirmation_token.ConfirmationToken;
-import com.agh.emt.model.student.StudentRepository;
+import com.agh.emt.model.authentication.ConfirmationToken;
+import com.agh.emt.model.user.User;
 import com.agh.emt.service.authentication.*;
-import com.agh.emt.service.authentication.email_sender.EmailSenderService;
-import com.agh.emt.service.authentication.email_sender.NoSuchConfirmationTokenException;
+import com.agh.emt.service.email_sender.EmailSenderService;
+import com.agh.emt.service.email_sender.NoSuchConfirmationTokenException;
 import com.agh.emt.utils.authentication.JwtResponse;
 import com.agh.emt.utils.authentication.JwtUtils;
 import com.agh.emt.utils.authentication.LoginRequest;
 import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,31 +26,27 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
+@AllArgsConstructor
 public class AuthenticationController {
-    @Autowired
     AuthenticationManager authenticationManager;
 
-    @Autowired
-    StudentRepository studentRepository;
-
-    @Autowired
     PasswordEncoder encoder;
-    @Autowired
     JwtUtils jwtUtils;
-    @Autowired
-    UserService userService;
-    @Autowired
+    UserCredentialsService userCredentialsService;
     EmailSenderService emailSenderService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest)
             throws UserNotEnabledException {
 
-        if(!userService.isUserEnabled(loginRequest.getEmail())) {
-            throw new UserNotEnabledException("Konto użytkownika nie jest potwierdzone");
-        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+
+        if(!userCredentialsService.isUserEnabled(loginRequest.getEmail())) {
+            throw new UserNotEnabledException("Konto użytkownika nie jest potwierdzone");
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
@@ -68,9 +63,9 @@ public class AuthenticationController {
     public ResponseEntity<?> registerUserAccount(@RequestBody @Valid SignUpRequest signUpRequest)
             throws UserAlreadyExistException, InvalidAghEmailException {
 
-        UserCredentials registeredUserCredentials = userService.registerNewUserAccount(signUpRequest);
-        ConfirmationToken confirmationToken = emailSenderService.createConfirmationToken(registeredUserCredentials);
-        emailSenderService.sendConfirmationEmail(confirmationToken, registeredUserCredentials);
+        User user = userCredentialsService.registerNewUserAccount(signUpRequest);
+        ConfirmationToken confirmationToken = emailSenderService.createConfirmationToken(user);
+        emailSenderService.sendConfirmationEmail(confirmationToken, user);
         return ResponseEntity.ok("successfulRegistration");
     }
 
@@ -80,7 +75,7 @@ public class AuthenticationController {
 
         ConfirmationToken confirmationToken =
                 emailSenderService.getConfirmationTokenByTokenString(confirmationTokenString);
-        userService.confirmUserAccount(confirmationToken.getUserCredentials());
+        userCredentialsService.confirmUserAccount(confirmationToken.getUser());
         return ResponseEntity.ok("successfulAccountConfirmation");
     }
 }

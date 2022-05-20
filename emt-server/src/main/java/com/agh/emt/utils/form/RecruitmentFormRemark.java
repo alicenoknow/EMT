@@ -1,7 +1,7 @@
 package com.agh.emt.utils.form;
 
 
-import com.agh.emt.model.admin.Admin;
+import com.agh.emt.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -15,7 +15,7 @@ public class RecruitmentFormRemark {
     private LocalDateTime timeLastModified = LocalDateTime.now();
 
     @DBRef
-    private Admin author;
+    private User author;
 
     private String title;
     private String message;

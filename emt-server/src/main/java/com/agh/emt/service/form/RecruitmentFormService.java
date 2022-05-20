@@ -2,21 +2,18 @@ package com.agh.emt.service.form;
 
 import com.agh.emt.model.form.RecruitmentForm;
 import com.agh.emt.model.form.RecruitmentFormRepository;
-import com.agh.emt.model.student.Student;
-import com.agh.emt.model.student.StudentRepository;
+import com.agh.emt.model.user.User;
+import com.agh.emt.model.user.UserRepository;
 import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.authentication.UserDetailsImpl;
-import com.agh.emt.service.authentication.UserService;
+import com.agh.emt.service.authentication.UserCredentialsService;
 import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.student.StudentNotFoundException;
 import com.agh.emt.utils.ranking.RankUtils;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -28,8 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RecruitmentFormService {
     private final RecruitmentFormRepository recruitmentFormRepository;
-    private final StudentRepository studentRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final OneDriveService oneDriveService;
 
     private static final int MAX_RECUITMENT_FORMS_PER_STUDENT = 2;
@@ -54,31 +50,31 @@ public class RecruitmentFormService {
     }
 
     public List<StudentFormsPreviewDTO> findAllStudentsWithPreviews() {
-        List<Student> students = studentRepository.findAll();
-        return students.stream().map(StudentFormsPreviewDTO::new).collect(Collectors.toList());
+        List<User> users = userRepository.findAll();
+        return users.stream().map(StudentFormsPreviewDTO::new).collect(Collectors.toList());
     }
 
     public List<RecruitmentFormDTO> findForLoggedStudent() throws NoLoggedUserException, StudentNotFoundException {
-        UserDetails loggedUser = UserService.getLoggedUser();
+        UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
         return this.findForStudent(studentId);
     }
     public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException {
-        UserDetails loggedUser = UserService.getLoggedUser();
+        UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
         return addForStudent(studentId, recruitmentFormDTO);
     }
     public RecruitmentFormDTO editForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
-        UserDetails loggedUser = UserService.getLoggedUser();
+        UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
         return editForStudent(studentId, recruitmentFormDTO);
     }
 
     public List<RecruitmentFormDTO> findForStudent(String studentId) throws StudentNotFoundException {
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         List<RecruitmentForm> recruitmentForms = student.getRecruitmentForms();
 
@@ -89,10 +85,10 @@ public class RecruitmentFormService {
 
     @Transactional
     public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException {
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         if (student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT) {
-            throw new RecruitmentFormLimitExceededException("Przekroczono limit zgłoszeń dla studenta: " + student.getUserCredentials().getEmail());
+            throw new RecruitmentFormLimitExceededException("Przekroczono limit zgłoszeń dla studenta: " + student.getEmail());
         }
 
         RecruitmentForm recruitmentForm = new RecruitmentForm();
@@ -104,12 +100,12 @@ public class RecruitmentFormService {
 
         student.getRecruitmentForms().add(recruitmentForm);
 
-        studentRepository.save(student);
+        userRepository.save(student);
 
         return recruitmentFormDTO;
     }
     public RecruitmentFormDTO editForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException {
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
         RecruitmentForm recruitmentForm = recruitmentFormRepository.findById(recruitmentFormDTO.getId()).orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono formularza o id: " + recruitmentFormDTO.getId()));
         if (!student.getRecruitmentForms().contains(recruitmentForm)) {
             throw new RecruitmentFormNotFoundException("Nie znaleziono formularza o id: " + recruitmentFormDTO.getId() + " wśród formularzy studenta o id: " + studentId);
@@ -121,7 +117,7 @@ public class RecruitmentFormService {
 
 
     public void deleteForStudent(String studentId, String formId) throws StudentNotFoundException {
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
         Optional<RecruitmentForm> recruitmentFormOpt = student.getRecruitmentForms()
                 .stream()
                 .filter(f -> f.getId().equals(formId))
@@ -132,7 +128,7 @@ public class RecruitmentFormService {
             recruitmentFormRepository.delete(recruitmentForm);
 
             student.getRecruitmentForms().remove(recruitmentForm);
-            studentRepository.save(student);
+            userRepository.save(student);
         }
     }
 
