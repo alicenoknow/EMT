@@ -50,6 +50,7 @@ public class OneDriveService {
             return null;
         }
     }
+
     public String postRecruitmentFormPDF(String filePath, byte[] pdf) {
         String url = "https://graph.microsoft.com/v1.0/me/drive/root:/" + filePath + ":/content" ;
         System.out.println(url);
@@ -71,11 +72,12 @@ public class OneDriveService {
             return null;
         }
     }
+
     public byte[] putRecruitmentFormPDF(String fileId, byte[] pdf) {
         String url = "https://graph.microsoft.com/v1.0/me/drive/items/" + fileId + "/content" ;
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer "+ACCESS_TOKEN);
+        headers.set("Authorization", "Bearer " + ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentLength(pdf.length);
 

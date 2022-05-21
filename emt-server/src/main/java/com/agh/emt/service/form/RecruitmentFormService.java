@@ -7,6 +7,7 @@ import com.agh.emt.model.user.UserRepository;
 import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.authentication.UserDetailsImpl;
 import com.agh.emt.service.authentication.UserCredentialsService;
+import com.agh.emt.service.one_drive.OneDriveConnectionException;
 import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.student.StudentNotFoundException;
 import com.agh.emt.utils.ranking.RankUtils;
@@ -55,14 +56,14 @@ public class RecruitmentFormService {
         return this.findForStudent(studentId);
     }
 
-    public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException {
+    public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, OneDriveConnectionException {
         UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
         return addForStudent(studentId, recruitmentFormDTO);
     }
 
-    public RecruitmentFormDTO editForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
+    public RecruitmentFormDTO editForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException, OneDriveConnectionException {
         UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
@@ -80,7 +81,7 @@ public class RecruitmentFormService {
     }
 
     @Transactional
-    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, RecruitmentFormExistsException {
+    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, RecruitmentFormExistsException, OneDriveConnectionException {
         User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         if (student.getRecruitmentForms().size() == MAX_RECRUITMENT_FORMS_PER_STUDENT) {
@@ -98,12 +99,20 @@ public class RecruitmentFormService {
         }
 
         RecruitmentForm recruitmentForm = new RecruitmentForm();
+        recruitmentForm.setPriority(recruitmentFormDTO.getPriority());
         recruitmentForm = recruitmentFormRepository.save(recruitmentForm);
-        String oneDriveLink = oneDriveService.postRecruitmentFormPDF(recruitmentForm.getId() + "/AR_" + new Timestamp(System.currentTimeMillis()) + ".pdf", recruitmentFormDTO.getPdf());
+
+        String oneDriveLink;
+        try {
+            oneDriveLink = oneDriveService.postRecruitmentFormPDF(recruitmentForm.getId() + "/AR_" + new Timestamp(System.currentTimeMillis()) + ".pdf", recruitmentFormDTO.getPdf());
+        }
+        catch(Exception ex) {
+            recruitmentFormRepository.delete(recruitmentForm);
+            throw new OneDriveConnectionException("Wystąpił błąd z połączeniem z usługą OneDrive");
+        }
 
         recruitmentForm.setOneDriveLinkPdf(oneDriveLink);
 
-        recruitmentForm.setPriority(recruitmentFormDTO.getPriority());
         recruitmentFormRepository.save(recruitmentForm);
 
         student.getRecruitmentForms().add(recruitmentForm);
@@ -112,33 +121,24 @@ public class RecruitmentFormService {
         return new RecruitmentFormDTO(recruitmentForm, oneDriveService.getRecruitmentFormPDF(recruitmentForm.getOneDriveLinkPdf()));
     }
 
-    public RecruitmentFormDTO editForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException {
+    public RecruitmentFormDTO editForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException, OneDriveConnectionException {
         User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
         RecruitmentForm recruitmentFormToEdit = recruitmentFormRepository.findById(recruitmentFormDTO.getId()).orElseThrow(() -> new RecruitmentFormNotFoundException("Nie znaleziono formularza o id: " + recruitmentFormDTO.getId()));
         if (!student.getRecruitmentForms().contains(recruitmentFormToEdit)) {
             throw new RecruitmentFormNotFoundException("Nie znaleziono formularza o id: " + recruitmentFormDTO.getId() + " wśród formularzy studenta o id: " + studentId);
         }
 
-        // to jednak nie potrzebne, bo kolejność na liście na froncie determinuje priorytet
-//        // if different priority than before -> swap priorities with the already existent (if exists)
-//        if (!recruitmentFormToEdit.getPriority().equals(recruitmentFormDTO.getPriority())) {
-//            Optional<RecruitmentForm> otherFormOpt = student.getRecruitmentForms()
-//                    .stream()
-//                    .filter(f -> f.getPriority().equals(recruitmentFormDTO.getPriority()))
-//                    .findFirst();
-//
-//            if (otherFormOpt.isPresent()) {
-//                RecruitmentForm otherForm = otherFormOpt.get();
-//                otherForm.setPriority(recruitmentFormToEdit.getPriority());
-//                recruitmentFormRepository.save(otherForm);
-//            }
-//            recruitmentFormToEdit.setPriority(recruitmentFormDTO.getPriority());
-//        }
-
         recruitmentFormToEdit.setTimeLastModified(LocalDateTime.now());
-        recruitmentFormRepository.save(recruitmentFormToEdit);
+        recruitmentFormToEdit = recruitmentFormRepository.save(recruitmentFormToEdit);
 
-        oneDriveService.putRecruitmentFormPDF(recruitmentFormToEdit.getOneDriveLinkPdf(), recruitmentFormDTO.getPdf());
+        try {
+            oneDriveService.putRecruitmentFormPDF(recruitmentFormToEdit.getOneDriveLinkPdf(), recruitmentFormDTO.getPdf());
+        }
+        catch(Exception ex) {
+            recruitmentFormRepository.delete(recruitmentFormToEdit);
+            throw new OneDriveConnectionException("Wystąpił błąd z połączeniem z usługą OneDrive");
+        }
+
         return new RecruitmentFormDTO(recruitmentFormToEdit, oneDriveService.getRecruitmentFormPDF(recruitmentFormToEdit.getOneDriveLinkPdf()));
     }
 
