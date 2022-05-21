@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class StudentFormsPreviewDTO {
     String studentId;
-    List<RecruitmentFormLiteDTO> recruitmentFormLiteDTOList;
+    List<RecruitmentFormDoubleInfoDTO> recruitmentFormLiteDTOList;
 
     public StudentFormsPreviewDTO(User user) {
         this.studentId = user.getId();
-        this.recruitmentFormLiteDTOList = user.getRecruitmentForms().stream().map(RecruitmentFormLiteDTO::new).collect(Collectors.toList());
+        this.recruitmentFormLiteDTOList = user.getRecruitmentForms().stream().map(RecruitmentFormDoubleInfoDTO::new).collect(Collectors.toList());
     }
 }

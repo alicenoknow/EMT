@@ -13,7 +13,13 @@ import java.time.LocalDateTime;
 public class RecruitmentForm {
     @Id
     private String id;
-    private String oneDriveLink;
+    private String oneDriveFormLink;
+    private String oneDriveFormPath;
+    private String oneDriveFormId;
+    private String oneDriveScanLink;
+    private String oneDriveScanPath;
+    private String oneDriveScanId;
+    private Integer priority;
     private LocalDateTime timeAdded = LocalDateTime.now();
     private LocalDateTime timeLastModified = LocalDateTime.now();
 

@@ -14,10 +14,10 @@ public class RecruitmentFormLiteDTO {
     LocalDateTime timeAdded;
     LocalDateTime timeLastModified;
 
-    public RecruitmentFormLiteDTO(RecruitmentForm recruitmentForm) {
-        this.id = recruitmentForm.getId();
-        this.timeAdded = recruitmentForm.getTimeAdded();
-        this.timeLastModified = recruitmentForm.getTimeLastModified();
-        this.oneDriveLink = recruitmentForm.getOneDriveLink();
-    }
+//    public RecruitmentFormLiteDTO(RecruitmentForm recruitmentForm) {
+//        this.id = recruitmentForm.getId();
+//        this.timeAdded = recruitmentForm.getTimeAdded();
+//        this.timeLastModified = recruitmentForm.getTimeLastModified();
+//        this.oneDriveLink = recruitmentForm.getOneDriveLink();
+//    }
 }
