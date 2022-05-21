@@ -2,6 +2,7 @@ package com.agh.emt.controller.form;
 
 import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.form.*;
+import com.agh.emt.service.one_drive.OneDriveConnectionException;
 import com.agh.emt.service.student.StudentNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -27,12 +28,6 @@ public class RecruitmentFormController {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
-    @GetMapping("/student-list")
-    @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<List<StudentFormsPreviewDTO>> findAllStudentsWithPreviews() {
-        return ResponseEntity.ok(recruitmentFormService.findAllStudentsWithPreviews());
-    }
-
     @GetMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<List<RecruitmentFormDTO>> findForLoggedStudent() throws NoLoggedUserException, StudentNotFoundException {
@@ -41,13 +36,13 @@ public class RecruitmentFormController {
 
     @PostMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentFormDTO> addForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException {
+    ResponseEntity<RecruitmentFormDTO> addForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, OneDriveConnectionException {
         return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(recruitmentFormDTO));
     }
 
     @PutMapping("/my-form")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentFormDTO> editForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
+    ResponseEntity<RecruitmentFormDTO> editForLoggedStudent(@RequestBody RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException, OneDriveConnectionException {
         return ResponseEntity.ok(recruitmentFormService.editForLoggedStudent(recruitmentFormDTO));
     }
 
@@ -59,13 +54,13 @@ public class RecruitmentFormController {
 
     @PostMapping("/student-form/{studentId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentFormDTO> addForStudent(@PathVariable String studentId, @RequestBody RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException {
+    ResponseEntity<RecruitmentFormDTO> addForStudent(@PathVariable String studentId, @RequestBody RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, OneDriveConnectionException {
         return ResponseEntity.ok(recruitmentFormService.addForStudent(studentId, recruitmentFormDTO));
     }
 
     @PutMapping("/student-form/{studentId}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentFormDTO> editForStudent(@PathVariable String studentId, @RequestBody RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException {
+    ResponseEntity<RecruitmentFormDTO> editForStudent(@PathVariable String studentId, @RequestBody RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException, OneDriveConnectionException {
         return ResponseEntity.ok(recruitmentFormService.editForStudent(studentId, recruitmentFormDTO));
     }
 
