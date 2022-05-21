@@ -3,7 +3,10 @@ import json
 import os
 import csv
 import sys
-import re
+
+
+
+
 
 def get_faculty_points(faculty):
 	"""get ranking points based on student's faculty
@@ -39,8 +42,7 @@ def get_gpa(gpa):
 	Returns:
 		int: gpa string
 	"""
-	gpa_string =re.findall(r'\d+\.*\d*', gpa)[0]
-	return float(gpa_string)
+	return float(gpa)
 
 def get_late_points(late):
 	"""negative points for being late
@@ -72,7 +74,7 @@ def get_cert_points(cert_type):
 		return 30
 	return 0
 
-def generate_rank(json_directory, rank_file_name, keys_to_include, get_rank):
+def generate_rank(json_directory, rank_file_name):
 	"""generate .csv file containing users ranking
 
 	Args:
@@ -85,6 +87,7 @@ def generate_rank(json_directory, rank_file_name, keys_to_include, get_rank):
 	users = []
 	for filename in os.listdir(json_directory):
 		f = os.path.join(json_directory, filename)
+		# checking if it is a file
 		if os.path.isfile(f) is False:
 			return
 
@@ -92,38 +95,28 @@ def generate_rank(json_directory, rank_file_name, keys_to_include, get_rank):
 			user = json.load(f)
 			# print(user)
 			users.append(user)
-			print(user)
-	cols = keys_to_include
-	final_users  = []
-	if get_rank:
-		cols.append('rank_score')
 	for user in users:
-		if get_rank:		
-			user['rank_score'] = 8*get_gpa(user['srednia']) + get_cert_points(user['Poziom Egzaminu'])+ get_faculty_points(user['Wydzial'])+ get_extra_activity_points(user['activity'])- get_late_points(user['being_late'])
-			user = {key:user[key] for key in cols}
-			final_users.append(user)
-		else:
-			user = {key:user[key] for key in cols}
-			final_users.append(user)
-	with open(rank_file_name, 'w+') as csvfile:
+		# print(8*get_gpa(user['GPA']))
+		# print(get_cert_points(user['certificate_type']))
+		user['rank_score'] = 8*get_gpa(user['GPA']) + get_cert_points(user['exam_level'])+ get_faculty_points(user['faculty'])+ get_extra_activity_points(user['activity'])- get_late_points(user['being_late'])
+	users.sort(key = lambda user: user['rank_score'], reverse = True)
+	cols = users[0].keys()
+	with open(rank_file_name, 'w') as csvfile:
 		writer = csv.DictWriter(csvfile, fieldnames = cols)
 		writer.writeheader()
-		writer.writerows(final_users)
+		writer.writerows(users)
 
-csv_path = sys.argv[1]
+
+
+# HOW TO USE?
+# python3 pdf_form_extractor.py path_to_save_csv path_to_load_pdfs path_to_save_jsons
+
+# place where to save each of created json
+result_path = sys.argv[4]
 # path where to load each pdf from
-keys_path = sys.argv[2]
-result_path = sys.argv[3]
-get_rank = False
-if len(sys.argv) == 5 and sys.argv[4]=='get_rank':
-    get_rank = True
+pdf_path = sys.argv[3]
+csv_path = sys.argv[2]
 
 # execution flow
-# keys specs are columns which should be included result csv file
-f = open(keys_path)
-with open(keys_path, 'r') as j:
-	data = j.read()
-	# print(data)
-	keys_specs = json.loads(data)
-	print(keys_specs)
-	generate_rank(result_path, csv_path, keys_specs['data'], get_rank)
+
+generate_rank(result_path, csv_path)
