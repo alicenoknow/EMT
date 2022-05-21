@@ -80,12 +80,21 @@ public class RecruitmentFormService {
     }
 
     @Transactional
-    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException {
+    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, RecruitmentFormExistsException {
         User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         if (student.getRecruitmentForms().size() == MAX_RECRUITMENT_FORMS_PER_STUDENT) {
             throw new RecruitmentFormLimitExceededException(
                     "Przekroczono limit zgłoszeń (" + MAX_RECRUITMENT_FORMS_PER_STUDENT + ") dla studenta: " + student.getEmail());
+        }
+
+        // check if already exists such priority
+        Optional<RecruitmentForm> otherFormOpt = student.getRecruitmentForms()
+                .stream()
+                .filter(f -> f.getPriority().equals(recruitmentFormDTO.getPriority()))
+                .findFirst();
+        if (otherFormOpt.isPresent()) {
+            throw new RecruitmentFormExistsException("Istnieje już formularz o priorytecie " + recruitmentFormDTO.getPriority() + " dla studenta: " + student.getEmail());
         }
 
         RecruitmentForm recruitmentForm = new RecruitmentForm();
@@ -94,18 +103,7 @@ public class RecruitmentFormService {
 
         recruitmentForm.setOneDriveLinkPdf(oneDriveLink);
 
-        // find the lowest possible priority
-        Integer lowestPossiblePriority = 1;
-        List<RecruitmentForm> userForms = student.getRecruitmentForms();
-        userForms.sort(Comparator.comparing(RecruitmentForm::getPriority));
-        for (var form: userForms) {
-            if (form.getPriority().equals(lowestPossiblePriority)) {
-                lowestPossiblePriority++;
-            } else {
-                break;
-            }
-        }
-        recruitmentForm.setPriority(lowestPossiblePriority);
+        recruitmentForm.setPriority(recruitmentFormDTO.getPriority());
         recruitmentFormRepository.save(recruitmentForm);
 
         student.getRecruitmentForms().add(recruitmentForm);
@@ -121,20 +119,21 @@ public class RecruitmentFormService {
             throw new RecruitmentFormNotFoundException("Nie znaleziono formularza o id: " + recruitmentFormDTO.getId() + " wśród formularzy studenta o id: " + studentId);
         }
 
-        // if different priority than before -> swap priorities with the already existent (if exists)
-        if (!recruitmentFormToEdit.getPriority().equals(recruitmentFormDTO.getPriority())) {
-            Optional<RecruitmentForm> otherFormOpt = student.getRecruitmentForms()
-                    .stream()
-                    .filter(f -> f.getPriority().equals(recruitmentFormDTO.getPriority()))
-                    .findFirst();
-
-            if (otherFormOpt.isPresent()) {
-                RecruitmentForm otherForm = otherFormOpt.get();
-                otherForm.setPriority(recruitmentFormToEdit.getPriority());
-                recruitmentFormRepository.save(otherForm);
-            }
-            recruitmentFormToEdit.setPriority(recruitmentFormDTO.getPriority());
-        }
+        // to jednak nie potrzebne, bo kolejność na liście na froncie determinuje priorytet
+//        // if different priority than before -> swap priorities with the already existent (if exists)
+//        if (!recruitmentFormToEdit.getPriority().equals(recruitmentFormDTO.getPriority())) {
+//            Optional<RecruitmentForm> otherFormOpt = student.getRecruitmentForms()
+//                    .stream()
+//                    .filter(f -> f.getPriority().equals(recruitmentFormDTO.getPriority()))
+//                    .findFirst();
+//
+//            if (otherFormOpt.isPresent()) {
+//                RecruitmentForm otherForm = otherFormOpt.get();
+//                otherForm.setPriority(recruitmentFormToEdit.getPriority());
+//                recruitmentFormRepository.save(otherForm);
+//            }
+//            recruitmentFormToEdit.setPriority(recruitmentFormDTO.getPriority());
+//        }
 
         recruitmentFormToEdit.setTimeLastModified(LocalDateTime.now());
         recruitmentFormRepository.save(recruitmentFormToEdit);
