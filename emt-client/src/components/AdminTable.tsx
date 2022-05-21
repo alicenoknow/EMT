@@ -135,7 +135,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 							onClick={createSortHandler(headCell.id)}>
 							{headCell.label}
 							{orderBy === headCell.id ? (
-								<Box component="span" sx={visuallyHidden}>
+								<Box sx={visuallyHidden}>
 									{order === "desc" ? "sorted descending" : "sorted ascending"}
 								</Box>
 							) : null}
@@ -222,67 +222,65 @@ export default function AdminTable() {
 		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
 	return (
-		<Box sx={{ width: "100%" }}>
-			<Paper sx={{ width: "100%", mb: 2 }}>
-				<SearchBar
-					value={searched}
-					onChange={(searchVal: string) => requestSearch(searchVal)}
-					onCancelSearch={() => cancelSearch()}
-					placeholder={"Wyszukaj"}
-				/>
-				<TableContainer>
-					<Table
-						sx={{ minWidth: 750 }}
-						aria-labelledby="tableTitle"
-						size="small">
-						<EnhancedTableHead
-							order={order}
-							orderBy={orderBy}
-							onRequestSort={handleRequestSort}
-						/>
-						<TableBody>
-							{filteredRows
-								.slice()
-								.sort(getComparator(order, orderBy))
-								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								.map((row: StudentFormRow) => {
-									return (
-										<TableRow hover tabIndex={-1} key={row.formId}>
-											<TableCell align="left">{row.firstName}</TableCell>
-											<TableCell align="left">{row.lastName}</TableCell>
-											<TableCell align="left">{row.major}</TableCell>
-											<TableCell align="left">{row.faculty}</TableCell>
-											<TableCell align="left">
-												{row.contractCoordinator}
-											</TableCell>
-											<TableCell align="left">{row.priority}</TableCell>
-											<TableCell align="left">
-												{renderOneDriveLink(row.link)}
-											</TableCell>
-										</TableRow>
-									);
-								})}
-							{emptyRows > 0 && (
-								<TableRow
-									style={{
-										height: 33 * emptyRows,
-									}}>
-									<TableCell colSpan={6} />
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[10, 25, 50]}
-					component="div"
-					count={rows.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
-			</Paper>
-		</Box>
+		<Paper sx={{ width: "100%", mb: 2 }}>
+			<SearchBar
+				value={searched}
+				onChange={(searchVal: string) => requestSearch(searchVal)}
+				onCancelSearch={() => cancelSearch()}
+				placeholder={"Wyszukaj"}
+			/>
+			<TableContainer component="span">
+				<Table
+					sx={{ minWidth: "100%" }}
+					aria-labelledby="tableTitle"
+					size="small">
+					<EnhancedTableHead
+						order={order}
+						orderBy={orderBy}
+						onRequestSort={handleRequestSort}
+					/>
+					<TableBody>
+						{filteredRows
+							.slice()
+							.sort(getComparator(order, orderBy))
+							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+							.map((row: StudentFormRow) => {
+								return (
+									<TableRow hover tabIndex={-1} key={row.formId}>
+										<TableCell align="left">{row.firstName}</TableCell>
+										<TableCell align="left">{row.lastName}</TableCell>
+										<TableCell align="left">{row.major}</TableCell>
+										<TableCell align="left">{row.faculty}</TableCell>
+										<TableCell align="left">
+											{row.contractCoordinator}
+										</TableCell>
+										<TableCell align="left">{row.priority}</TableCell>
+										<TableCell align="left">
+											{renderOneDriveLink(row.link)}
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						{emptyRows > 0 && (
+							<TableRow
+								style={{
+									height: 33 * emptyRows,
+								}}>
+								<TableCell colSpan={6} />
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+			</TableContainer>
+			<TablePagination
+				rowsPerPageOptions={[10, 25, 50]}
+				component="div"
+				count={rows.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
+			/>
+		</Paper>
 	);
 }
