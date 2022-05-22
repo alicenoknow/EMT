@@ -1,6 +1,5 @@
 import React, { SyntheticEvent, useState } from "react";
 import { Tabs, Tab, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { getUserCredentials } from "../services/auth.service";
 import "./UserPage.scss";
 import {

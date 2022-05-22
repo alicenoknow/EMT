@@ -40,7 +40,11 @@ export default function AdminResults(props: AdminResultsProps) {
 	return (
 		<div className="results">
 			<h4>Wyniki rekrutacji:</h4>
-			<a className="document__link" href={excelLink ?? props.resultsLink}>
+			<a
+				className="document__link"
+				href={excelLink ?? props.resultsLink}
+				target="_blank"
+				rel="noreferrer">
 				{"Pobierz plik (.xlsx)"}
 			</a>
 			<div className="document__line" />
