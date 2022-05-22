@@ -1,12 +1,24 @@
 import React, { useRef, useState } from "react";
-import { Container, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "./AdminSettings.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function AdminSettings() {
-	const [startDate, setStartDate] = useState<Date | null>(null);
-	const [endDate, setEndDate] = useState<Date | null>();
+interface AdminSettingsProps {
+	config?: {
+		startDate?: Date;
+		endDate?: Date;
+		defaultPDFLink?: string;
+	};
+}
+
+type MaybeDate = Date | undefined | null;
+
+export default function AdminSettings(props: AdminSettingsProps) {
+	const [startDate, setStartDate] = useState<MaybeDate>(
+		props?.config?.startDate,
+	);
+	const [endDate, setEndDate] = useState<MaybeDate>(props?.config?.endDate);
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 	const [form, setForm] = useState();
 
@@ -20,6 +32,12 @@ export default function AdminSettings() {
 			setUploadedFileName(inputRef.current.files[0].name);
 	};
 	const handleFileSend = () => {
+		// TODO send default pdf
+		return 0;
+	};
+
+	const handleDateChange = () => {
+		// TODO handle date update
 		return 0;
 	};
 
@@ -34,9 +52,9 @@ export default function AdminSettings() {
 				<DatePicker onChange={setEndDate} selected={endDate} />
 			</div>
 			<Button
-				onClick={handleFileSend}
+				onClick={handleDateChange}
 				className={"send__button"}
-				disabled={!uploadedFileName}>
+				disabled={!!endDate && !!startDate}>
 				Zatwierdź
 			</Button>
 			<div className="document__line" />

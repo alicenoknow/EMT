@@ -1,123 +1,43 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Paper from "@mui/material/Paper";
-import { visuallyHidden } from "@mui/utils";
-import { getComparator, Order } from "./utils/tableUtils";
+import {
+	Box,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TablePagination,
+	TableRow,
+	TableSortLabel,
+	Paper,
+} from "@mui/material";
 import { Button } from "react-bootstrap";
 import SearchBar from "material-ui-search-bar";
+import { visuallyHidden } from "@mui/utils";
+import {
+	CustomTableHeadProps,
+	getComparator,
+	headCells,
+	Order,
+	rows,
+} from "./tableUtils";
+import { StudentFormRecord } from "../../types/admin";
 
-interface StudentFormRow {
-	firstName: string;
-	lastName: string;
-	major: string;
-	faculty: string;
-	contractCoordinator: string;
-	priority: number;
-	link: string;
-	formId: string;
+interface AdminTableProps {
+	data?: StudentFormRecord[];
 }
 
-const renderOneDriveLink = (destination: string) => (
+export const renderOneDriveLink = (destination: string) => (
 	<Button className="table__button" variant="link" href={destination}>
 		Ankieta Rekrutacyjna
 	</Button>
 );
 
-function createData(
-	firstName: string,
-	lastName: string,
-	major: string,
-	faculty: string,
-	contractCoordinator: string,
-	priority: number,
-	link: string,
-	formId: string,
-): StudentFormRow {
-	return {
-		firstName,
-		lastName,
-		major,
-		faculty,
-		contractCoordinator,
-		priority,
-		link,
-		formId,
-	};
-}
-
-interface HeadCell {
-	disablePadding: boolean;
-	id: keyof StudentFormRow;
-	label: string;
-	numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-	{
-		id: "firstName",
-		numeric: false,
-		disablePadding: true,
-		label: "Imię",
-	},
-	{
-		id: "lastName",
-		numeric: false,
-		disablePadding: false,
-		label: "Nazwisko",
-	},
-	{
-		id: "major",
-		numeric: false,
-		disablePadding: false,
-		label: "Kierunek",
-	},
-	{
-		id: "faculty",
-		numeric: false,
-		disablePadding: false,
-		label: "Wydział",
-	},
-	{
-		id: "contractCoordinator",
-		numeric: false,
-		disablePadding: false,
-		label: "Koordynator umowy",
-	},
-	{
-		id: "priority",
-		numeric: true,
-		disablePadding: false,
-		label: "Priorytet",
-	},
-	{
-		id: "link",
-		numeric: false,
-		disablePadding: false,
-		label: "Dokumenty",
-	},
-];
-
-interface EnhancedTableProps {
-	onRequestSort: (
-		event: React.MouseEvent<unknown>,
-		property: keyof StudentFormRow,
-	) => void;
-	order: Order;
-	orderBy: string;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
+export function CustomTableHead(props: CustomTableHeadProps) {
 	const { order, orderBy, onRequestSort } = props;
 	const createSortHandler =
-		(property: keyof StudentFormRow) => (event: React.MouseEvent<unknown>) => {
+		(property: keyof StudentFormRecord) =>
+		(event: React.MouseEvent<unknown>) => {
 			onRequestSort(event, property);
 		};
 
@@ -147,40 +67,17 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 	);
 }
 
-const rows = [
-	{
-		firstName: "Jan",
-		lastName: "Kowalski",
-		major: "Informatyka",
-		faculty: "WIEiT",
-		contractCoordinator: "Anna Nowak",
-		priority: 420,
-		link: "https://www.youtube.com/watch?v=BRiaWEHjUM0&ab_channel=Momentprawdy",
-		formId: "xd",
-	},
-	{
-		firstName: "John",
-		lastName: "Doe",
-		major: "Cyberbezpieczeństwo",
-		faculty: "WIEiT",
-		contractCoordinator: "Bartosz Nowak",
-		priority: 69,
-		link: "https://www.youtube.com/watch?v=BRiaWEHjUM0&ab_channel=Momentprawdy",
-		formId: "lol",
-	},
-];
-
-export default function AdminTable() {
+export default function AdminTable(props: AdminTableProps) {
 	const [order, setOrder] = useState<Order>("asc");
-	const [orderBy, setOrderBy] = useState<keyof StudentFormRow>("lastName");
+	const [orderBy, setOrderBy] = useState<keyof StudentFormRecord>("lastName");
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [searched, setSearched] = useState<string>("");
-	const [filteredRows, setRows] = useState<StudentFormRow[]>(rows);
+	const [filteredRows, setRows] = useState<StudentFormRecord[]>(rows);
 
 	const handleRequestSort = (
 		_event: React.MouseEvent<unknown>,
-		property: keyof StudentFormRow,
+		property: keyof StudentFormRecord,
 	) => {
 		const isAsc = orderBy === property && order === "asc";
 		setOrder(isAsc ? "desc" : "asc");
@@ -199,7 +96,11 @@ export default function AdminTable() {
 	};
 
 	const requestSearch = (searchedVal: string) => {
-		const filteredRows = rows.filter(row => {
+		if (!props.data) {
+			return setRows([]);
+		}
+
+		const filteredRows = props.data.filter(row => {
 			return (
 				row.firstName.toLowerCase().includes(searchedVal.toLowerCase()) ||
 				row.lastName.toLowerCase().includes(searchedVal.toLowerCase()) ||
@@ -222,19 +123,16 @@ export default function AdminTable() {
 		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
 	return (
-		<Paper sx={{ width: "100%", mb: 2 }}>
+		<Paper>
 			<SearchBar
 				value={searched}
 				onChange={(searchVal: string) => requestSearch(searchVal)}
 				onCancelSearch={() => cancelSearch()}
 				placeholder={"Wyszukaj"}
 			/>
-			<TableContainer component="span">
-				<Table
-					sx={{ minWidth: "100%" }}
-					aria-labelledby="tableTitle"
-					size="small">
-					<EnhancedTableHead
+			<TableContainer>
+				<Table aria-labelledby="form-table" size="small">
+					<CustomTableHead
 						order={order}
 						orderBy={orderBy}
 						onRequestSort={handleRequestSort}
@@ -244,7 +142,7 @@ export default function AdminTable() {
 							.slice()
 							.sort(getComparator(order, orderBy))
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-							.map((row: StudentFormRow) => {
+							.map((row: StudentFormRecord) => {
 								return (
 									<TableRow hover tabIndex={-1} key={row.formId}>
 										<TableCell align="left">{row.firstName}</TableCell>

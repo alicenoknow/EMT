@@ -10,3 +10,9 @@
 .tab {
 	padding: 10px !important;
 }
+
+.tab__box {
+	display: flex;
+	flex: 1;
+	max-width: 80%;
+}
