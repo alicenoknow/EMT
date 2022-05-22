@@ -1,41 +1,63 @@
 import axios from "axios";
-import { LoginResponse } from "./types";
+import  FileDownload from 'js-file-download';
 
 axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const ROOT_API = "http://localhost:8080/api";
-const LOGIN_API = "/auth/login";
-const REGISTER_API = "/auth/register";
+const ROOT_API = "http://localhost:8080/api/recruitment-form/";
+const TEMPLATE_FORM_API = "default";
+const SEND_FORM_API = "my-form";
+const SEND_FORM_SCAN_API = "my-form/scan/";
 
-export const register = (email: string, password: string) => {
-	return axios.post(ROOT_API + REGISTER_API, {
-		email,
-		password,
-	});
-};
-
-export const login = (
-	email: string,
-	password: string,
-): Promise<LoginResponse> => {
-	return axios
-		.post(ROOT_API + LOGIN_API, {
-			email,
-			password,
-		})
-		.catch(function (error) {
-			console.log(error.toJSON());
-			return undefined;
-		})
-		.then(response => {
-			if (response?.data?.token) {
-				localStorage.setItem("user", JSON.stringify(response.data));
-			}
-			return response?.data;
-		});
-};
-
-export const logout = () => {
-	localStorage.removeItem("user");
-};
+export const getTemplate = (
+	): Promise<void> => {
+		const tokenStr = JSON.parse(String(localStorage.getItem('user')))?.token;
+		
+		return axios
+			.get(ROOT_API + TEMPLATE_FORM_API, { 
+				headers: {
+					"Authorization" : `Bearer ${tokenStr}`
+				},
+				responseType: 'blob' 
+			})
+			.catch(function (error) {
+				console.log(error.toJSON());
+				return undefined;
+			})
+			.then(response => {
+				if (response?.data) {
+					FileDownload(response.data, 'AnkietaRekrutacyjnaErasmus2022-wzor.pdf');
+				}
+			});
+	};
+	export const sendFilledPdf = (
+		pdf:FormData
+		): Promise<number> => {
+			const tokenStr = JSON.parse(String(localStorage.getItem('user')))?.token;
+			
+			// return axios
+			// 	.post(ROOT_API + SEND_FORM_API, 
+			// 		pdf
+			// 	,{ 
+			// 		headers: {
+			// 			"Authorization" : `Bearer ${tokenStr}`
+			// 		}
+			// 	})
+			return axios({
+				method: "post",
+				url: ROOT_API + SEND_FORM_API,
+				data: pdf,
+				headers: { "Content-Type": "multipart/form-data",
+				"Authorization" : `Bearer ${tokenStr}` },
+			})
+				.catch(function (error) {
+					console.log(error.toJSON());
+					return undefined;
+				})
+				.then(response => {
+					if (response?.data?.id) {
+						return response?.data?.id
+					}
+					return undefined;
+				});
+		};

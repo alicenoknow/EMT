@@ -19,6 +19,10 @@ public class RecruitmentFormDoubleInfoDTO {
     String oneDriveScanLink;
     String oneDriveScanPath;
     String oneDriveScanId;
+    String surname;
+    String name;
+    String faculty;
+    String coordinator;
     LocalDateTime timeAdded;
     LocalDateTime timeLastModified;
 
@@ -33,5 +37,9 @@ public class RecruitmentFormDoubleInfoDTO {
         oneDriveScanId = recruitmentForm.getOneDriveScanId();
         timeAdded = recruitmentForm.getTimeAdded();
         timeLastModified = recruitmentForm.getTimeLastModified();
+        surname = recruitmentForm.getSurname();
+        name = recruitmentForm.getName();
+        faculty = recruitmentForm.getFaculty();
+        coordinator = recruitmentForm.getCoordinator();
     }
 }

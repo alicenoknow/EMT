@@ -10,13 +10,17 @@ import com.agh.emt.service.authentication.UserCredentialsService;
 import com.agh.emt.service.one_drive.OneDriveConnectionException;
 import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.one_drive.PostFileDTO;
+import com.agh.emt.service.pdf_parser.PdfData;
+import com.agh.emt.service.pdf_parser.PdfParserService;
 import com.agh.emt.service.student.StudentNotFoundException;
+import com.agh.emt.utils.form.Faculty;
 import com.agh.emt.utils.ranking.RankUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,27 +32,29 @@ public class RecruitmentFormService {
     private final RecruitmentFormRepository recruitmentFormRepository;
     private final UserRepository userRepository;
     private final OneDriveService oneDriveService;
+    private final PdfParserService pdfParserService;
 
     private static final int MAX_RECUITMENT_FORMS_PER_STUDENT = 2;
     private static final String DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK = "wzor/AnkietaRekrutacyjnaErasmus2022.pdf";
 
     public List<RecruitmentFormDoubleInfoDTO> findAllPreviews() {
-        List<RecruitmentFormDoubleInfoDTO> recruitmentFormPreviews = recruitmentFormRepository.findAllProjectedBy();
+        List<RecruitmentFormDoubleInfoDTO> recruitmentFormPreviews = recruitmentFormRepository.findAll().stream().map(RecruitmentFormDoubleInfoDTO::new).toList();
 
         List<RecruitmentFormDoubleInfoDTO> result = new LinkedList<>();
 
-        byte[] pdf;
-        double rank = 0;
+//        byte[] pdf;
+//        double rank = 0;
         for (var recruitmentFormPreview: recruitmentFormPreviews) {
-            try {
-                pdf = oneDriveService.getRecruitmentDocumentFromPath("somePath");
-                rank = RankUtils.getRank(pdf);
-            } catch (RecruitmentFormNotFoundException e) {
-                e.printStackTrace();
-            } finally {
-//                result.add(new RecruitmentFormPreviewDTO(recruitmentFormPreview, rank));
-                result.add(recruitmentFormPreview);
-            }
+//            try {
+//                pdf = oneDriveService.getRecruitmentDocumentFromPath("somePath");
+//                rank = RankUtils.getRank(pdf);
+//            } catch (RecruitmentFormNotFoundException e) {
+//                e.printStackTrace();
+//            } finally {
+////                result.add(new RecruitmentFormPreviewDTO(recruitmentFormPreview, rank));
+//
+//            }
+            result.add(recruitmentFormPreview);
         }
         return result;
     }
@@ -165,6 +171,20 @@ public class RecruitmentFormService {
             //.......................................
             //TODO: attach parser service to get name, surname, department and main coordinator
             //.......................................
+
+            try {
+                PdfData pdfData = pdfParserService.getDataFromPdf(recruitmentFormDTO.getPdf());
+                recruitmentForm.setSurname(pdfData.surname());
+                recruitmentForm.setName(pdfData.name());
+                recruitmentForm.setFaculty(pdfData.faculty());
+                recruitmentForm.setCoordinator(pdfData.coordinator());
+
+                student.setFaculty(Faculty.valueOf(pdfData.faculty()));
+                student.setFirstName(pdfData.name());
+                student.setLastName(pdfData.surname());
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         recruitmentForm.setPriority(recruitmentFormDTO.getPriority());
         recruitmentFormRepository.save(recruitmentForm);

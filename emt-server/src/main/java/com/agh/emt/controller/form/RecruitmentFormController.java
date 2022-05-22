@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/recruitment-form")
+@CrossOrigin("http://localhost:3000/")
 @AllArgsConstructor
 public class RecruitmentFormController {
     private final RecruitmentFormService recruitmentFormService;

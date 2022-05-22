@@ -77,3 +77,23 @@
 		outline: none !important;
 	}
 }
+
+.download__button {
+	background-color: $downloadColor !important;
+    border-color: $downloadColor !important;
+	margin: 1rem 1rem;
+	cursor: pointer;
+
+	&:disabled {
+		background-color: $downloadColor !important;
+		border-color: $downloadColor !important;
+		opacity: 0.6;
+	}
+
+	&:hover {
+        background-color: $onSecondary !important;
+		border-color: $secondary !important;
+		color: $secondary !important;
+		outline: none !important;
+	}
+}
