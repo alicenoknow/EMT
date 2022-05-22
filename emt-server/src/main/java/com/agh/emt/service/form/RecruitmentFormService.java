@@ -32,10 +32,10 @@ public class RecruitmentFormService {
     private static final int MAX_RECUITMENT_FORMS_PER_STUDENT = 2;
     private static final String DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK = "wzor/AnkietaRekrutacyjnaErasmus2022.pdf";
 
-    public List<RecruitmentFormPreviewDTO> findAllPreviews() {
-        List<RecruitmentFormPreview> recruitmentFormPreviews = recruitmentFormRepository.findAllProjectedBy();
+    public List<RecruitmentFormDoubleInfoDTO> findAllPreviews() {
+        List<RecruitmentFormDoubleInfoDTO> recruitmentFormPreviews = recruitmentFormRepository.findAllProjectedBy();
 
-        List<RecruitmentFormPreviewDTO> result = new LinkedList<>();
+        List<RecruitmentFormDoubleInfoDTO> result = new LinkedList<>();
 
         byte[] pdf;
         double rank = 0;
@@ -46,7 +46,8 @@ public class RecruitmentFormService {
             } catch (RecruitmentFormNotFoundException e) {
                 e.printStackTrace();
             } finally {
-                result.add(new RecruitmentFormPreviewDTO(recruitmentFormPreview, rank));
+//                result.add(new RecruitmentFormPreviewDTO(recruitmentFormPreview, rank));
+                result.add(recruitmentFormPreview);
             }
         }
         return result;

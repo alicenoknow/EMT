@@ -26,7 +26,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/form-list")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<List<RecruitmentFormPreviewDTO>> findAllPreviews() {
+    ResponseEntity<List<RecruitmentFormDoubleInfoDTO>> findAllPreviews() {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
