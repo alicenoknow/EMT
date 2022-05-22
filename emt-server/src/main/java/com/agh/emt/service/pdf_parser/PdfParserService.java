@@ -49,8 +49,10 @@ public class PdfParserService {
                                       jsonObject.getString("Koordynator Wydzia#C5#82owy"));
 
         // delete temp folder
-        FileUtils.deleteDirectory(tempPdf);
-        FileUtils.deleteDirectory(tempJson);
+//        FileUtils.deleteDirectory(tempPdf);
+//        FileUtils.deleteDirectory(tempJson);
+        (new File(".tempJson/temp_form.json")).delete();
+        (new File(".tempPdf/temp")).delete();
 
         // return result
         return pdfData;
@@ -66,9 +68,12 @@ public class PdfParserService {
         // write pdfs to folder
         int i = 0;
         for (byte[] pdf : pdfs) {
+            getDataFromPdf(pdf);
             FileUtils.writeByteArrayToFile(new File(".tempPdf/" + Integer.toString(i)), pdf);
             ++i;
         }
+
+
 
         // convert pdf to json
         String[] command = {"python",
@@ -79,13 +84,17 @@ public class PdfParserService {
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
 
+        System.out.println(new String(process.getErrorStream().readAllBytes()));
+        System.out.println("Exit value: " + process.exitValue());
+        System.out.println(new String(process.getInputStream().readAllBytes()));
+
         // read csv
         byte[] csvData = Files.readAllBytes(Path.of(".temp.csv"));
 
         // delete temp files
-        FileUtils.deleteDirectory(tempPdf);
-        FileUtils.deleteDirectory(tempJson);
-        (new File(".temp.csv")).delete();
+//        FileUtils.deleteDirectory(tempPdf);
+//        FileUtils.deleteDirectory(tempJson);
+//        (new File(".temp.csv")).delete();
 
         // return result
         return csvData;

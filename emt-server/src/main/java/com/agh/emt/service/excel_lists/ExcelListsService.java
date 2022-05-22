@@ -37,13 +37,15 @@ public class ExcelListsService {
         //.......................................
         //TODO: attach parser service to generate
         //.......................................
+
+        byte[] excelRecruitmentResultList  = "".getBytes(StandardCharsets.UTF_8);
         try {
-            pdfParserService.parserPdfsToExcel(recruitmentFormsPdfs);
+            excelRecruitmentResultList = pdfParserService.parserPdfsToExcel(recruitmentFormsPdfs);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
-        byte[] excelRecruitmentResultList = "".getBytes(StandardCharsets.UTF_8); //mock
+//        byte[] excelRecruitmentResultList = "".getBytes(StandardCharsets.UTF_8); //mock
 
         return oneDriveService.postRecruitmentDocument(RESULT_EXCEL_PATH,excelRecruitmentResultList);
 
