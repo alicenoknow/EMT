@@ -21,6 +21,7 @@ def convert_pdf_from_file_to_dict(fname):
 	for key in res.keys():
 		val = res[key][pdf_format_value_marker]
 		result[key] = val
+	# -*- coding: utf-8 -*-
 	print(result)
 	return result
 
