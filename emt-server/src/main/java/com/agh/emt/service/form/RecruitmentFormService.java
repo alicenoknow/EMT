@@ -116,15 +116,23 @@ public class RecruitmentFormService {
     }
 
     private boolean removeRecruitmentFormWithIdenticalPriority(User student, RecruitmentFormDTO recruitmentFormDTO){
+
+        System.out.println("START");
+        if(recruitmentFormDTO.getIsScan())
+            return false;
         RecruitmentForm formId = student.getRecruitmentForms().stream()
-                .filter(recruitmentForm -> recruitmentForm.getPriority().equals(recruitmentFormDTO.getPriority())).
+                .filter(recruitmentForm -> {
+                    return recruitmentFormDTO.getPriority().equals(recruitmentForm.getPriority());
+                }).
                 findFirst().orElse(null);
-        System.out.println(formId);
-        student.getRecruitmentForms().removeIf(recruitmentForm -> recruitmentForm.getPriority().equals(recruitmentFormDTO.getPriority()));
+
+        student.getRecruitmentForms().removeIf(recruitmentForm -> (recruitmentForm!=null && recruitmentFormDTO.getPriority().equals(recruitmentForm.getPriority())));
         student = userRepository.save(student);
-        if(formId!=null)
-            return recruitmentFormRepository.findAll()
-                .removeIf(recruitmentForm1 -> recruitmentForm1.getId().equals(formId.getId()));
+        if(formId!=null){
+            recruitmentFormRepository.deleteById(formId.getId());
+            return true;
+        }
+
         return  false;
     }
 
@@ -133,10 +141,15 @@ public class RecruitmentFormService {
 
         User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
-        removeRecruitmentFormWithIdenticalPriority(student,recruitmentFormDTO);
+        try{
+            removeRecruitmentFormWithIdenticalPriority(student,recruitmentFormDTO);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
         if ((student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT ||
-                recruitmentFormDTO.getPriority()>MAX_RECUITMENT_FORMS_PER_STUDENT ) && recruitmentFormDTO.getIsScan()) {
+                recruitmentFormDTO.getPriority()>MAX_RECUITMENT_FORMS_PER_STUDENT ) && !recruitmentFormDTO.getIsScan()) {
             throw new RecruitmentFormLimitExceededException("Przekroczono limit zgłoszeń dla studenta: " + student.getEmail());
         }
 
@@ -191,12 +204,7 @@ public class RecruitmentFormService {
         }
         recruitmentForm.setPriority(recruitmentFormDTO.getPriority());
         recruitmentFormRepository.save(recruitmentForm);
-
-
-
         userRepository.save(student);
-
-
 
         return new RecruitmentFormDTO(recruitmentForm,recruitmentFormDTO.getPdf(),recruitmentFormDTO.getIsScan());
     }

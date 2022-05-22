@@ -98,7 +98,7 @@ def generate_rank(json_directory, rank_file_name):
 	for user in users:
 		# print(8*get_gpa(user['GPA']))
 		# print(get_cert_points(user['certificate_type']))
-		user['rank_score'] = 8*get_gpa(user['GPA']) + get_cert_points(user['exam_level'])+ get_faculty_points(user['faculty'])+ get_extra_activity_points(user['activity'])- get_late_points(user['being_late'])
+		user['rank_score'] = 8*get_gpa(user['srednia']) + get_cert_points(user['Poziom Egzaminu'])+ get_faculty_points(user['Wydzial'])#+ get_extra_activity_points(user['activity'])- get_late_points(user['being_late'])
 	users.sort(key = lambda user: user['rank_score'], reverse = True)
 	cols = users[0].keys()
 	with open(rank_file_name, 'w') as csvfile:
@@ -111,11 +111,12 @@ def generate_rank(json_directory, rank_file_name):
 # HOW TO USE?
 # python3 pdf_form_extractor.py path_to_save_csv path_to_load_pdfs path_to_save_jsons
 
+print(sys.argv)
 # place where to save each of created json
-result_path = sys.argv[4]
+result_path = sys.argv[3]
 # path where to load each pdf from
-pdf_path = sys.argv[3]
-csv_path = sys.argv[2]
+pdf_path = sys.argv[2]
+csv_path = sys.argv[1]
 
 # execution flow
 
