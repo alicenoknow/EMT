@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Container, Button } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import "./DocumentPage.scss";
 
 interface DocumentPageProps {
@@ -9,10 +10,15 @@ interface DocumentPageProps {
 	docLink: string;
 }
 
+interface LocationParams {
+	firstChoice: boolean;
+}
+
 export default function DocumentPage(props: DocumentPageProps) {
 	const [isFilled, setFilled] = useState<boolean>(props.isFilled);
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const location = useLocation();
 
 	const { isAvailable, docName, docLink } = props;
 
@@ -25,6 +31,17 @@ export default function DocumentPage(props: DocumentPageProps) {
 	};
 	const handleFileSend = () => {
 		setFilled(true);
+		// TODO: based on firstChoice and file, send form
+	};
+
+	const renderHeader = () => {
+		return (
+			<h1>{`${docName} - ${
+				(location.state as LocationParams).firstChoice
+					? "pierwszy wybór"
+					: "drugi wybór"
+			}`}</h1>
+		);
 	};
 
 	if (!isAvailable) {
@@ -35,7 +52,7 @@ export default function DocumentPage(props: DocumentPageProps) {
 	return (
 		<div className="document">
 			<Container fluid className="p-0">
-				<h1>{docName}</h1>
+				{renderHeader()}
 				<div className="document__container">
 					<h4>Pobierz dokument:</h4>
 					<a className="document__link" href={docLink}>
@@ -51,18 +68,19 @@ export default function DocumentPage(props: DocumentPageProps) {
 							className="d-none"
 							type="file"
 						/>
-						<Button
-							onClick={handleUpload}
-							className="upload__button">
+						<Button onClick={handleUpload} className="upload__button">
 							{uploadedFileName ? uploadedFileName : "Wybierz"}
 						</Button>
 					</div>
-                    <div className="document__line" />
-                    <div className="send_container">
-					<Button onClick={handleFileSend} className={"send__button"} disabled={!uploadedFileName}>
-						Prześlij dokument
-					</Button>
-                    </div>
+					<div className="document__line" />
+					<div className="send_container">
+						<Button
+							onClick={handleFileSend}
+							className={"send__button"}
+							disabled={!uploadedFileName}>
+							Prześlij dokument
+						</Button>
+					</div>
 				</div>
 			</Container>
 		</div>

@@ -1,0 +1,29 @@
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "../../style/colors";
+
+.settings {
+	height: 100%;
+	width: 80vw;
+	align-items: center;
+}
+
+.confirm__button {
+	background-color: $secondary !important;
+	color: $onSecondary !important;
+	border-color: $secondary !important;
+	margin: auto;
+	margin-top: 1rem;
+	transition: color 0.4s ease-in-out background-color 0.4s ease-in-out;
+	cursor: pointer;
+
+	&:hover {
+		background-color: $onPrimary !important;
+		border-color: $secondary !important;
+		color: $secondary !important;
+		cursor: pointer;
+	}
+}
+
+.data__container {
+	padding: 15px;
+}

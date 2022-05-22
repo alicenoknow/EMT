@@ -1,0 +1,18 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../style/colors";
+
+.admin {
+	height: 100%;
+	align-content: center;
+	padding-top: 5vh;
+}
+
+.tab {
+	padding: 10px !important;
+}
+
+.tab__box {
+	display: flex;
+	flex: 1;
+	max-width: 80%;
+}

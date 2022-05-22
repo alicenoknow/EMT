@@ -8,6 +8,7 @@ import DocumentPage from "./pages/DocumentPage";
 import UserPage from "./pages/UserPage";
 import { store } from "./redux/store";
 import UserLogin from "./pages/UserLogin";
+import AdminPage from "./pages/AdminPage";
 
 ReactDOM.render(
 	<React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.render(
 						<Route path="/" element={<App />} />
 						<Route path="/login/user" element={<UserLogin />} />
 						<Route path="/user" element={<UserPage />} />
+						<Route path="/admin" element={<AdminPage />} />
 						<Route
 							path="/form"
 							element={

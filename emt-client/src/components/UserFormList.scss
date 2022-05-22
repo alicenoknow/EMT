@@ -1,0 +1,16 @@
+@import "../style/colors";
+
+.list__item {
+	background-color: $onPrimary !important;
+	color: $primary !important;
+	border-color: $onPrimary !important;
+	margin: 1rem 1rem;
+
+	cursor: pointer;
+
+	&:hover {
+		background-color: $transparentBackground !important;
+		border-color: $onPrimary !important;
+		color: $primary !important;
+	}
+}
