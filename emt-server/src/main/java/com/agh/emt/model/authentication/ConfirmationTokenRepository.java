@@ -1,4 +1,4 @@
-package com.agh.emt.model.confirmation_token;
+package com.agh.emt.model.authentication;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

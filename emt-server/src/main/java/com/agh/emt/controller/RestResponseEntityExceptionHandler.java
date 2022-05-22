@@ -3,10 +3,11 @@ package com.agh.emt.controller;
 import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.authentication.UserAlreadyExistException;
 import com.agh.emt.service.authentication.UserNotEnabledException;
-import com.agh.emt.service.authentication.email_sender.NoSuchConfirmationTokenException;
+import com.agh.emt.service.email_sender.NoSuchConfirmationTokenException;
 import com.agh.emt.service.form.RecruitmentFormExistsException;
 import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.agh.emt.service.news.NewsNotFoundException;
+import com.agh.emt.service.one_drive.OneDriveConnectionException;
 import com.agh.emt.service.student.StudentNotFoundException;
 import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,11 @@ public class RestResponseEntityExceptionHandler
     @ExceptionHandler(NewsNotFoundException.class)
     protected ResponseEntity<String> handleNewsNotFoundException(NewsNotFoundException ex) {
         return ResponseEntity.status(520).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(OneDriveConnectionException.class)
+    protected ResponseEntity<String> handleOneDriveConnectionException(OneDriveConnectionException ex) {
+        return ResponseEntity.status(521).body(ex.getMessage());
     }
 
     @ExceptionHandler()

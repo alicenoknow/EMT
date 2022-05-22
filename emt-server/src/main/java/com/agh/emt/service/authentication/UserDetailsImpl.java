@@ -1,6 +1,6 @@
 package com.agh.emt.service.authentication;
 
-import com.agh.emt.model.authentication.UserCredentials;
+import com.agh.emt.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -37,12 +37,12 @@ public class UserDetailsImpl implements UserDetails {
         return authorities;
     }
 
-    public static UserDetailsImpl build(UserCredentials userCredentials) {
+    public static UserDetailsImpl build(User user) {
         return new UserDetailsImpl(
-                userCredentials.getId(),
-                userCredentials.getEmail(),
-                userCredentials.getPassword(),
-                List.of(new SimpleGrantedAuthority( userCredentials.getRole().name()))
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                List.of(new SimpleGrantedAuthority( user.getRole().name()))
         );
     }
 
