@@ -28,7 +28,11 @@ interface AdminTableProps {
 
 export const renderOneDriveLink = (destination: string) => {
 	return (
-		<Button className="table__button" variant="link" href={destination}>
+		<Button
+			className="table__button"
+			variant="link"
+			href={destination}
+			target="_blank">
 			Ankieta Rekrutacyjna
 		</Button>
 	);

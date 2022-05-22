@@ -39,19 +39,5 @@ export default function UserFormList() {
 				</ListItem>
 			</List>
 		</div>
-
-		// <Button
-		// 	variant="link"
-		// 	onClick={}>
-		// 	Ankieta rekrutacyjna
-		// </Button>
-		// <hr />
-		// <Button
-		// 	variant="link"
-		// 	onClick={() => {
-		// 		navigate("/form");
-		// 	}}>
-		// 	Ankieta rekrutacyjna
-		// </Button>
 	);
 }
