@@ -20,6 +20,10 @@ public class RecruitmentForm {
     private String oneDriveScanPath;
     private String oneDriveScanId;
     private Integer priority;
+    private String surname;
+    private String name;
+    private String faculty;
+    private String coordinator;
     private LocalDateTime timeAdded = LocalDateTime.now();
     private LocalDateTime timeLastModified = LocalDateTime.now();
 

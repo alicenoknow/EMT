@@ -17,6 +17,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/excel-lists")
+@CrossOrigin("http://localhost:3000/")
 @AllArgsConstructor
 public class ExcelListsController {
     ExcelListsService excelListsService;

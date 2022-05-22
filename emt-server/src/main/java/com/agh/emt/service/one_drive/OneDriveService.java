@@ -123,7 +123,7 @@ public class OneDriveService {
         RestTemplate restTemplate = new RestTemplate();
         var response  = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, String.class);
         System.out.println(response.getBody());
-        if (response.getStatusCode() == HttpStatus.CREATED) {
+        if (response.getStatusCode() == HttpStatus.CREATED || response.getStatusCode() == HttpStatus.OK) {
 
             return new PostFileDTO((String) new JSONObject(response.getBody()).get("webUrl"),
                     filePath,

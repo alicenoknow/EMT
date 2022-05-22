@@ -9,13 +9,17 @@ export interface StudentFormRecord {
 	formId: string;
 }
 
-export interface AdminQueryData {
-	data: {
-		formList?: StudentFormRecord[];
-		config?: {
-			startDate?: Date;
-			endDate?: Date;
-			defaultPDFLink?: string;
-		};
-	};
+export interface FormApiListRecord {
+	id: string;
+	timeAdded: Date;
+	timeLastModified: Date;
+	rankingPoints: number;
+	firstName: string;
+	lastName: string;
+	major: string;
+	faculty: string;
+	contractCoordinator: string;
+	priority: number;
+	oneDriveFormLink: string;
+	oneDriveLinkScan: string;
 }

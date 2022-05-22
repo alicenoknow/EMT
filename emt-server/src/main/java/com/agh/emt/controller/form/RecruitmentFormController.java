@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/recruitment-form")
+@CrossOrigin("http://localhost:3000/")
 @AllArgsConstructor
 public class RecruitmentFormController {
     private final RecruitmentFormService recruitmentFormService;
@@ -26,7 +27,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/form-list")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<List<RecruitmentFormPreviewDTO>> findAllPreviews() {
+    ResponseEntity<List<RecruitmentFormDoubleInfoDTO>> findAllPreviews() {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
@@ -114,10 +115,10 @@ public class RecruitmentFormController {
         return getResponseForDefaultPdf(contents);
     }
 
-    @PostMapping("/default")
+    @RequestMapping(value = "/default" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<byte[]> addDefaultRecruitmentForm(@RequestBody byte[] pdf) throws RecruitmentFormNotFoundException {
-        byte[] contents = recruitmentFormService.addDefaultRecruitmentForm(pdf);
+    ResponseEntity<byte[]> addDefaultRecruitmentForm(@RequestParam("pdf") MultipartFile pdf) throws RecruitmentFormNotFoundException, IOException {
+        byte[] contents = recruitmentFormService.addDefaultRecruitmentForm(pdf.getBytes());
         return getResponseForDefaultPdf(contents);
     }
 

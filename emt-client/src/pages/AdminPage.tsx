@@ -12,24 +12,48 @@ import {
 	TabPanel,
 	TabStyle,
 } from "./utils/adminUtils";
-import { AdminQueryData } from "../types/admin";
+import { FormApiListRecord, StudentFormRecord } from "../types/admin";
 import Loading from "../components/Loading";
 import "./AdminPage.scss";
+import { getFormList, getResults } from "../services/admin.service";
 
 export default function AdminPage() {
 	const [tabIndex, setTabIndex] = useState<number>(0);
-	const [adminData, setAdminData] = useState<AdminQueryData | undefined>();
+	const [resultsLink, setResultsLink] = useState<string | undefined>();
+	const [formList, setFormList] = useState<StudentFormRecord[] | undefined>();
 
 	useEffect(() => {
-		//TODO fetch data about admin (see: AdminQueryData)
-		setAdminData(undefined);
+		fetchResultsLink();
+		fetchFormList();
 	}, []);
+
+	const fetchResultsLink = async () => {
+		const result = await getResults();
+		setResultsLink(result.oneDriveLink);
+	};
+
+	const fetchFormList = async () => {
+		const result = await getFormList();
+		if (result) {
+			const formRecords = result.map((form: FormApiListRecord) => ({
+				firstName: form.firstName ?? "Jan",
+				lastName: form.lastName ?? "Kowalski",
+				major: form.major ?? "Informatyka",
+				faculty: form.faculty ?? "WIEiT",
+				contractCoordinator: form.contractCoordinator ?? "Anna Nowak",
+				priority: form.priority ?? "1",
+				link: form.oneDriveFormLink ?? "",
+				formId: form.id ?? "",
+			}));
+			setFormList(formRecords);
+		}
+	};
 
 	const handleChange = (_event: SyntheticEvent, newValue: number) => {
 		setTabIndex(newValue);
 	};
 
-	if (!adminData) {
+	if (!resultsLink || !formList) {
 		return <Loading />;
 	}
 
@@ -49,13 +73,13 @@ export default function AdminPage() {
 					<Tab className="tab" label="Pomoc" {...getTabProps(3)} />
 				</Tabs>
 				<TabPanel value={tabIndex} index={0}>
-					<AdminTable data={adminData?.data?.formList} />
+					<AdminTable data={formList} />
 				</TabPanel>
 				<TabPanel value={tabIndex} index={1}>
-					<AdminResults />
+					<AdminResults resultsLink={resultsLink} />
 				</TabPanel>
 				<TabPanel value={tabIndex} index={2}>
-					<AdminSettings config={adminData?.data?.config} />
+					<AdminSettings />
 				</TabPanel>
 				<TabPanel value={tabIndex} index={3}>
 					<AdminHelp />

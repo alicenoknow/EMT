@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -35,14 +36,17 @@ public class PdfParserService {
                             ".tempJson/"};
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
+        System.out.println(new String(process.getErrorStream().readAllBytes()));
+        System.out.println("Exit value: " + process.exitValue());
+        System.out.println(new String(process.getInputStream().readAllBytes()));
 
         // read json
         String jsonString = new String(Files.readAllBytes(Paths.get(".tempJson/temp_form.json")), StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(jsonString);
-        PdfData pdfData = new PdfData(jsonObject.getString("name"),
-                                      jsonObject.getString("surname"),
-                                      jsonObject.getString("faculty"),
-                                      jsonObject.getString("coordinator"));
+        PdfData pdfData = new PdfData(jsonObject.getString("Imie"),
+                                      jsonObject.getString("Nazwisko"),
+                                      jsonObject.getString("Wydzial"),
+                                      jsonObject.getString("Koordynator Wydzia#C5#82owy"));
 
         // delete temp folder
         FileUtils.deleteDirectory(tempPdf);

@@ -1,27 +1,46 @@
 import React, { useRef, useState } from "react";
 import { Button, Alert } from "react-bootstrap";
+import { sendFinalExcel } from "../../services/admin.service";
 import "./AdminResults.scss";
 
-export default function AdminResults() {
+interface AdminResultsProps {
+	resultsLink: string;
+}
+
+export default function AdminResults(props: AdminResultsProps) {
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+	const [excelLink, setExcelLink] = useState<string | null>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleUpload = () => {
 		inputRef.current?.click();
 	};
+
 	const handleDisplayFileDetails = () => {
-		inputRef.current?.files &&
+		if (inputRef.current?.files) {
 			setUploadedFileName(inputRef.current.files[0].name);
+			setUploadedFile(inputRef.current.files[0]);
+		}
 	};
-	const handleFileSend = () => {
-		// TODO final results upload
+
+	const generateDoc = () => {
+		// TODO generate DWZ file
 		return 0;
 	};
 
+	const handleFileSend = async () => {
+		const formData = new FormData();
+		formData.append("excel", uploadedFile ?? "");
+		const results = await sendFinalExcel(formData);
+		if (results?.oneDriveLink) {
+			setExcelLink(results.oneDriveLink);
+		}
+	};
 	return (
 		<div className="results">
 			<h4>Wyniki rekrutacji:</h4>
-			<a className="document__link" href={""}>
+			<a className="document__link" href={excelLink ?? props.resultsLink}>
 				{"Pobierz plik (.xlsx)"}
 			</a>
 			<div className="document__line" />
@@ -37,11 +56,17 @@ export default function AdminResults() {
 				<Button onClick={handleUpload} className="upload__button">
 					{uploadedFileName ? uploadedFileName : "Wybierz"}
 				</Button>
+				<Button
+					onClick={handleFileSend}
+					className={"send__button"}
+					disabled={!uploadedFileName}>
+					Prześlij
+				</Button>
 			</div>
 			<div className="document__line" />
-			<Alert variant="secondary ">
+			<Alert variant="secondary">
 				<Alert.Heading>Generowanie listy rankingowej</Alert.Heading>
-				<p>
+				<div>
 					Klikając poniższy przycisk możesz wygenerować listę rankingową.
 					Domyślnie lista zostanie stworzona na podstawie danych zawartych w
 					pliku z wynikami rekrutacji, który można pobrać powyżej.
@@ -49,9 +74,9 @@ export default function AdminResults() {
 					pobierz ją, zedytuj, a następnie załaduj w polu Wyniki końcowe, wtedy
 					lista rankigowa zostanie wygenerowana na podstawie załadowanych
 					danych.
-				</p>
+				</div>
 			</Alert>
-			<Button onClick={handleFileSend} className={"send__button"}>
+			<Button onClick={generateDoc} className={"send__button"}>
 				Generuj listę rankingową
 			</Button>
 		</div>
