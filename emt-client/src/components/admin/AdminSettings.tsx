@@ -3,6 +3,8 @@ import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "./AdminSettings.scss";
 import "react-datepicker/dist/react-datepicker.css";
+import { getTemplate } from "../../services/forms.service";
+import { sendDefaultPdf } from "../../services/admin.service";
 
 interface AdminSettingsProps {
 	config?: {
@@ -20,20 +22,25 @@ export default function AdminSettings(props: AdminSettingsProps) {
 	);
 	const [endDate, setEndDate] = useState<MaybeDate>(props?.config?.endDate);
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-	// const [form, setForm] = useState();
+	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleUpload = () => {
 		inputRef.current?.click();
 	};
+
 	const handleDisplayFileDetails = () => {
-		inputRef.current?.files &&
+		if (inputRef.current?.files) {
 			setUploadedFileName(inputRef.current.files[0].name);
+			setUploadedFile(inputRef.current.files[0]);
+		}
 	};
-	const handleFileSend = () => {
-		// TODO send default pdf
-		return 0;
+
+	const handleFileSend = async () => {
+		const formData = new FormData();
+		formData.append("pdf", uploadedFile ?? "");
+		await sendDefaultPdf(formData);
 	};
 
 	const handleDateChange = () => {
@@ -58,6 +65,10 @@ export default function AdminSettings(props: AdminSettingsProps) {
 				Zatwierdź
 			</Button>
 			<div className="document__line" />
+			<h4>Pobierz dokument:</h4>
+			<Button onClick={getTemplate} className={"upload__button"}>
+				Pobierz aktualny wzorzec
+			</Button>
 			<h4>Prześlij wzorzec ankiety rekrutacyjnej:</h4>
 			<div className="m-3">
 				<label className="mx-3">Wgraj plik:</label>

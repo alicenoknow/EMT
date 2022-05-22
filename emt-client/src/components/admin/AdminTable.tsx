@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Box,
 	Table,
@@ -19,7 +19,6 @@ import {
 	getComparator,
 	headCells,
 	Order,
-	rows,
 } from "./tableUtils";
 import { StudentFormRecord } from "../../types/admin";
 
@@ -27,11 +26,13 @@ interface AdminTableProps {
 	data?: StudentFormRecord[];
 }
 
-export const renderOneDriveLink = (destination: string) => (
-	<Button className="table__button" variant="link" href={destination}>
-		Ankieta Rekrutacyjna
-	</Button>
-);
+export const renderOneDriveLink = (destination: string) => {
+	return (
+		<Button className="table__button" variant="link" href={destination}>
+			Ankieta Rekrutacyjna
+		</Button>
+	);
+};
 
 export function CustomTableHead(props: CustomTableHeadProps) {
 	const { order, orderBy, onRequestSort } = props;
@@ -73,7 +74,11 @@ export default function AdminTable(props: AdminTableProps) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [searched, setSearched] = useState<string>("");
-	const [filteredRows, setRows] = useState<StudentFormRecord[]>(rows);
+	const [filteredRows, setRows] = useState<StudentFormRecord[]>([]);
+
+	const rows = props.data ?? [];
+
+	useEffect(() => setRows(props.data ?? []), [props.data]);
 
 	const handleRequestSort = (
 		_event: React.MouseEvent<unknown>,
@@ -96,11 +101,11 @@ export default function AdminTable(props: AdminTableProps) {
 	};
 
 	const requestSearch = (searchedVal: string) => {
-		if (!props.data) {
+		if (!rows) {
 			return setRows([]);
 		}
 
-		const filteredRows = props.data.filter(row => {
+		const filteredRows = rows.filter(row => {
 			return (
 				row.firstName.toLowerCase().includes(searchedVal.toLowerCase()) ||
 				row.lastName.toLowerCase().includes(searchedVal.toLowerCase()) ||
