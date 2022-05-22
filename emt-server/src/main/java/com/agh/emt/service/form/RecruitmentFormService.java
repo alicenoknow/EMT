@@ -119,6 +119,7 @@ public class RecruitmentFormService {
         RecruitmentForm formId = student.getRecruitmentForms().stream()
                 .filter(recruitmentForm -> recruitmentForm.getPriority().equals(recruitmentFormDTO.getPriority())).
                 findFirst().orElse(null);
+        System.out.println(formId);
         student.getRecruitmentForms().removeIf(recruitmentForm -> recruitmentForm.getPriority().equals(recruitmentFormDTO.getPriority()));
         student = userRepository.save(student);
         if(formId!=null)
@@ -134,8 +135,8 @@ public class RecruitmentFormService {
 
         removeRecruitmentFormWithIdenticalPriority(student,recruitmentFormDTO);
 
-        if (student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT ||
-                recruitmentFormDTO.getPriority()>MAX_RECUITMENT_FORMS_PER_STUDENT) {
+        if ((student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT ||
+                recruitmentFormDTO.getPriority()>MAX_RECUITMENT_FORMS_PER_STUDENT ) && recruitmentFormDTO.getIsScan()) {
             throw new RecruitmentFormLimitExceededException("Przekroczono limit zgłoszeń dla studenta: " + student.getEmail());
         }
 
@@ -168,6 +169,8 @@ public class RecruitmentFormService {
             recruitmentForm.setOneDriveFormPath(oneDriveInfo.getOneDrivePath());
             recruitmentForm.setOneDriveFormLink(oneDriveInfo.getOneDriveLink());
 
+            student.getRecruitmentForms().add(recruitmentForm);
+
             //.......................................
             //TODO: attach parser service to get name, surname, department and main coordinator
             //.......................................
@@ -189,7 +192,7 @@ public class RecruitmentFormService {
         recruitmentForm.setPriority(recruitmentFormDTO.getPriority());
         recruitmentFormRepository.save(recruitmentForm);
 
-        student.getRecruitmentForms().add(recruitmentForm);
+
 
         userRepository.save(student);
 
