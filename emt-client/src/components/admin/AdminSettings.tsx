@@ -20,7 +20,7 @@ export default function AdminSettings(props: AdminSettingsProps) {
 	);
 	const [endDate, setEndDate] = useState<MaybeDate>(props?.config?.endDate);
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-	const [form, setForm] = useState();
+	// const [form, setForm] = useState();
 
 	const inputRef = useRef<HTMLInputElement>(null);
 
