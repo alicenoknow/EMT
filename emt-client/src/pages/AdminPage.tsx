@@ -18,11 +18,11 @@ import "./AdminPage.scss";
 
 export default function AdminPage() {
 	const [tabIndex, setTabIndex] = useState<number>(0);
-	const [adminData, setAdminData] = useState<AdminQueryData>();
+	const [adminData, setAdminData] = useState<AdminQueryData | undefined>();
 
 	useEffect(() => {
 		//TODO fetch data about admin (see: AdminQueryData)
-		//setAdminData(data);
+		setAdminData(undefined);
 	}, []);
 
 	const handleChange = (_event: SyntheticEvent, newValue: number) => {
