@@ -68,7 +68,6 @@ public class PdfParserService {
         // write pdfs to folder
         int i = 0;
         for (byte[] pdf : pdfs) {
-            getDataFromPdf(pdf);
             FileUtils.writeByteArrayToFile(new File(".tempPdf/" + Integer.toString(i)), pdf);
             ++i;
         }
