@@ -49,8 +49,8 @@ public class PdfParserService {
                                       jsonObject.getString("Koordynator Wydzia#C5#82owy"));
 
         // delete temp folder
-//        FileUtils.deleteDirectory(tempPdf);
-//        FileUtils.deleteDirectory(tempJson);
+        FileUtils.deleteDirectory(tempPdf);
+        FileUtils.deleteDirectory(tempJson);
         (new File(".tempJson/temp_form.json")).delete();
         (new File(".tempPdf/temp")).delete();
 
@@ -91,9 +91,9 @@ public class PdfParserService {
         byte[] csvData = Files.readAllBytes(Path.of(".temp.csv"));
 
         // delete temp files
-//        FileUtils.deleteDirectory(tempPdf);
-//        FileUtils.deleteDirectory(tempJson);
-//        (new File(".temp.csv")).delete();
+        FileUtils.deleteDirectory(tempPdf);
+        FileUtils.deleteDirectory(tempJson);
+        (new File(".temp.csv")).delete();
 
         // return result
         return csvData;
