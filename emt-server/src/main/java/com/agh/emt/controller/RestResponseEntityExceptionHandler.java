@@ -8,6 +8,7 @@ import com.agh.emt.service.form.RecruitmentFormExistsException;
 import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.agh.emt.service.news.NewsNotFoundException;
 import com.agh.emt.service.one_drive.OneDriveConnectionException;
+import com.agh.emt.service.parameters.ParameterNotFoundException;
 import com.agh.emt.service.student.StudentNotFoundException;
 import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
 import org.springframework.http.HttpStatus;
@@ -69,6 +70,11 @@ public class RestResponseEntityExceptionHandler
     @ExceptionHandler(OneDriveConnectionException.class)
     protected ResponseEntity<String> handleOneDriveConnectionException(OneDriveConnectionException ex) {
         return ResponseEntity.status(521).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ParameterNotFoundException.class)
+    protected ResponseEntity<String> handleParameterNotFoundException(ParameterNotFoundException ex) {
+        return ResponseEntity.status(522).body(ex.getMessage());
     }
 
     @ExceptionHandler()
