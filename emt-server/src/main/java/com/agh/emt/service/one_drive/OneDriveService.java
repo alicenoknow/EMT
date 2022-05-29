@@ -93,6 +93,21 @@ public class OneDriveService {
         }
     }
 
+    public byte[] deleteRecruitmentDocumentFromId(String fileId) throws RecruitmentFormNotFoundException {
+        String url = "https://graph.microsoft.com/v1.0/me/drive/items/" + fileId;
+        System.out.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer "+accessToken);
+        HttpEntity request = new HttpEntity(headers);
+
+        var response  = restTemplate.exchange(url, HttpMethod.DELETE, request, byte[].class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return Objects.requireNonNull(response.getBody());
+        } else {
+            return null;
+        }
+    }
+
     public byte[] getRecruitmentDocumentFromPath(String filePath) throws RecruitmentFormNotFoundException {
         String url = "https://graph.microsoft.com/v1.0/me/drive/root:/" + filePath + ":/content" ;
         System.out.println(url);

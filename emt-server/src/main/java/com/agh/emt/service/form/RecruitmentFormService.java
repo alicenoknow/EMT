@@ -116,8 +116,6 @@ public class RecruitmentFormService {
     }
 
     private boolean removeRecruitmentFormWithIdenticalPriority(User student, RecruitmentFormDTO recruitmentFormDTO){
-
-        System.out.println("START");
         if(recruitmentFormDTO.getIsScan())
             return false;
         RecruitmentForm formId = student.getRecruitmentForms().stream()
@@ -125,6 +123,10 @@ public class RecruitmentFormService {
                     return recruitmentFormDTO.getPriority().equals(recruitmentForm.getPriority());
                 }).
                 findFirst().orElse(null);
+        try {
+            oneDriveService.deleteRecruitmentDocumentFromId(formId.getOneDriveFormId());
+            oneDriveService.deleteRecruitmentDocumentFromId(formId.getOneDriveScanId());
+        } catch (Exception ignored) {}
 
         student.getRecruitmentForms().removeIf(recruitmentForm -> (recruitmentForm!=null && recruitmentFormDTO.getPriority().equals(recruitmentForm.getPriority())));
         student = userRepository.save(student);
@@ -157,7 +159,7 @@ public class RecruitmentFormService {
         String filename;
         if(recruitmentFormDTO.getIsScan()){
             recruitmentForm = recruitmentFormRepository.findById(recruitmentFormDTO.getId()).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono dokumentu o id: " + recruitmentFormDTO.getId()));
-            filename =  student.getId() + "/" + recruitmentForm.getId() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
+            filename =  student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
                     .replace(":","-")
                     .replace(".","_") + "_scan.pdf";
 
@@ -165,7 +167,7 @@ public class RecruitmentFormService {
             recruitmentForm = new RecruitmentForm();
             recruitmentForm.setUser(student);
             recruitmentForm = recruitmentFormRepository.save(recruitmentForm);
-            filename = student.getId() + "/" + recruitmentForm.getId() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
+            filename = student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
                     .replace(":","-")
                     .replace(".","_") + ".pdf";
         }
