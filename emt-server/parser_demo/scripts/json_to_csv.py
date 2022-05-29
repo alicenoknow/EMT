@@ -106,7 +106,7 @@ def generate_rank(json_directory, rank_file_name, keys_to_include, get_rank):
 			user = {key:user[key] for key in cols}
 			final_users.append(user)
 	with open(rank_file_name, 'w+') as csvfile:
-		writer = csv.DictWriter(csvfile, fieldnames = cols)
+		writer = csv.DictWriter(csvfile, fieldnames = cols, delimiter = ',')
 		writer.writeheader()
 		writer.writerows(final_users)
 
