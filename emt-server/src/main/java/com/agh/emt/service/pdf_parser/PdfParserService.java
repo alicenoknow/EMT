@@ -106,4 +106,32 @@ public class PdfParserService {
         // return result
         return csvData;
     }
+    
+    public byte[] excelToDWZExcel(byte[] excel) throws IOException, InterruptedException {
+        // write excel to file
+        FileUtils.writeByteArrayToFile(new File(".temp_excel.csv"), excel);
+        
+        // convert excel to DWZ excel
+        String[] command = {"python",
+                pythonScriptsRoot + "dwz_export.py",
+                ".temp_excel.csv",
+                pythonScriptsRoot + "../forms/form.xlsx",
+                ".temp_dwz_excel.xlsx"};
+        Process process = Runtime.getRuntime().exec(command);
+        process.waitFor();
+        
+        System.out.println(new String(process.getErrorStream().readAllBytes()));
+        System.out.println("Exit value: " + process.exitValue());
+        System.out.println(new String(process.getInputStream().readAllBytes()));
+
+        // read dwz excel
+        byte[] dwzData = Files.readAllBytes(Path.of(".temp_dwz_excel.xlsx"));
+
+        // delete temp files
+        (new File(".temp_excel.csv")).delete();
+        (new File(".temp_dwz_excel.xlsx")).delete();
+
+        // return result
+        return dwzData;
+    }
 }

@@ -62,13 +62,14 @@ public class ExcelListsService {
     public PostFileDTO generateDWZRecruitmentResults() throws RecruitmentFormNotFoundException {
         byte[] recruitmentResults = oneDriveService.getRecruitmentDocumentFromPath(RESULT_EXCEL_PATH);
 
-        //.......................................
-        //TODO: generate DWZ schema on the basis of the tem result excel
-        //.......................................
+        byte[] excelRecruitmentResultDWZ  = "".getBytes(StandardCharsets.UTF_8);
+        try {
+            excelRecruitmentResultDWZ = pdfParserService.excelToDWZExcel(recruitmentResults);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        byte[] excelRecruitmentResultDWZ = "".getBytes(StandardCharsets.UTF_8); //mock
-
-        return oneDriveService.postRecruitmentDocument(RESULT_DWZ_EXCEL_PATH,excelRecruitmentResultDWZ);
+        return oneDriveService.postRecruitmentDocument(RESULT_DWZ_EXCEL_PATH, excelRecruitmentResultDWZ);
     }
 
     public byte[] downloadRecruitmentResultsDWZ() throws RecruitmentFormNotFoundException {
