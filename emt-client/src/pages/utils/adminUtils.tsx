@@ -10,9 +10,9 @@ interface TabPanelProps {
 
 export const TabBoxStyle = {
 	flexGrow: 1,
-	bgcolor: "background.paper",
+	bgcolor: "#fcfcfc",
 	display: "flex",
-	height: "80vh",
+	height: "100%",
 };
 
 export const TabStyle = {
