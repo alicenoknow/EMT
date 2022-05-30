@@ -9,6 +9,8 @@ import UserPage from "./pages/UserPage";
 import { store } from "./redux/store";
 import UserLogin from "./pages/UserLogin";
 import AdminPage from "./pages/AdminPage";
+import About from "./pages/About";
+import UserHelp from "./pages/UserHelp";
 
 ReactDOM.render(
 	<React.StrictMode>
@@ -20,6 +22,8 @@ ReactDOM.render(
 						<Route path="/login/user" element={<UserLogin />} />
 						<Route path="/user" element={<UserPage />} />
 						<Route path="/admin" element={<AdminPage />} />
+						<Route path="/tutorial" element={<UserHelp />} />
+						<Route path="/about" element={<About />} />
 						<Route
 							path="/form"
 							element={

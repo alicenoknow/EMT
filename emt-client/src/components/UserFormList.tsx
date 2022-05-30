@@ -37,6 +37,18 @@ export default function UserFormList() {
 						secondary={"Drugi wybór"}
 					/>
 				</ListItem>
+				<ListItem className="list__item">
+					<ListItemIcon>
+						<FeedIcon />
+					</ListItemIcon>
+					<ListItemText primary="Certyfikaty językowe" secondary={""} />
+				</ListItem>
+				<ListItem className="list__item">
+					<ListItemIcon>
+						<FeedIcon />
+					</ListItemIcon>
+					<ListItemText primary="Dodatkowe dokumenty" secondary={""} />
+				</ListItem>
 			</List>
 		</div>
 	);
