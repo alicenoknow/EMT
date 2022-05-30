@@ -74,21 +74,21 @@ public class PdfParserService {
         }
 
         // convert pdf to json
-        String[] command = {"python",
+        String[] commandPdfToJson = {"python",
                 pythonScriptsRoot + "pdf_to_json.py",
                 ".tempPdf/",
                 ".tempJson/"};
-        Process process = Runtime.getRuntime().exec(command);
+        Process process = Runtime.getRuntime().exec(commandPdfToJson);
         process.waitFor();
         
         // convert json to csv
-        String[] command = {"python",
+        String[] commandJsonToCsv = {"python",
                 pythonScriptsRoot + "json_to_csv.py",
                 ".temp.csv",
                 pythonScriptsRoot + "../form.json",
                 ".tempJson/",
                 "get_rank"};
-        process = Runtime.getRuntime().exec(command);
+        process = Runtime.getRuntime().exec(commandJsonToCsv);
         process.waitFor();
         
         System.out.println(new String(process.getErrorStream().readAllBytes()));
