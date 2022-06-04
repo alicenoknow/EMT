@@ -2,19 +2,23 @@ package com.agh.emt.service.form;
 
 import com.agh.emt.model.form.RecruitmentForm;
 import com.agh.emt.model.form.RecruitmentFormRepository;
+import com.agh.emt.model.parameters.Parameter;
+import com.agh.emt.model.parameters.ParameterRepository;
 import com.agh.emt.model.user.User;
 import com.agh.emt.model.user.UserRepository;
 import com.agh.emt.service.authentication.NoLoggedUserException;
-import com.agh.emt.service.authentication.UserDetailsImpl;
 import com.agh.emt.service.authentication.UserCredentialsService;
-import com.agh.emt.service.one_drive.OneDriveConnectionException;
+import com.agh.emt.service.authentication.UserDetailsImpl;
 import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.one_drive.PostFileDTO;
+import com.agh.emt.service.parameters.ParameterFormatException;
+import com.agh.emt.service.parameters.ParameterNotFoundException;
 import com.agh.emt.service.pdf_parser.PdfData;
 import com.agh.emt.service.pdf_parser.PdfParserService;
 import com.agh.emt.service.student.StudentNotFoundException;
+import com.agh.emt.utils.date.DateUtils;
 import com.agh.emt.utils.form.Faculty;
-import com.agh.emt.utils.ranking.RankUtils;
+import com.agh.emt.utils.parameters.ParameterNames;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,18 +27,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.time.format.DateTimeParseException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class RecruitmentFormService {
     private final RecruitmentFormRepository recruitmentFormRepository;
+    private final ParameterRepository parameterRepository;
     private final UserRepository userRepository;
     private final OneDriveService oneDriveService;
     private final PdfParserService pdfParserService;
 
-    private static final int MAX_RECUITMENT_FORMS_PER_STUDENT = 2;
     private static final String DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK = "wzor/AnkietaRekrutacyjnaErasmus2022.pdf";
 
     public List<RecruitmentFormDoubleInfoDTO> findAllPreviews() {
@@ -57,6 +64,27 @@ public class RecruitmentFormService {
             result.add(recruitmentFormPreview);
         }
         return result;
+    }
+
+    private void validateDate() throws DateValidationException, ParameterFormatException {
+        LocalDateTime now = LocalDateTime.now();
+        Optional<Parameter> startDateOpt = parameterRepository.findById(ParameterNames.RECRUITMENT_START_DATE);
+        Optional<Parameter> endDateOpt = parameterRepository.findById(ParameterNames.RECRUITMENT_END_DATE);
+
+        if (startDateOpt.isEmpty() || endDateOpt.isEmpty())
+            throw new DateValidationException("Brak skonfigurowanych dat rozpoczecia i / lub końca rekrutacji. Skontaktuj się z administratorem");
+
+        LocalDateTime startDate, endDate;
+        try {
+            startDate = DateUtils.parseDate(startDateOpt.get().getValue());
+            endDate = DateUtils.parseDate(endDateOpt.get().getValue());
+        } catch (DateTimeParseException e) {
+            throw new ParameterFormatException("Błędna wartość parametru rozpoczecia i / lub końca rekrutacji. Skontaktuj się z administratorem");
+        }
+
+        if (now.isBefore(startDate) || now.isAfter(endDate)) {
+            throw new DateValidationException("Błąd: przesłano dokument przed / po okresie rekrutacyjnym");
+        }
     }
 
     public List<StudentFormsPreviewDTO> findAllStudentsWithPreviews() {
@@ -91,7 +119,9 @@ public class RecruitmentFormService {
         return oneDriveService.getRecruitmentDocumentFromId(recruitmentForm.getOneDriveFormId());
     }
 
-    public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException {
+    public RecruitmentFormDTO addForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, DateValidationException, ParameterFormatException, ParameterNotFoundException {
+        validateDate();
+
         UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
@@ -139,7 +169,8 @@ public class RecruitmentFormService {
     }
 
     @Transactional
-    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException {
+    public RecruitmentFormDTO addForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, DateValidationException, ParameterNotFoundException, ParameterFormatException {
+        validateDate();
 
         User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
@@ -149,9 +180,16 @@ public class RecruitmentFormService {
             e.printStackTrace();
         }
 
+        String maxRecruitmentFormsPerStudentStr = parameterRepository.findById(ParameterNames.MAX_RECUITMENT_FORMS_PER_STUDENT).orElseThrow(() -> new ParameterNotFoundException("Błąd: nie skonfigurowano limitu formularzy dla studenta. Skontaktuj się z administratorem")).getValue();
+        int maxRecruitmentFormsPerStudent;
+        try {
+            maxRecruitmentFormsPerStudent = Integer.parseInt(maxRecruitmentFormsPerStudentStr);
+        } catch (NumberFormatException e) {
+            throw new ParameterFormatException("Zły format parametru: " + ParameterNames.MAX_RECUITMENT_FORMS_PER_STUDENT);
+        }
 
-        if ((student.getRecruitmentForms().size() == MAX_RECUITMENT_FORMS_PER_STUDENT ||
-                recruitmentFormDTO.getPriority()>MAX_RECUITMENT_FORMS_PER_STUDENT ) && !recruitmentFormDTO.getIsScan()) {
+        if ((student.getRecruitmentForms().size() == maxRecruitmentFormsPerStudent ||
+                recruitmentFormDTO.getPriority()>maxRecruitmentFormsPerStudent ) && !recruitmentFormDTO.getIsScan()) {
             throw new RecruitmentFormLimitExceededException("Przekroczono limit zgłoszeń dla studenta: " + student.getEmail());
         }
 

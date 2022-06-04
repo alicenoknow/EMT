@@ -4,10 +4,12 @@ import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.authentication.UserAlreadyExistException;
 import com.agh.emt.service.authentication.UserNotEnabledException;
 import com.agh.emt.service.email_sender.NoSuchConfirmationTokenException;
+import com.agh.emt.service.form.DateValidationException;
 import com.agh.emt.service.form.RecruitmentFormExistsException;
 import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.agh.emt.service.news.NewsNotFoundException;
 import com.agh.emt.service.one_drive.OneDriveConnectionException;
+import com.agh.emt.service.parameters.ParameterFormatException;
 import com.agh.emt.service.parameters.ParameterNotFoundException;
 import com.agh.emt.service.student.StudentNotFoundException;
 import com.agh.emt.utils.authentication.signup_validator.InvalidAghEmailException;
@@ -77,8 +79,19 @@ public class RestResponseEntityExceptionHandler
         return ResponseEntity.status(522).body(ex.getMessage());
     }
 
+    @ExceptionHandler(ParameterFormatException.class)
+    protected ResponseEntity<String> handleParameterNotFoundException(ParameterFormatException ex) {
+        return ResponseEntity.status(523).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DateValidationException.class)
+    protected ResponseEntity<String> handleParameterNotFoundException(DateValidationException ex) {
+        return ResponseEntity.status(524).body(ex.getMessage());
+    }
+
     @ExceptionHandler()
     protected ResponseEntity<String> defaultHandle(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
+
 }

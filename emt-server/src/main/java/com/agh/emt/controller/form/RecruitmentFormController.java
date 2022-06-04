@@ -2,7 +2,8 @@ package com.agh.emt.controller.form;
 
 import com.agh.emt.service.authentication.NoLoggedUserException;
 import com.agh.emt.service.form.*;
-import com.agh.emt.service.one_drive.OneDriveConnectionException;
+import com.agh.emt.service.parameters.ParameterFormatException;
+import com.agh.emt.service.parameters.ParameterNotFoundException;
 import com.agh.emt.service.student.StudentNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -62,7 +63,7 @@ public class RecruitmentFormController {
     ResponseEntity<RecruitmentFormDTO> addForLoggedStudent(@RequestParam("pdf") MultipartFile pdf,
                                                            @RequestParam("priority") Integer priority,
                                                            @RequestParam("id") String id,
-                                                           @RequestParam("isScan") Boolean isScan) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, IOException {
+                                                           @RequestParam("isScan") Boolean isScan) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, IOException, ParameterFormatException, ParameterNotFoundException, DateValidationException {
         if(isScan)
             return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(new RecruitmentFormDTO(id,pdf.getBytes(),priority,isScan)));
         return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(new RecruitmentFormDTO(pdf.getBytes(),priority)));
