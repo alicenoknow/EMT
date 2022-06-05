@@ -51,9 +51,7 @@ public class PdfParserService {
         // delete temp folder
         FileUtils.deleteDirectory(tempPdf);
         FileUtils.deleteDirectory(tempJson);
-        (new File(".tempJson/temp_form.json")).delete();
-        (new File(".tempPdf/temp")).delete();
-
+        
         // return result
         return pdfData;
     }
@@ -68,13 +66,12 @@ public class PdfParserService {
         // write pdfs to folder
         int i = 0;
         for (byte[] pdf : pdfs) {
-            getDataFromPdf(pdf);
-            FileUtils.writeByteArrayToFile(new File(".tempPdf/" + Integer.toString(i)), pdf);
+            FileUtils.writeByteArrayToFile(new File(".tempPdf/temp" + Integer.toString(i)), pdf);
             ++i;
         }
 
         // convert pdf to json
-        String[] commandPdfToJson = {"python",
+        String[] commandPdfToJson = {"python3",
                 pythonScriptsRoot + "pdf_to_json.py",
                 ".tempPdf/",
                 ".tempJson/"};
@@ -82,10 +79,10 @@ public class PdfParserService {
         process.waitFor();
         
         // convert json to csv
-        String[] commandJsonToCsv = {"python",
+        String[] commandJsonToCsv = {"python3",
                 pythonScriptsRoot + "json_to_csv.py",
                 ".temp.csv",
-                pythonScriptsRoot + "../form.json",
+                pythonScriptsRoot + "json_fields_specs.json",
                 ".tempJson/",
                 "get_rank"};
         process = Runtime.getRuntime().exec(commandJsonToCsv);
@@ -112,10 +109,10 @@ public class PdfParserService {
         FileUtils.writeByteArrayToFile(new File(".temp_excel.csv"), excel);
         
         // convert excel to DWZ excel
-        String[] command = {"python",
+        String[] command = {"python3",
                 pythonScriptsRoot + "dwz_export.py",
                 ".temp_excel.csv",
-                pythonScriptsRoot + "../forms/form.xlsx",
+                pythonScriptsRoot + "../parsers_example/scripts/form.xlsx",
                 ".temp_dwz_excel.xlsx"};
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
