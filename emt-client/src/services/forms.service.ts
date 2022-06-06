@@ -71,7 +71,10 @@ export const getSentPdf = (priority: number): Promise<void> => {
 		})
 		.then(response => {
 			if (response?.data) {
-				FileDownload(response.data, "AnkietaRekrutacyjnaErasmus2022-pr-" + priority.toString() + ".pdf");
+				FileDownload(
+					response.data,
+					"AnkietaRekrutacyjnaErasmus2022-pr-" + priority.toString() + ".pdf",
+				);
 			}
 		});
 };
@@ -92,16 +95,20 @@ export const getSentScan = (priority: number): Promise<void> => {
 		})
 		.then(response => {
 			if (response?.data) {
-				FileDownload(response.data, "AnkietaRekrutacyjnaErasmus2022-skan-pr" + priority.toString() + ".pdf");
+				FileDownload(
+					response.data,
+					"AnkietaRekrutacyjnaErasmus2022-skan-pr" +
+						priority.toString() +
+						".pdf",
+				);
 			}
 		});
 };
 
 export const getUserForm = (priority: number) => {
 	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
-
 	return axios
-		.get(ROOT_API + SEND_FORM_API + '/' + priority.toString(), {
+		.get(ROOT_API + SEND_FORM_API + "/" + priority.toString(), {
 			headers: { Authorization: `Bearer ${tokenStr}` },
 		})
 		.catch(function (error) {

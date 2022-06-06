@@ -57,10 +57,10 @@ export default function AdminSettings(props: AdminSettingsProps) {
 	};
 
 	const convertDateToString = (date: Date): string => {
-		return `${date.getFullYear()}-${String(date.getMonth()).padStart(
+		return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
 			2,
 			"0",
-		)}-${String(date.getDay()).padStart(2, "0")}`;
+		)}-${String(date.getDate()).padStart(2, "0")}`;
 	};
 
 	const handleDateChange = async () => {

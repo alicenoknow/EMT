@@ -41,12 +41,16 @@ export default function AdminPage() {
 
 	const fetchStartDate = async () => {
 		const result = await getParam("RECRUITMENT_START_DATE");
-		setStartDate(new Date(result?.value));
+		if (result?.value) {
+			setStartDate(new Date(result?.value));
+		}
 	};
 
 	const fetchEndDate = async () => {
 		const result = await getParam("RECRUITMENT_END_DATE");
-		setEndDate(new Date(result?.value));
+		if (result?.value) {
+			setEndDate(new Date(result?.value));
+		}
 	};
 
 	const fetchFormsNum = async () => {

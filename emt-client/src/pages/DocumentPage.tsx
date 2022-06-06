@@ -49,18 +49,26 @@ export default function DocumentPage(props: DocumentPageProps) {
 	const PRIORITY = (location.state as LocationParams).priority;
 
 	useEffect(() => {
-		dispatch(setAlertVisibility(true));
+		dispatch(setAlertVisibility(false));
 		fetchForm();
 	}, []);
 
 	const fetchForm = async () => {
 		const result = await getUserForm(PRIORITY);
+		let pdfAvailable = false;
+		let scanAvailable = false;
+
 		if (result) {
-			setFormsData({ ...formsData, isDownloadablePDF: true });
+			pdfAvailable = true;
 			if (result.oneDriveScanLink != "") {
-				setFormsData({ ...formsData, isDownloadableScan: true });
+				scanAvailable = true;
 			}
 		}
+		setFormsData({
+			...formsData,
+			isDownloadablePDF: pdfAvailable,
+			isDownloadableScan: scanAvailable,
+		});
 	};
 
 	const handleUpload = () => {
@@ -105,11 +113,11 @@ export default function DocumentPage(props: DocumentPageProps) {
 	};
 
 	const getPdfAvailabilityText = () => {
-		return formsData.isDownloadablePDF ? <text>✅</text> : <text>🚫</text>;
+		return formsData.isDownloadablePDF ? <>✅</> : <>🚫</>;
 	};
 
 	const getScanAvailabilityText = () => {
-		return formsData.isDownloadableScan ? <text>✅</text> : <text>🚫</text>;
+		return formsData.isDownloadableScan ? <>✅</> : <>🚫</>;
 	};
 
 	if (!isAvailable) {
@@ -128,7 +136,7 @@ export default function DocumentPage(props: DocumentPageProps) {
 					</Button>
 
 					<Button
-						disabled={formsData.isDownloadablePDF}
+						disabled={!formsData.isDownloadablePDF}
 						onClick={() => getSentPdf(PRIORITY)}
 						className={"download__button"}>
 						Pobierz wysłany pdf
@@ -136,7 +144,7 @@ export default function DocumentPage(props: DocumentPageProps) {
 					{getPdfAvailabilityText()}
 
 					<Button
-						disabled={formsData.isDownloadableScan}
+						disabled={!formsData.isDownloadableScan}
 						onClick={() => getSentScan(PRIORITY)}
 						className={"download__button"}>
 						Pobierz wysłany skan
