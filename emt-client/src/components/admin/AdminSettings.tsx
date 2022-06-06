@@ -7,7 +7,6 @@ import { getTemplate } from "../../services/forms.service";
 import { sendDefaultPdf } from "../../services/admin.service";
 import { TextField } from "@material-ui/core";
 import { setParam } from "../../services/params.service";
-import Loading from "../Loading";
 
 interface AdminSettingsProps {
 	config?: {

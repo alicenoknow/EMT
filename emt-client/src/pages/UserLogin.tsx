@@ -43,9 +43,14 @@ export default function UserLogin() {
 
 		if (response && response.token && response.roles) {
 			dispatch(setAuthToken(response.token));
-			if (response.roles.includes(Roles.ADMIN) || response.roles.includes(Roles.FACULTY_COORDINATOR) ||
-				response.roles.includes(Roles.CONTRACT_COORDINATOR) || response.roles.includes(Roles.DEAN_OFFICE_WORKER) ||
-				response.roles.includes(Roles.FOREIGN_COUNTRIES_DEPARTMENT_REP) || response.roles.includes(Roles.OTHER_ADMIN)) {
+			if (
+				response.roles.includes(Roles.ADMIN) ||
+				response.roles.includes(Roles.FACULTY_COORDINATOR) ||
+				response.roles.includes(Roles.CONTRACT_COORDINATOR) ||
+				response.roles.includes(Roles.DEAN_OFFICE_WORKER) ||
+				response.roles.includes(Roles.FOREIGN_COUNTRIES_DEPARTMENT_REP) ||
+				response.roles.includes(Roles.OTHER_ADMIN)
+			) {
 				navigateTo("/admin", true);
 			} else {
 				navigateTo("/user", false);

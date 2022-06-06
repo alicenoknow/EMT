@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Container, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import { setAlertVisibility } from "../redux/alertSlice";
+import { useAppDispatch } from "../redux/hooks";
 import {
 	getTemplate,
 	sendFilledPdf,
@@ -18,15 +20,20 @@ interface DocumentPageProps {
 }
 
 interface LocationParams {
-	firstChoice: boolean;
+	priority: number;
+}
+
+interface FormData {
+	isDownloadablePDF: boolean;
+	isDownloadableScan: boolean;
 }
 
 export default function DocumentPage(props: DocumentPageProps) {
 	const [isFilled, setFilled] = useState<boolean>(props.isFilled);
-	const [isDownloadablePdf1, setDownloadablePdf1] = useState<boolean>(false);
-	const [isDownloadablePdf2, setDownloadablePdf2] = useState<boolean>(false);
-	const [isDownloadableScan1, setDownloadableScan1] = useState<boolean>(false);
-	const [isDownloadableScan2, setDownloadableScan2] = useState<boolean>(false);
+	const [formsData, setFormsData] = useState<FormData>({
+		isDownloadablePDF: false,
+		isDownloadableScan: false,
+	});
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 	const [uploadedFileNameScan, setUploadedFileNameScan] = useState<
 		string | null
@@ -36,34 +43,23 @@ export default function DocumentPage(props: DocumentPageProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const inputRef2 = useRef<HTMLInputElement>(null);
 	const location = useLocation();
+	const dispatch = useAppDispatch();
 
 	const { isAvailable, docName } = props;
+	const PRIORITY = (location.state as LocationParams).priority;
 
 	useEffect(() => {
-		fetchForm(1);
-		fetchForm(2);
+		dispatch(setAlertVisibility(true));
+		fetchForm();
 	}, []);
 
-	const fetchForm = async (priority: number) => {
-		const result = await getUserForm(priority);
-		if (result && priority === 1) {
-			setDownloadablePdf1(true);
+	const fetchForm = async () => {
+		const result = await getUserForm(PRIORITY);
+		if (result) {
+			setFormsData({ ...formsData, isDownloadablePDF: true });
 			if (result.oneDriveScanLink != "") {
-				setDownloadableScan1(true);
+				setFormsData({ ...formsData, isDownloadableScan: true });
 			}
-		} else if (result && priority === 2) {
-			setDownloadablePdf2(true);
-			if (result.oneDriveScanLink !== "") {
-				setDownloadableScan1(true);
-			}
-		}
-
-		if (!result && priority === 1) {
-			setDownloadablePdf1(false);
-			setDownloadableScan1(false);
-		} else if (!result && priority === 2) {
-			setDownloadablePdf2(false);
-			setDownloadableScan2(false);
 		}
 	};
 
@@ -91,51 +87,29 @@ export default function DocumentPage(props: DocumentPageProps) {
 		formData.append("pdf", uploadedFile ?? "");
 		formData.append("isScan", "false");
 		formData.append("id", "");
-		formData.append(
-			"priority",
-			(location.state as LocationParams).firstChoice ? "1" : "2",
-		);
+		formData.append("priority", PRIORITY.toString());
 		const id = await sendFilledPdf(formData);
 		if (id) {
 			const formData2 = new FormData();
 			formData2.append("pdf", uploadedFile ?? "");
 			formData2.append("isScan", "true");
 			formData2.append("id", id.toString());
-			formData2.append(
-				"priority",
-				(location.state as LocationParams).firstChoice ? "1" : "2",
-			);
+			formData2.append("priority", PRIORITY.toString());
 			sendFilledPdf(formData2);
 		}
 		setFilled(true);
 	};
 
 	const renderHeader = () => {
-		return (
-			<h1>{`${docName} - ${
-				(location.state as LocationParams).firstChoice
-					? "pierwszy wybór"
-					: "drugi wybór"
-			}`}</h1>
-		);
+		return <h1>{`${docName} - ${PRIORITY.toString() + " wybór"}`}</h1>;
 	};
 
-	const getPdfAvailabilityText = (priority: number) => {
-		return (isDownloadablePdf1 && priority === 1) ||
-			(isDownloadablePdf2 && priority === 2) ? (
-			<text>✅</text>
-		) : (
-			<text>🚫</text>
-		);
+	const getPdfAvailabilityText = () => {
+		return formsData.isDownloadablePDF ? <text>✅</text> : <text>🚫</text>;
 	};
 
-	const getScanAvailabilityText = (priority: number) => {
-		return (isDownloadableScan1 && priority === 1) ||
-			(isDownloadableScan2 && priority === 2) ? (
-			<text>✅</text>
-		) : (
-			<text>🚫</text>
-		);
+	const getScanAvailabilityText = () => {
+		return formsData.isDownloadableScan ? <text>✅</text> : <text>🚫</text>;
 	};
 
 	if (!isAvailable) {
@@ -154,44 +128,20 @@ export default function DocumentPage(props: DocumentPageProps) {
 					</Button>
 
 					<Button
-						disabled={
-							!((location.state as LocationParams).firstChoice
-								? true
-								: false && isDownloadablePdf1) &&
-							!((location.state as LocationParams).firstChoice
-								? false
-								: true && isDownloadablePdf2)
-						}
-						onClick={() =>
-							getSentPdf((location.state as LocationParams).firstChoice ? 1 : 2)
-						}
+						disabled={formsData.isDownloadablePDF}
+						onClick={() => getSentPdf(PRIORITY)}
 						className={"download__button"}>
 						Pobierz wysłany pdf
 					</Button>
-					{getPdfAvailabilityText(
-						(location.state as LocationParams).firstChoice ? 1 : 2,
-					)}
+					{getPdfAvailabilityText()}
 
 					<Button
-						disabled={
-							!((location.state as LocationParams).firstChoice
-								? true
-								: false && isDownloadableScan1) &&
-							!((location.state as LocationParams).firstChoice
-								? false
-								: true && isDownloadableScan2)
-						}
-						onClick={() =>
-							getSentScan(
-								(location.state as LocationParams).firstChoice ? 1 : 2,
-							)
-						}
+						disabled={formsData.isDownloadableScan}
+						onClick={() => getSentScan(PRIORITY)}
 						className={"download__button"}>
 						Pobierz wysłany skan
 					</Button>
-					{getScanAvailabilityText(
-						(location.state as LocationParams).firstChoice ? 1 : 2,
-					)}
+					{getScanAvailabilityText()}
 
 					<div className="document__line" />
 					<h4>Prześlij wypełniony dokument:</h4>
@@ -222,12 +172,7 @@ export default function DocumentPage(props: DocumentPageProps) {
 						<Button
 							onClick={handleFileSend}
 							className={"send__button"}
-							disabled={
-								!uploadedFileName &&
-								((location.state as LocationParams).firstChoice
-									? true
-									: false || isDownloadablePdf1)
-							}>
+							disabled={!uploadedFileName}>
 							Prześlij dokumenty
 						</Button>
 					</div>

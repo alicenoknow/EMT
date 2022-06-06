@@ -15,3 +15,15 @@ export const RegisterFailAlert = {
 	header: "Coś poszło nie tak 😭",
 	body: `Nie można zarejestrować użytkownika z podanym adresem e-mail.`,
 };
+
+export const NotStarted = {
+	type: "danger" as const,
+	header: "Uwaga! Rekrutacja nie została jeszcze rozpoczęta!",
+	body: `Przesłane formularze nie będą brane pod uwagę.`,
+};
+
+export const HasFinished = {
+	type: "danger" as const,
+	header: "Uwaga! Rekrutacja została już zakończona!",
+	body: `Przesłane formularze nie będą brane pod uwagę.`,
+};
