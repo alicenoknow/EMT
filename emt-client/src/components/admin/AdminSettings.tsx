@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
-import { Button } from "react-bootstrap";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Form, FormControl } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "./AdminSettings.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import { getTemplate } from "../../services/forms.service";
-import { sendDefaultPdf } from "../../services/admin.service";
+import { createNewEdition, deleteEdition, getAllEditions, sendDefaultPdf, setCurrentEdition } from "../../services/admin.service";
 
 interface AdminSettingsProps {
 	config?: {
@@ -23,6 +23,9 @@ export default function AdminSettings(props: AdminSettingsProps) {
 	const [endDate, setEndDate] = useState<MaybeDate>(props?.config?.endDate);
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [newEditionName, setNewEditionName] = useState<string>("");
+  const [toDelEditionName, setToDelEditionName] = useState<string>("");
+  const [newCurrentEditionName, setNewCurrentEditionName] = useState<string>("");
 
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +50,37 @@ export default function AdminSettings(props: AdminSettingsProps) {
 		// TODO handle date update
 		return 0;
 	};
+
+	const [editions, setEditions] = useState<string[]>([]);
+  const getEditions = async () => {
+    // const editionsList = await getAllEditions();
+    // return editionsList.g;
+    return getAllEditions().then(result=>{
+      setEditions(result);
+    });
+	};
+
+  const handleDeleteEdition = () => {
+		deleteEdition(toDelEditionName);
+    getEditions();
+    console.log("dupa");
+		return 0;
+	};
+  const handleCurrentEditionChange = () => {
+		setCurrentEdition(newCurrentEditionName);
+    getEditions();
+		return 0;
+	};
+  const handleNewEdition = () => {
+		createNewEdition(newEditionName);
+    getEditions();
+		return 0;
+	};
+
+
+  useEffect(() => {
+		getEditions();
+	}, []);
 
 	return (
 		<div className="settings">
@@ -87,6 +121,42 @@ export default function AdminSettings(props: AdminSettingsProps) {
 					disabled={!uploadedFileName}>
 					Prześlij dokument
 				</Button>
+			</div>
+      <div className="document__line" />
+      <h4>Ustawienia edycji</h4>
+      <div className="m-3">
+				<label className="mx-3">Wybierz edycję do usunięcia:</label>
+        <select id='template-select'
+        onChange={(event) => { setToDelEditionName(event.target.value) }}>
+          <option>----</option>
+          {editions.map(option => <option key={option} value={option}>{option}</option>)}
+        </select>
+				<Button
+          onClick={handleDeleteEdition}
+          className={"upload__button"}>
+          Usuń
+       </Button>
+			</div>
+      <div className="m-3">
+				<label className="mx-3">Wybierz edycję do ustawienia:</label>
+        <select id='template-select'
+          onChange={(event) => { setNewCurrentEditionName(event.target.value) }} >
+          {editions.map(option => <option key={option} value={option}>{option}</option>)}
+        </select>
+				<Button
+          onClick={handleCurrentEditionChange}
+          className={"send__button"}>
+          Ustaw jak aktualną
+        </Button>
+			</div>
+      <div className="m-3">
+				<label className="mx-3">Dodaj nową edycję:</label>
+        <FormControl type='text' onChange={(event) => { setNewEditionName(event.target.value) }} />
+				<Button
+          onClick={handleNewEdition}
+          className={"send__button"}>
+         Dodaj edycję
+        </Button>
 			</div>
 		</div>
 	);

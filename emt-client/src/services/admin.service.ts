@@ -7,6 +7,8 @@ const ROOT_API = "http://localhost:8080/api";
 const RESULTS_API = "/excel-lists/results";
 const RECRUITMENT_API = "/recruitment-form/form-list";
 const RECRUITMENT_DEFAULT_API = "/recruitment-form/default";
+const EDITIONS_API = "/parameter/editions";
+const PARAMETERS_API = "/parameter";
 
 export const getResults = () => {
 	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
@@ -83,5 +85,81 @@ export const sendFinalExcel = (
 				return response.data;
 			}
 			return undefined;
+		});
+};
+
+export const getAllEditions = () => {
+	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
+
+	return axios
+		.get(ROOT_API + EDITIONS_API, {
+			headers: { Authorization: `Bearer ${tokenStr}` },
+		})
+		.catch(function (error) {
+			console.log(error.toJSON());
+			return undefined;
+		})
+		.then(response => {
+			console.log(response);
+			console.log(response?.data);
+			return response?.data
+		});
+};
+
+export const deleteEdition = (edition:string) => {
+	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
+
+	return axios
+		.delete(ROOT_API + EDITIONS_API + "/" + edition, {
+			headers: { Authorization: `Bearer ${tokenStr}` },
+		})
+		.catch(function (error) {
+			console.log(error.toJSON());
+			return undefined;
+		})
+		.then(response => {
+			console.log(response);
+			console.log(response?.data);
+			return response?.data
+		});
+};
+
+export const createNewEdition = (edition:string) => {
+	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
+
+	return axios
+		.post(ROOT_API + EDITIONS_API + "/" + edition, {
+			headers: { Authorization: `Bearer ${tokenStr}` },
+		})
+		.catch(function (error) {
+			console.log(error.toJSON());
+			return undefined;
+		})
+		.then(response => {
+			console.log(response);
+			console.log(response?.data);
+			return response?.data
+		});
+};
+
+export const setCurrentEdition = (edition:string) => {
+	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
+
+	return axios
+		.post(ROOT_API + PARAMETERS_API, {
+			headers: { Authorization: `Bearer ${tokenStr}` },
+			body:{
+				name:"editions",
+				value:edition
+			}
+		})
+		.catch(function (error) {
+			console.log(error.toJSON());
+			return undefined;
+		})
+		.then(response => {
+			console.log(response);
+			console.log(response?.data);
+			return response?.data
 		});
 };
