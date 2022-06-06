@@ -71,20 +71,20 @@ public class RecruitmentFormService {
         Optional<Parameter> startDateOpt = parameterRepository.findById(ParameterNames.RECRUITMENT_START_DATE);
         Optional<Parameter> endDateOpt = parameterRepository.findById(ParameterNames.RECRUITMENT_END_DATE);
 
-        if (startDateOpt.isEmpty() || endDateOpt.isEmpty())
-            throw new DateValidationException("Brak skonfigurowanych dat rozpoczecia i / lub końca rekrutacji. Skontaktuj się z administratorem");
-
-        LocalDateTime startDate, endDate;
-        try {
-            startDate = DateUtils.parseDate(startDateOpt.get().getValue());
-            endDate = DateUtils.parseDate(endDateOpt.get().getValue());
-        } catch (DateTimeParseException e) {
-            throw new ParameterFormatException("Błędna wartość parametru rozpoczecia i / lub końca rekrutacji. Skontaktuj się z administratorem");
-        }
-
-        if (now.isBefore(startDate) || now.isAfter(endDate)) {
-            throw new DateValidationException("Błąd: przesłano dokument przed / po okresie rekrutacyjnym");
-        }
+//        if (startDateOpt.isEmpty() || endDateOpt.isEmpty())
+//            throw new DateValidationException("Brak skonfigurowanych dat rozpoczecia i / lub końca rekrutacji. Skontaktuj się z administratorem");
+//
+//        LocalDateTime startDate, endDate;
+//        try {
+//            startDate = DateUtils.parseDate(startDateOpt.get().getValue());
+//            endDate = DateUtils.parseDate(endDateOpt.get().getValue());
+//        } catch (DateTimeParseException e) {
+//            throw new ParameterFormatException("Błędna wartość parametru rozpoczecia i / lub końca rekrutacji. Skontaktuj się z administratorem");
+//        }
+//
+//        if (now.isBefore(startDate) || now.isAfter(endDate)) {
+//            throw new DateValidationException("Błąd: przesłano dokument przed / po okresie rekrutacyjnym");
+//        }
     }
 
     public List<StudentFormsPreviewDTO> findAllStudentsWithPreviews() {

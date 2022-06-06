@@ -4,39 +4,41 @@ import { useNavigate } from "react-router-dom";
 import FeedIcon from "@mui/icons-material/Feed";
 import "./UserFormList.scss";
 
-export default function UserFormList() {
+interface UserFormListProps {
+	config: {
+		formsNum: number;
+		startDate?: Date;
+		endDate?: Date;
+	};
+}
+
+export default function UserFormList(props: UserFormListProps) {
 	const navigate = useNavigate();
 
 	return (
 		<div>
 			<h2>Dokumenty rekrutacyjne</h2>
 			<List dense>
-				<ListItem
-					className="list__item"
-					onClick={() => {
-						navigate("/form", { state: { firstChoice: true } });
-					}}>
-					<ListItemIcon>
-						<FeedIcon />
-					</ListItemIcon>
-					<ListItemText
-						primary="Ankieta rekrutacyjna"
-						secondary={"Pierwszy wybór"}
-					/>
-				</ListItem>
-				<ListItem
-					className="list__item"
-					onClick={() => {
-						navigate("/form", { state: { firstChoice: false } });
-					}}>
-					<ListItemIcon>
-						<FeedIcon />
-					</ListItemIcon>
-					<ListItemText
-						primary="Ankieta rekrutacyjna"
-						secondary={"Drugi wybór"}
-					/>
-				</ListItem>
+				{Array.from(Array(props.config?.formsNum ?? 0).keys()).map(
+					(elem: number) => {
+						return (
+							<ListItem
+								key={elem}
+								className="list__item"
+								onClick={() => {
+									navigate("/form", { state: { priority: elem + 1 } });
+								}}>
+								<ListItemIcon>
+									<FeedIcon />
+								</ListItemIcon>
+								<ListItemText
+									primary="Ankieta rekrutacyjna"
+									secondary={`${elem + 1} wybór`}
+								/>
+							</ListItem>
+						);
+					},
+				)}
 				<ListItem className="list__item">
 					<ListItemIcon>
 						<FeedIcon />
