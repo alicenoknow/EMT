@@ -28,7 +28,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/form-list")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<List<RecruitmentFormDoubleInfoDTO>> findAllPreviews() {
+    ResponseEntity<List<RecruitmentFormDoubleInfoDTO>> findAllPreviews() throws ParameterNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
@@ -53,7 +53,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/my-form/{priority}")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForLoggedStudent( @PathVariable Integer priority) throws NoLoggedUserException, StudentNotFoundException {
+    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForLoggedStudent( @PathVariable Integer priority) throws NoLoggedUserException, StudentNotFoundException, ParameterNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForLoggedStudent(priority));
     }
 
@@ -77,7 +77,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/student-form/{studentId}/{priority}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForStudent(@PathVariable String studentId, @PathVariable Integer priority) throws StudentNotFoundException {
+    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForStudent(@PathVariable String studentId, @PathVariable Integer priority) throws StudentNotFoundException, ParameterNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForStudent(studentId, priority));
     }
 

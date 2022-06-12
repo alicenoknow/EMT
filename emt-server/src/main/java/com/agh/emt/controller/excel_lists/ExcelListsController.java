@@ -4,6 +4,7 @@ import com.agh.emt.service.excel_lists.ExcelListsService;
 import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.agh.emt.service.form.RecruitmentFormService;
 import com.agh.emt.service.one_drive.PostFileDTO;
+import com.agh.emt.service.parameters.ParameterNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class ExcelListsController {
 
     @GetMapping("/results")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<PostFileDTO> getRecruitmentResults() throws RecruitmentFormNotFoundException {
+    ResponseEntity<PostFileDTO> getRecruitmentResults() throws RecruitmentFormNotFoundException, ParameterNotFoundException {
         return ResponseEntity.ok(excelListsService.generateRecruitmentResults());
     }
 
@@ -44,7 +45,13 @@ public class ExcelListsController {
     @GetMapping("/results-DWZ")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
     ResponseEntity<PostFileDTO> getRecruitmentResultsDWZ() throws RecruitmentFormNotFoundException {
-        return ResponseEntity.ok(excelListsService.generateDWZRecruitmentResults());
+        try{
+            return ResponseEntity.ok(excelListsService.generateDWZRecruitmentResults());
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.ok(excelListsService.generateDWZRecruitmentResults());
+        }
+
     }
 
     @GetMapping("/results-DWZ/download")

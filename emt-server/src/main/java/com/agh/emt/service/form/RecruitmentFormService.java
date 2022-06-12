@@ -46,8 +46,13 @@ public class RecruitmentFormService {
 
     private static final String DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK = "wzor/AnkietaRekrutacyjnaErasmus2022.pdf";
 
-    public List<RecruitmentFormDoubleInfoDTO> findAllPreviews() {
-        List<RecruitmentFormDoubleInfoDTO> recruitmentFormPreviews = recruitmentFormRepository.findAll().stream().map(RecruitmentFormDoubleInfoDTO::new).toList();
+    public List<RecruitmentFormDoubleInfoDTO> findAllPreviews() throws ParameterNotFoundException {
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
+        List<RecruitmentFormDoubleInfoDTO> recruitmentFormPreviews = recruitmentFormRepository.findAll().stream()
+                .filter(recruitmentForm -> recruitmentForm!=null &&
+                        recruitmentForm.getOneDriveFormPath()!=null &&
+                        recruitmentForm.getOneDriveFormPath().contains(erasmusEdition))
+                .map(RecruitmentFormDoubleInfoDTO::new).toList();
 
         List<RecruitmentFormDoubleInfoDTO> result = new LinkedList<>();
 
@@ -91,10 +96,12 @@ public class RecruitmentFormService {
 
     public List<StudentFormsPreviewDTO> findAllStudentsWithPreviews() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(StudentFormsPreviewDTO::new).collect(Collectors.toList());
+        return users.stream()
+                .map(StudentFormsPreviewDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public RecruitmentFormDoubleInfoDTO findForLoggedStudent(Integer priority) throws NoLoggedUserException, StudentNotFoundException {
+    public RecruitmentFormDoubleInfoDTO findForLoggedStudent(Integer priority) throws NoLoggedUserException, StudentNotFoundException, ParameterNotFoundException {
         UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
@@ -136,7 +143,8 @@ public class RecruitmentFormService {
 //        return editForStudent(studentId, recruitmentFormDTO);
 //    }
 
-    public RecruitmentFormDoubleInfoDTO findForStudent(String studentId,Integer priority) throws StudentNotFoundException {
+    public RecruitmentFormDoubleInfoDTO findForStudent(String studentId,Integer priority) throws StudentNotFoundException, ParameterNotFoundException {
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
         User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         List<RecruitmentForm> recruitmentForms = student.getRecruitmentForms();
@@ -144,6 +152,8 @@ public class RecruitmentFormService {
         return recruitmentForms.stream()
                 .map(RecruitmentFormDoubleInfoDTO::new)
                 .filter(form -> form.getPriority().equals(priority))
+                .filter(recruitmentForm -> recruitmentForm.getOneDriveFormPath() != null &&
+                        recruitmentForm.getOneDriveFormPath().contains(erasmusEdition))
                 .collect(Collectors.toList()).get(0);
     }
 

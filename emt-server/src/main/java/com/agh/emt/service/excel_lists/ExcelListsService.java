@@ -4,7 +4,10 @@ import com.agh.emt.model.form.RecruitmentFormRepository;
 import com.agh.emt.service.form.RecruitmentFormNotFoundException;
 import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.one_drive.PostFileDTO;
+import com.agh.emt.service.parameters.ParameterNotFoundException;
+import com.agh.emt.service.parameters.ParameterService;
 import com.agh.emt.service.pdf_parser.PdfParserService;
+import com.agh.emt.utils.parameters.ParameterNames;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +21,26 @@ public class ExcelListsService {
     OneDriveService oneDriveService;
     RecruitmentFormRepository recruitmentFormRepository;
     PdfParserService pdfParserService;
+    ParameterService parameterService;
 
     final static String RESULT_EXCEL_PATH = "/results/ErasmusRecruitmentResults2022.csv";
     final static String RESULT_DWZ_EXCEL_PATH = "/results/ErasmusRecruitmentResults2022.csv";
 
 
-    public PostFileDTO generateRecruitmentResults(){
-
-        List<byte[]> recruitmentFormsPdfs =  recruitmentFormRepository.findAll().stream().map(recruitmentForm -> {
-            try {
-                return oneDriveService.getRecruitmentDocumentFromId(recruitmentForm.getOneDriveFormId());
-            } catch (RecruitmentFormNotFoundException e) {
-                e.printStackTrace();
-            }
-            return "".getBytes(StandardCharsets.UTF_8);
-        }).toList();
+    public PostFileDTO generateRecruitmentResults() throws ParameterNotFoundException {
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
+        List<byte[]> recruitmentFormsPdfs =  recruitmentFormRepository.findAll().stream()
+                .filter(recruitmentForm -> recruitmentForm!=null &&
+                        recruitmentForm.getOneDriveFormPath()!=null &&
+                        recruitmentForm.getOneDriveFormPath().contains(erasmusEdition))
+                .map(recruitmentForm -> {
+                    try {
+                        return oneDriveService.getRecruitmentDocumentFromId(recruitmentForm.getOneDriveFormId());
+                    } catch (RecruitmentFormNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    return "".getBytes(StandardCharsets.UTF_8);
+            }).toList();
 
         //.......................................
         //TODO: attach parser service to generate
