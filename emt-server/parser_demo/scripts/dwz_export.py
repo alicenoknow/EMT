@@ -11,7 +11,7 @@ import sys
 csv_file_path = sys.argv[1] # ../csv_results/result.csv
 input_excel_path = sys.argv[2] # ../forms/form.xlsx
 output_excel_path = sys.argv[3]  #../forms/out_form.xlsx
-df = pd.read_csv(csv_file_path, delimiter = ';')
+df = pd.read_csv(csv_file_path, delimiter = ';',encoding='latin-1')
 members_num = df.shape[0]
 wb_obj = openpyxl.load_workbook(input_excel_path)
  

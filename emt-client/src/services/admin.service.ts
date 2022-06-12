@@ -71,7 +71,7 @@ export const downloadResultsDWZ = (): Promise<void> => {
 			if (response?.data) {
 				FileDownload(
 					response.data,
-					"DWZ-list.csv",
+					"DWZ-list.xlsx",
 				);
 			}
 		});

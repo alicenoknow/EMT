@@ -136,6 +136,15 @@ public class RecruitmentFormService {
 
         return addForStudent(studentId, recruitmentFormDTO);
     }
+
+    public AdditionalDocumentDTO addForLoggedStudent(AdditionalDocumentDTO additionalDocumentDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, DateValidationException, ParameterFormatException, ParameterNotFoundException {
+        validateDate();
+
+        UserDetails loggedUser = UserCredentialsService.getLoggedUser();
+        String studentId = ((UserDetailsImpl) loggedUser).getId();
+
+        return addForStudent(studentId, additionalDocumentDTO);
+    }
 //    public RecruitmentFormDTO editForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
 //        UserDetails loggedUser = UserCredentialsService.getLoggedUser();
 //        String studentId = ((UserDetailsImpl) loggedUser).getId();
@@ -260,6 +269,27 @@ public class RecruitmentFormService {
         userRepository.save(student);
 
         return new RecruitmentFormDTO(recruitmentForm,recruitmentFormDTO.getPdf(),recruitmentFormDTO.getIsScan());
+    }
+
+    @Transactional
+    public AdditionalDocumentDTO addForStudent(String studentId, AdditionalDocumentDTO additionalDocumentDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, DateValidationException, ParameterNotFoundException, ParameterFormatException {
+        validateDate();
+
+        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
+
+        //TODO: Add removing similar docs
+
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
+        String filename = ParameterNames.ERASMUS_EDITION + "/" + erasmusEdition + "/" + student.getEmail() + "/documents/" + additionalDocumentDTO.getName();
+
+        PostFileDTO oneDriveInfo = oneDriveService.postRecruitmentDocument(filename
+                .replace(" ","_")
+                .replace(":","-")
+                , additionalDocumentDTO.getDoc());
+
+        //TODO: saving documents to user in DB
+
+        return additionalDocumentDTO;
     }
 //    public RecruitmentFormDTO editForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException {
 //        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
