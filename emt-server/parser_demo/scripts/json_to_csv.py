@@ -98,6 +98,8 @@ def generate_rank(json_directory, rank_file_name, keys_to_include, get_rank):
 	if get_rank:
 		cols.append('rank_score')
 	for user in users:
+		user['erasmus_pocz_kon'] = user['poczatek praktyki']+' '+user['koniec praktyki']
+		user['rok_stopien'] = user['Stopien']+ ' '+user['Rok']
 		if get_rank:		
 			user['rank_score'] = 8*get_gpa(user['srednia']) + get_cert_points(user['Poziom Egzaminu'])+ get_faculty_points(user['Wydzial'])+ get_extra_activity_points(user['activity'])- get_late_points(user['being_late'])
 			user = {key:user[key] for key in cols}

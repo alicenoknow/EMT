@@ -1,4 +1,4 @@
-Imie;Nazwisko;rank_score
-Jan;Nowak;40.0
-Marcin;Domanski;34.96
-Jan;Kowalski;36.0
+Imie;Nazwisko;Wydzial;rok_stopien;Planowane miejsce praktyk;erasmus_pocz_kon;Email;Telefon;Uprzedni Erasmus;rank_score
+Zbigniew;Herbert;WMS;1 2;Siena;01-01-1949 05-05-2022;c@student.agh.edu.pl;999999999;/Off;40.0
+Jan;Kowalski;WIET;2 2;Paryz;01-01-2020 01-03-2020;a@student.agh.edu.pl;111111111;/Off;46.0
+Jerzy;Kukuczka;WFIS;2 1;Kolonia;01-01-2020 01-02-2100;b@student.agh.edu.pl;121321123;/Off;38.0
