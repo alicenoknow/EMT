@@ -24,7 +24,7 @@ public class ExcelListsService {
     ParameterService parameterService;
 
     final static String RESULT_EXCEL_PATH = "/results/ErasmusRecruitmentResults2022.csv";
-    final static String RESULT_DWZ_EXCEL_PATH = "/results/ErasmusRecruitmentResults2022.csv";
+    final static String RESULT_DWZ_EXCEL_PATH = "/results/ErasmusRecruitmentResults2022.xlsx";
 
 
     public PostFileDTO generateRecruitmentResults() throws ParameterNotFoundException {

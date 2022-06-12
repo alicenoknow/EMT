@@ -137,6 +137,9 @@ public class OneDriveService {
     }
 
     public byte[] getRecruitmentDocumentFromPath(String filePath) throws RecruitmentFormNotFoundException {
+        if(filePath.startsWith("/")){
+            filePath = filePath.substring(1);
+        }
         String url = "https://graph.microsoft.com/v1.0/me/drive/root:/" + filePath + ":/content" ;
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
@@ -144,6 +147,7 @@ public class OneDriveService {
         HttpEntity request = new HttpEntity(headers);
 
         var response  = restTemplate.exchange(url, HttpMethod.GET, request, byte[].class);
+        System.out.println(response);
         if (response.getStatusCode() == HttpStatus.OK) {
             return Objects.requireNonNull(response.getBody());
         } else {

@@ -21,6 +21,7 @@ import { getParam } from "../services/params.service";
 export default function AdminPage() {
 	const [tabIndex, setTabIndex] = useState<number>(0);
 	const [resultsLink, setResultsLink] = useState<string | undefined>();
+	const [resultsDWZLink, setResultsDWZLink] = useState<string | undefined>();
 	const [formList, setFormList] = useState<StudentFormRecord[] | undefined>();
 	const [startDate, setStartDate] = useState<Date | undefined>();
 	const [endDate, setEndDate] = useState<Date | undefined>();

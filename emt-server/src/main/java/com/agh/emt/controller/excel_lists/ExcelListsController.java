@@ -49,7 +49,7 @@ public class ExcelListsController {
             return ResponseEntity.ok(excelListsService.generateDWZRecruitmentResults());
         } catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.ok(excelListsService.generateDWZRecruitmentResults());
+            return ResponseEntity.ok(new PostFileDTO("","",""));
         }
 
     }
