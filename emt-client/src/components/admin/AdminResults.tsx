@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Button, Alert } from "react-bootstrap";
-import { downloadResultsDWZ, getResultsDWZ, sendFinalExcel } from "../../services/admin.service";
+import { downloadCsvList, downloadResultsDWZ, getCsvList, getResultsDWZ, sendFinalExcel } from "../../services/admin.service";
 import "./AdminResults.scss";
 
 interface AdminResultsProps {
@@ -23,6 +23,12 @@ export default function AdminResults(props: AdminResultsProps) {
 			setUploadedFileName(inputRef.current.files[0].name);
 			setUploadedFile(inputRef.current.files[0]);
 		}
+	};
+
+	const generateCsvList = async () => {
+		const result = await getCsvList();
+		setExcelLink(result.oneDriveLink);
+		downloadCsvList();
 	};
 
 	const generateDoc = async () => {
@@ -49,6 +55,9 @@ export default function AdminResults(props: AdminResultsProps) {
 				rel="noreferrer">
 				{"Pobierz plik (.xlsx)"}
 			</a>
+			<Button onClick={generateCsvList} className={"send__button"}>
+				Pobierz tymczasową listę rankingową
+			</Button>
 			<div className="document__line" />
 			<h4>Prześlij końcowe wyniki rekrutacji:</h4>
 			<div className="m-3">
