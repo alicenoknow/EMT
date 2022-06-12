@@ -7,6 +7,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 const ROOT_API = "http://localhost:8080/api/recruitment-form/";
 const TEMPLATE_FORM_API = "default";
 const SEND_FORM_API = "my-form";
+const SEND_DOC_API = "other-docs";
 const GET_PDF_API = "my-form/download/";
 const GET_SCAN_API = "my-form/scan/download/";
 
@@ -116,4 +117,28 @@ export const getUserForm = (priority: number) => {
 			return undefined;
 		})
 		.then(response => response?.data);
+};
+
+export const sendOtherDoc = (pdf: FormData): Promise<number> => {
+	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
+
+	return axios({
+		method: "post",
+		url: ROOT_API + SEND_DOC_API,
+		data: pdf,
+		headers: {
+			"Content-Type": "multipart/form-data",
+			Authorization: `Bearer ${tokenStr}`,
+		},
+	})
+		.catch(function (error) {
+			console.log(error.toJSON());
+			return undefined;
+		})
+		.then(response => {
+			if (response?.data) {
+				return response?.data;
+			}
+			return undefined;
+		});
 };

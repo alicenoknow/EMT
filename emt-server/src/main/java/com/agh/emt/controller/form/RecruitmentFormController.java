@@ -28,7 +28,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/form-list")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<List<RecruitmentFormDoubleInfoDTO>> findAllPreviews() {
+    ResponseEntity<List<RecruitmentFormDoubleInfoDTO>> findAllPreviews() throws ParameterNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findAllPreviews());
     }
 
@@ -53,20 +53,27 @@ public class RecruitmentFormController {
 
     @GetMapping("/my-form/{priority}")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForLoggedStudent( @PathVariable Integer priority) throws NoLoggedUserException, StudentNotFoundException {
+    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForLoggedStudent( @PathVariable Integer priority) throws NoLoggedUserException, StudentNotFoundException, ParameterNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForLoggedStudent(priority));
     }
 
 //    @PostMapping("/my-form")
     @RequestMapping(value = "/my-form" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<RecruitmentFormDTO> addForLoggedStudent(@RequestParam("pdf") MultipartFile pdf,
-                                                           @RequestParam("priority") Integer priority,
-                                                           @RequestParam("id") String id,
-                                                           @RequestParam("isScan") Boolean isScan) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, IOException, ParameterFormatException, ParameterNotFoundException, DateValidationException {
+    ResponseEntity<RecruitmentFormDTO> addFormForLoggedStudent(@RequestParam("pdf") MultipartFile pdf,
+                                                               @RequestParam("priority") Integer priority,
+                                                               @RequestParam("id") String id,
+                                                               @RequestParam("isScan") Boolean isScan) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, IOException, ParameterFormatException, ParameterNotFoundException, DateValidationException {
         if(isScan)
             return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(new RecruitmentFormDTO(id,pdf.getBytes(),priority,isScan)));
         return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(new RecruitmentFormDTO(pdf.getBytes(),priority)));
+    }
+
+    @RequestMapping(value = "/other-docs" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
+    @PreAuthorize("hasRole('STUDENT')")
+    ResponseEntity<AdditionalDocumentDTO> addDocForLoggedStudent(@RequestParam("doc") MultipartFile doc,
+                                                           @RequestParam("name") String name) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, IOException, ParameterFormatException, ParameterNotFoundException, DateValidationException {
+        return ResponseEntity.ok(recruitmentFormService.addForLoggedStudent(new AdditionalDocumentDTO(doc.getBytes(),name)));
     }
 
 //    @PutMapping("/my-form")
@@ -77,7 +84,7 @@ public class RecruitmentFormController {
 
     @GetMapping("/student-form/{studentId}/{priority}")
     @PreAuthorize("hasAnyRole('FACULTY_COORDINATOR', 'CONTRACT_COORDINATOR', 'DEAN_OFFICE_WORKER', 'FOREIGN_COUNTRIES_DEPARTMENT_REP', 'OTHER_ADMIN')")
-    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForStudent(@PathVariable String studentId, @PathVariable Integer priority) throws StudentNotFoundException {
+    ResponseEntity<RecruitmentFormDoubleInfoDTO> findForStudent(@PathVariable String studentId, @PathVariable Integer priority) throws StudentNotFoundException, ParameterNotFoundException {
         return ResponseEntity.ok(recruitmentFormService.findForStudent(studentId, priority));
     }
 

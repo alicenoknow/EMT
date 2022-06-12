@@ -71,7 +71,7 @@ public class PdfParserService {
         }
 
         // convert pdf to json
-        String[] commandPdfToJson = {"python3",
+        String[] commandPdfToJson = {"python",
                 pythonScriptsRoot + "pdf_to_json.py",
                 ".tempPdf/",
                 ".tempJson/"};
@@ -79,7 +79,7 @@ public class PdfParserService {
         process.waitFor();
         
         // convert json to csv
-        String[] commandJsonToCsv = {"python3",
+        String[] commandJsonToCsv = {"python",
                 pythonScriptsRoot + "json_to_csv.py",
                 ".temp.csv",
                 pythonScriptsRoot + "json_fields_specs.json",
@@ -109,7 +109,7 @@ public class PdfParserService {
         FileUtils.writeByteArrayToFile(new File(".temp_excel.csv"), excel);
         
         // convert excel to DWZ excel
-        String[] command = {"python3",
+        String[] command = {"python",
                 pythonScriptsRoot + "dwz_export.py",
                 ".temp_excel.csv",
                 pythonScriptsRoot + "../parsers_example/scripts/form.xlsx",

@@ -22,4 +22,11 @@ public class Parameter {
     private String value;
 
     private String description;
+
+    public Parameter(){}
+
+    public Parameter(String name, String value){
+        this.name = name;
+        this.value = value;
+    }
 }

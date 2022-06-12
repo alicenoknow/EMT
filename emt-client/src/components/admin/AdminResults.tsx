@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Button, Alert } from "react-bootstrap";
-import { sendFinalExcel } from "../../services/admin.service";
+import { downloadResultsDWZ, getResultsDWZ, sendFinalExcel } from "../../services/admin.service";
 import "./AdminResults.scss";
 
 interface AdminResultsProps {
@@ -11,6 +11,7 @@ export default function AdminResults(props: AdminResultsProps) {
 	const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 	const [excelLink, setExcelLink] = useState<string | null>(null);
+	const [resultsDWZLink, setResultsDWZLink] = useState<string | undefined>();
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleUpload = () => {
@@ -24,9 +25,10 @@ export default function AdminResults(props: AdminResultsProps) {
 		}
 	};
 
-	const generateDoc = () => {
-		// TODO generate DWZ file
-		return 0;
+	const generateDoc = async () => {
+		const result = await getResultsDWZ();
+		setResultsDWZLink(result.oneDriveLink);
+		downloadResultsDWZ();
 	};
 
 	const handleFileSend = async () => {

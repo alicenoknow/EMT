@@ -13,6 +13,7 @@ import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.one_drive.PostFileDTO;
 import com.agh.emt.service.parameters.ParameterFormatException;
 import com.agh.emt.service.parameters.ParameterNotFoundException;
+import com.agh.emt.service.parameters.ParameterService;
 import com.agh.emt.service.pdf_parser.PdfData;
 import com.agh.emt.service.pdf_parser.PdfParserService;
 import com.agh.emt.service.student.StudentNotFoundException;
@@ -38,14 +39,20 @@ import java.util.stream.Collectors;
 public class RecruitmentFormService {
     private final RecruitmentFormRepository recruitmentFormRepository;
     private final ParameterRepository parameterRepository;
+    private final ParameterService parameterService;
     private final UserRepository userRepository;
     private final OneDriveService oneDriveService;
     private final PdfParserService pdfParserService;
 
     private static final String DEFAULT_RECRUITMENT_FORM_ONEDRIVE_LINK = "wzor/AnkietaRekrutacyjnaErasmus2022.pdf";
 
-    public List<RecruitmentFormDoubleInfoDTO> findAllPreviews() {
-        List<RecruitmentFormDoubleInfoDTO> recruitmentFormPreviews = recruitmentFormRepository.findAll().stream().map(RecruitmentFormDoubleInfoDTO::new).toList();
+    public List<RecruitmentFormDoubleInfoDTO> findAllPreviews() throws ParameterNotFoundException {
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
+        List<RecruitmentFormDoubleInfoDTO> recruitmentFormPreviews = recruitmentFormRepository.findAll().stream()
+                .filter(recruitmentForm -> recruitmentForm!=null &&
+                        recruitmentForm.getOneDriveFormPath()!=null &&
+                        recruitmentForm.getOneDriveFormPath().contains(erasmusEdition))
+                .map(RecruitmentFormDoubleInfoDTO::new).toList();
 
         List<RecruitmentFormDoubleInfoDTO> result = new LinkedList<>();
 
@@ -89,10 +96,12 @@ public class RecruitmentFormService {
 
     public List<StudentFormsPreviewDTO> findAllStudentsWithPreviews() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(StudentFormsPreviewDTO::new).collect(Collectors.toList());
+        return users.stream()
+                .map(StudentFormsPreviewDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public RecruitmentFormDoubleInfoDTO findForLoggedStudent(Integer priority) throws NoLoggedUserException, StudentNotFoundException {
+    public RecruitmentFormDoubleInfoDTO findForLoggedStudent(Integer priority) throws NoLoggedUserException, StudentNotFoundException, ParameterNotFoundException {
         UserDetails loggedUser = UserCredentialsService.getLoggedUser();
         String studentId = ((UserDetailsImpl) loggedUser).getId();
 
@@ -127,6 +136,15 @@ public class RecruitmentFormService {
 
         return addForStudent(studentId, recruitmentFormDTO);
     }
+
+    public AdditionalDocumentDTO addForLoggedStudent(AdditionalDocumentDTO additionalDocumentDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormExistsException, RecruitmentFormNotFoundException, RecruitmentFormLimitExceededException, DateValidationException, ParameterFormatException, ParameterNotFoundException {
+        validateDate();
+
+        UserDetails loggedUser = UserCredentialsService.getLoggedUser();
+        String studentId = ((UserDetailsImpl) loggedUser).getId();
+
+        return addForStudent(studentId, additionalDocumentDTO);
+    }
 //    public RecruitmentFormDTO editForLoggedStudent(RecruitmentFormDTO recruitmentFormDTO) throws NoLoggedUserException, StudentNotFoundException, RecruitmentFormNotFoundException {
 //        UserDetails loggedUser = UserCredentialsService.getLoggedUser();
 //        String studentId = ((UserDetailsImpl) loggedUser).getId();
@@ -134,7 +152,8 @@ public class RecruitmentFormService {
 //        return editForStudent(studentId, recruitmentFormDTO);
 //    }
 
-    public RecruitmentFormDoubleInfoDTO findForStudent(String studentId,Integer priority) throws StudentNotFoundException {
+    public RecruitmentFormDoubleInfoDTO findForStudent(String studentId,Integer priority) throws StudentNotFoundException, ParameterNotFoundException {
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
         User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
 
         List<RecruitmentForm> recruitmentForms = student.getRecruitmentForms();
@@ -142,6 +161,8 @@ public class RecruitmentFormService {
         return recruitmentForms.stream()
                 .map(RecruitmentFormDoubleInfoDTO::new)
                 .filter(form -> form.getPriority().equals(priority))
+                .filter(recruitmentForm -> recruitmentForm.getOneDriveFormPath() != null &&
+                        recruitmentForm.getOneDriveFormPath().contains(erasmusEdition))
                 .collect(Collectors.toList()).get(0);
     }
 
@@ -195,9 +216,10 @@ public class RecruitmentFormService {
 
         RecruitmentForm recruitmentForm;
         String filename;
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
         if(recruitmentFormDTO.getIsScan()){
             recruitmentForm = recruitmentFormRepository.findById(recruitmentFormDTO.getId()).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono dokumentu o id: " + recruitmentFormDTO.getId()));
-            filename =  student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
+            filename =  ParameterNames.ERASMUS_EDITION + "/" + erasmusEdition + "/" + student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
                     .replace(":","-")
                     .replace(".","_") + "_scan.pdf";
 
@@ -205,7 +227,7 @@ public class RecruitmentFormService {
             recruitmentForm = new RecruitmentForm();
             recruitmentForm.setUser(student);
             recruitmentForm = recruitmentFormRepository.save(recruitmentForm);
-            filename = student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
+            filename = ParameterNames.ERASMUS_EDITION + "/" + erasmusEdition + "/" + student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
                     .replace(":","-")
                     .replace(".","_") + ".pdf";
         }
@@ -247,6 +269,27 @@ public class RecruitmentFormService {
         userRepository.save(student);
 
         return new RecruitmentFormDTO(recruitmentForm,recruitmentFormDTO.getPdf(),recruitmentFormDTO.getIsScan());
+    }
+
+    @Transactional
+    public AdditionalDocumentDTO addForStudent(String studentId, AdditionalDocumentDTO additionalDocumentDTO) throws StudentNotFoundException, RecruitmentFormLimitExceededException, DateValidationException, ParameterNotFoundException, ParameterFormatException {
+        validateDate();
+
+        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));
+
+        //TODO: Add removing similar docs
+
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
+        String filename = ParameterNames.ERASMUS_EDITION + "/" + erasmusEdition + "/" + student.getEmail() + "/documents/" + additionalDocumentDTO.getName();
+
+        PostFileDTO oneDriveInfo = oneDriveService.postRecruitmentDocument(filename
+                .replace(" ","_")
+                .replace(":","-")
+                , additionalDocumentDTO.getDoc());
+
+        //TODO: saving documents to user in DB
+
+        return additionalDocumentDTO;
     }
 //    public RecruitmentFormDTO editForStudent(String studentId, RecruitmentFormDTO recruitmentFormDTO) throws RecruitmentFormNotFoundException, StudentNotFoundException {
 //        User student = userRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono studenta o id: " + studentId));

@@ -1,10 +1,13 @@
 import axios from "axios";
+import FileDownload from "js-file-download";
 
 axios.defaults.headers.get["Access-Control-Allow-Origin"] = "*";
 axios.defaults.headers.get["Content-Type"] = "application/json";
 
 const ROOT_API = "http://localhost:8080/api";
 const RESULTS_API = "/excel-lists/results";
+
+const RESULTS_API_DWZ = "/excel-lists/results-DWZ";
 const RECRUITMENT_API = "/recruitment-form/form-list";
 const RECRUITMENT_DEFAULT_API = "/recruitment-form/default";
 
@@ -34,6 +37,44 @@ export const getFormList = () => {
 			return undefined;
 		})
 		.then(response => response?.data);
+};
+
+export const getResultsDWZ = () => {
+	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
+
+	return axios
+		.get(ROOT_API + RESULTS_API_DWZ, {
+			headers: { Authorization: `Bearer ${tokenStr}` },
+		})
+		.catch(function (error) {
+			console.log(error.toJSON());
+			return undefined;
+		})
+		.then(response => response?.data);
+};
+
+export const downloadResultsDWZ = (): Promise<void> => {
+	const tokenStr = JSON.parse(String(localStorage.getItem("user")))?.token;
+
+	return axios
+		.get(ROOT_API + RESULTS_API_DWZ + "/download", {
+			headers: {
+				Authorization: `Bearer ${tokenStr}`,
+			},
+			responseType: "blob",
+		})
+		.catch(function (error) {
+			console.log(error.toJSON());
+			return undefined;
+		})
+		.then(response => {
+			if (response?.data) {
+				FileDownload(
+					response.data,
+					"DWZ-list.xlsx",
+				);
+			}
+		});
 };
 
 export const sendDefaultPdf = (pdf: FormData): Promise<number> => {

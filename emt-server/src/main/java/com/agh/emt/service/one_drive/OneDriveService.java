@@ -5,6 +5,7 @@ import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
 import com.microsoft.graph.requests.GraphServiceClient;
 import lombok.AllArgsConstructor;
 import okhttp3.Request;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -15,9 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -108,7 +107,39 @@ public class OneDriveService {
         }
     }
 
+    public boolean deleteRecruitmentObjFromPath(String filePath) throws RecruitmentFormNotFoundException {
+        String url = "https://graph.microsoft.com/v1.0/me/drive/items/" + getRecruitmentObjIdFromPath(filePath);
+        System.out.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer "+accessToken);
+        HttpEntity request = new HttpEntity(headers);
+
+        var response  = restTemplate.exchange(url, HttpMethod.DELETE, request, byte[].class);
+        return response.getStatusCode() == HttpStatus.OK;
+    }
+
+    public String getRecruitmentObjIdFromPath(String filePath) throws RecruitmentFormNotFoundException {
+        String url = "https://graph.microsoft.com/v1.0/me/drive/root:/" + filePath;
+        System.out.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer "+accessToken);
+        HttpEntity request = new HttpEntity(headers);
+
+        var response  = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("GET ID");
+            System.out.println(response);
+            System.out.println(response.getBody());
+            return (String) new JSONObject(response.getBody()).get("id");
+        } else {
+            return null;
+        }
+    }
+
     public byte[] getRecruitmentDocumentFromPath(String filePath) throws RecruitmentFormNotFoundException {
+        if(filePath.startsWith("/")){
+            filePath = filePath.substring(1);
+        }
         String url = "https://graph.microsoft.com/v1.0/me/drive/root:/" + filePath + ":/content" ;
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
@@ -116,8 +147,54 @@ public class OneDriveService {
         HttpEntity request = new HttpEntity(headers);
 
         var response  = restTemplate.exchange(url, HttpMethod.GET, request, byte[].class);
+        System.out.println(response);
         if (response.getStatusCode() == HttpStatus.OK) {
             return Objects.requireNonNull(response.getBody());
+        } else {
+            return null;
+        }
+    }
+
+    public List<String> getChildrenList(String folderPath) throws RecruitmentFormNotFoundException {
+        String url = "https://graph.microsoft.com/v1.0/me/drive/root:/" + folderPath + ":/children" ;
+        System.out.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity request = new HttpEntity(headers);
+
+        var response  = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+        System.out.println(response.getStatusCode());
+        System.out.println(new JSONObject(response.getBody()));
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            List<String> returnList = new ArrayList<>();
+            ((JSONArray) new JSONObject(response.getBody()).get("value"))
+                    .forEach(val -> returnList.add(((JSONObject)val).get("name").toString()));
+            return  returnList;
+        } else {
+            return null;
+        }
+    }
+
+    public List<String> createChild(String folderPath, String folderName) throws RecruitmentFormNotFoundException {
+        String url = "https://graph.microsoft.com/v1.0/me/drive/items/" + getRecruitmentObjIdFromPath(folderPath) + "/children" ;
+        System.out.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer "+accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("name", folderName);
+        map.put("folder", new HashMap<String,String>());
+        map.put("@microsoft.graph.conflictBehavior", "rename");
+
+        HttpEntity<LinkedHashMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+        System.out.println(requestEntity);
+        RestTemplate restTemplate = new RestTemplate();
+        var response  = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        System.out.println(response.getBody());
+        if (response.getStatusCode() == HttpStatus.CREATED || response.getStatusCode() == HttpStatus.OK) {
+
+            return getChildrenList(folderPath);
         } else {
             return null;
         }
