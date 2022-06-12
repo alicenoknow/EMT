@@ -13,6 +13,7 @@ import com.agh.emt.service.one_drive.OneDriveService;
 import com.agh.emt.service.one_drive.PostFileDTO;
 import com.agh.emt.service.parameters.ParameterFormatException;
 import com.agh.emt.service.parameters.ParameterNotFoundException;
+import com.agh.emt.service.parameters.ParameterService;
 import com.agh.emt.service.pdf_parser.PdfData;
 import com.agh.emt.service.pdf_parser.PdfParserService;
 import com.agh.emt.service.student.StudentNotFoundException;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 public class RecruitmentFormService {
     private final RecruitmentFormRepository recruitmentFormRepository;
     private final ParameterRepository parameterRepository;
+    private final ParameterService parameterService;
     private final UserRepository userRepository;
     private final OneDriveService oneDriveService;
     private final PdfParserService pdfParserService;
@@ -195,9 +197,10 @@ public class RecruitmentFormService {
 
         RecruitmentForm recruitmentForm;
         String filename;
+        String erasmusEdition = parameterService.findParameter(ParameterNames.ERASMUS_EDITION).getValue();
         if(recruitmentFormDTO.getIsScan()){
             recruitmentForm = recruitmentFormRepository.findById(recruitmentFormDTO.getId()).orElseThrow(() -> new StudentNotFoundException("Nie znaleziono dokumentu o id: " + recruitmentFormDTO.getId()));
-            filename =  student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
+            filename =  ParameterNames.ERASMUS_EDITION + "/" + erasmusEdition + "/" + student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
                     .replace(":","-")
                     .replace(".","_") + "_scan.pdf";
 
@@ -205,7 +208,7 @@ public class RecruitmentFormService {
             recruitmentForm = new RecruitmentForm();
             recruitmentForm.setUser(student);
             recruitmentForm = recruitmentFormRepository.save(recruitmentForm);
-            filename = student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
+            filename = ParameterNames.ERASMUS_EDITION + "/" + erasmusEdition + "/" + student.getEmail() + "/" + recruitmentFormDTO.getPriority() + "/AR_" + new Timestamp(System.currentTimeMillis()).toString()
                     .replace(":","-")
                     .replace(".","_") + ".pdf";
         }
