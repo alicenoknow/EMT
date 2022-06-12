@@ -6,3 +6,11 @@
 	width: 80vw;
 	align-items: center;
 }
+
+.help__header {
+	flex: 1;
+	display: flex;
+	margin: 5vh;
+	align-self: center;
+	justify-content: center;
+}
