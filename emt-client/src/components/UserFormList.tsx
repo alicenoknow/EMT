@@ -39,13 +39,19 @@ export default function UserFormList(props: UserFormListProps) {
 						);
 					},
 				)}
-				<ListItem className="list__item">
+				<ListItem
+					key={"lang"}
+					className="list__item"
+					onClick={() => navigate("/docs")}>
 					<ListItemIcon>
 						<FeedIcon />
 					</ListItemIcon>
 					<ListItemText primary="Certyfikaty językowe" secondary={""} />
 				</ListItem>
-				<ListItem className="list__item">
+				<ListItem
+					key={"other"}
+					className="list__item"
+					onClick={() => navigate("/docs")}>
 					<ListItemIcon>
 						<FeedIcon />
 					</ListItemIcon>

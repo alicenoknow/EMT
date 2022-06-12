@@ -11,6 +11,7 @@ import UserLogin from "./pages/UserLogin";
 import AdminPage from "./pages/AdminPage";
 import About from "./pages/About";
 import UserHelp from "./pages/UserHelp";
+import OtherDocumentPage from "./pages/OtherDocumentPage";
 
 ReactDOM.render(
 	<React.StrictMode>
@@ -24,6 +25,7 @@ ReactDOM.render(
 						<Route path="/admin" element={<AdminPage />} />
 						<Route path="/tutorial" element={<UserHelp />} />
 						<Route path="/about" element={<About />} />
+						<Route path="/docs" element={<OtherDocumentPage />} />
 						<Route
 							path="/form"
 							element={
