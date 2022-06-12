@@ -1,31 +1,3 @@
 {
-	"data":["Imie",
-		"Nazwisko",
-		"Wydzial",
-		"Stopien",
-		"Rok",
-		"Kierunek Studiow",
-		"Adres",
-		"Telefon",
-		"Email",
-		"Semestr",
-		"srednia",
-		"Poziom Egzaminu",
-		"Jezyk obcy",
-		"Rodzaj Certyfikatu",
-		"Koordynator Wydzia#C5#82owy",
-		"Planowane miejsce praktyk",
-		"pocz#C4#85tek praktyki",
-		"koniec praktyki",
-		"Uprzedni Erasmus",
-		"Stypendium socjalne_TAK",
-		"Student niepe#C5#82nosprawny_TAK",
-		"Wyjazd d#C5#82ugoterminowy",
-		"wyjazd kr#C3#B3tkoterminowy",
-		"Stypendium socjalne NIE",
-		"Student niepelnosprawny_NIE",
-		"Inny wydzial",
-		"being_late",
-		"activity"
-	]
+	"data":["Imie", "Nazwisko","Wydzial","rok_stopien", "Planowane miejsce praktyk", "erasmus_pocz_kon", "Email", "Telefon", "Uprzedni Erasmus"]
 }
