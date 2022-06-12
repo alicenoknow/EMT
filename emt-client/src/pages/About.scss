@@ -1,0 +1,30 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../style/colors";
+
+.about__container {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	margin-top: 10vh;
+	margin-bottom: 10vh;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+}
+
+.about__header {
+	margin-bottom: 5vh;
+	align-self: center;
+	justify-content: center;
+}
+
+.about__button__container {
+	width: 40vw;
+	flex: 1;
+	display: flex;
+}
+
+.button_container {
+	margin-bottom: 50;
+	width: 100%;
+}

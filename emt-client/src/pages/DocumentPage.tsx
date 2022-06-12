@@ -69,6 +69,7 @@ export default function DocumentPage(props: DocumentPageProps) {
 			isDownloadablePDF: pdfAvailable,
 			isDownloadableScan: scanAvailable,
 		});
+		console.warn(result);
 	};
 
 	const handleUpload = () => {
@@ -99,7 +100,7 @@ export default function DocumentPage(props: DocumentPageProps) {
 		const id = await sendFilledPdf(formData);
 		if (id) {
 			const formData2 = new FormData();
-			formData2.append("pdf", uploadedFile ?? "");
+			formData2.append("pdf", uploadedFileScan ?? "");
 			formData2.append("isScan", "true");
 			formData2.append("id", id.toString());
 			formData2.append("priority", PRIORITY.toString());
@@ -121,9 +122,13 @@ export default function DocumentPage(props: DocumentPageProps) {
 	};
 
 	if (!isAvailable) {
-		return <h3>Przykro mi, nie masz dostępu do tego dokumentu 🚫</h3>;
+		return (
+			<h3 className="info--centered">
+				Przykro mi, nie masz dostępu do tego dokumentu 🚫
+			</h3>
+		);
 	} else if (isFilled) {
-		return <h3>Dokument został wysłany 📄✅</h3>;
+		return <h3 className="info--centered">Dokument został wysłany 📄✅</h3>;
 	}
 	return (
 		<div className="document">

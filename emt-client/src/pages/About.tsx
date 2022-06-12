@@ -1,8 +1,7 @@
 import React from "react";
 import { Container, Button, ButtonGroup } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
-import { Link } from "react-router-dom";
-import "./DocumentPage.scss";
+import "./About.scss";
 
 const markdown = `Tutaj znajdziesz najważniejsze informacje dotyczące programu Erasmus+ realizowanego na naszej uczelni.`;
 
@@ -36,46 +35,20 @@ const links: { url: string; title: string }[] = [
 export default function About() {
 	return (
 		<div className="document">
-			<h2
-				style={{
-					marginBottom: "5vh",
-					alignSelf: "center",
-					justifyContent: "center",
-				}}>
+			<h2 className="about__header" style={{}}>
 				Program Erasmus+
 			</h2>
 			<ReactMarkdown>{markdown}</ReactMarkdown>
 			<Container fluid className="p-0">
-				<div
-					style={{
-						marginTop: "10vh",
-						marginBottom: "10vh",
-						justifyContent: "center",
-						alignContent: "center",
-						alignItems: "center",
-						display: "flex",
-						flex: 1,
-						flexDirection: "column",
-					}}>
-					<ButtonGroup
-						vertical
-						style={{
-							width: "40hw",
-							flex: 1,
-							display: "flex",
-						}}>
+				<div className="about__container">
+					<ButtonGroup vertical className="about__button__container">
 						{links.map(item => (
-							<div
-								key={item.url}
-								style={{
-									marginBottom: 20,
-									width: "100%",
-								}}>
+							<div key={item.url} className="button_container">
 								<Button
 									onClick={() => window.open(item.url, "_blank")}
 									variant="outline-dark"
 									size="lg"
-									style={{ width: "100%" }}>
+									style={{ width: "100%", margin: 10 }}>
 									{item.title}
 								</Button>
 							</div>
