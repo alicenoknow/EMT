@@ -83,8 +83,7 @@ public class PdfParserService {
                 pythonScriptsRoot + "json_to_csv.py",
                 ".temp.csv",
                 pythonScriptsRoot + "json_fields_specs.json",
-                ".tempJson/",
-                "get_rank"};
+                ".tempJson/"};
         process = Runtime.getRuntime().exec(commandJsonToCsv);
         process.waitFor();
         
